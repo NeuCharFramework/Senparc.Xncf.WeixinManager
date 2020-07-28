@@ -1,0 +1,40 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+/.vs
+/src/.vs/Senparc.Xscf.WeixinManager
+/src/Senparc.Xscf.WeixinManager/obj
+/src/Senparc.Xscf.WeixinManager/bin/Debug/netcoreapp3.1
+/src/BuildOutPut
+/src/.vs/Senparc.Xncf.WeixinManager
+/src/Senparc.Xncf.WeixinManager/obj
+/src/Senparc.Xncf.WeixinManager/bin

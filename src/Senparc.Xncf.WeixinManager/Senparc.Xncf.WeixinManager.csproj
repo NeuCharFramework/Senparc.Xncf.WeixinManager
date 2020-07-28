@@ -1,0 +1,95 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>0.4.1-beta1</Version>
+    <AssemblyName>Senparc.Xncf.WeixinManager</AssemblyName>
+    <RootNamespace>Senparc.Xncf.WeixinManager</RootNamespace>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='LocalRelease'">true</GeneratePackageOnBuild>
+    <Description>
+      NCF 模块：盛派官方发布的微信管理后台
+
+      使用此插件可以在 NCF 中快速集成微信公众号、小程序的部分基础管理功能，欢迎大家一起扩展！
+
+      微信 SDK 基于 Senparc.Weixin SDK 开发。
+    </Description>
+    <Copyright>SenparcCoreFramework</Copyright>
+    <PackageTags>SenparcCoreFramework,NCF,Senparc.Xncf.WeixinManager</PackageTags>
+    <Authors>SenparcCoreFramework</Authors>
+    <Owners>SenparcCoreFramework</Owners>
+    <PackageLicenseUrl>https://github.com/SenparcCoreFramework/NcfPackageSources/blob/master/LICENSE</PackageLicenseUrl>
+    <Title>NCF 模块：微信管理后台 盛派官方</Title>
+    <ProjectUrl>https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</ProjectUrl>
+    <PackageProjectUrl>https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</PackageProjectUrl>
+    <PackageIconUrl>http://sdk.weixin.senparc.com/Images/logo-square-ncf.jpg</PackageIconUrl>
+    <PackageReleaseNotes>
+      v0.1 创世
+      v0.2 完成公众号管理、用户管理等功能
+      v0.3 优化UI，匹配新版本NCF
+      v0.4.1 移植WeixinFace
+    </PackageReleaseNotes>
+    <RepositoryUrl> https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
+    <Configurations>Debug;Release;Test;LocalRelease</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'LocalRelease' ">
+    <OutputPath>..\BuildOutPut</OutputPath>
+    <DocumentationFile>..\BuildOutPut\Senparc.Ncf.XncfBase.XML</DocumentationFile>
+    <DefineConstants>$(DefineConstants);RELEASE;LocalRelease</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <OutputPath>..\..\..\NcfPackageSources\src\BuildOutPut</OutputPath>
+    <DocumentationFile>..\..\..\NcfPackageSources\src\BuildOutPut\Senparc.Ncf.XncfBase.XML</DocumentationFile>
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Models\Register.Database.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="2.0.0-preview1-final" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.1" />-->
+
+
+    <PackageReference Include="Senparc.Ncf.AreaBase" Version="0.3.402-beta1" />
+    <PackageReference Include="Senparc.Ncf.Core" Version="0.3.402-beta1" />
+    <PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.3.402-beta1" />
+    <PackageReference Include="Senparc.Ncf.XncfBase" Version="0.3.402-beta1" />
+    <PackageReference Include="Senparc.Weixin.MP" Version="16.10.502.1" />
+    <PackageReference Include="Senparc.Weixin.MP.Middleware" Version="0.1.502" />
+    <PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.5.901-beta1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\Admin\Pages\Shared\" />
+    <Folder Include="Areas\Admin\Pages\WeixinManager\UserTag\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.json" />
+  </ItemGroup>
+
+
+
+</Project>
