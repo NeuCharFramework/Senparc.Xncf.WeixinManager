@@ -7,10 +7,10 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2019'
 
 variables:
-  solution: '**/*.sln'
+  solution: '**/Senparc.Xncf.WeixinManager.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -19,7 +19,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
-    restoreSolution: '**/*.sln'
+    restoreSolution: '**/Senparc.Xncf.WeixinManager.sln'
     feedsToUse: 'select'
 
 - task: VSBuild@1
