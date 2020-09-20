@@ -1,13 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Senparc.CO2NET.Cache;
-using Senparc.CO2NET.RegisterServices;
-using Senparc.Ncf.Core.Config;
-using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.XncfBase.Database;
 using System;
-using System.Configuration;
 using System.IO;
 
 namespace Senparc.Xncf.WeixinManager
@@ -18,8 +10,13 @@ namespace Senparc.Xncf.WeixinManager
     public class SenparcDbContextFactory : SenparcDesignTimeDbContextFactoryBase<WeixinSenparcEntities, Register>
     {
         /// <summary>
-        /// 用于寻找 App_Data 文件夹，从而找到数据库连接字符串配置信息
+        /// 用于寻找 App_Data 文件夹，一般为项目根目录，从而找到数据库连接字符串配置信息
         /// </summary>
-        public override string RootDictionaryPath => Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\"/*项目根目录*/);
+        public static string RootDictionaryPath => Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\");
+
+        public SenparcDbContextFactory() : base(RootDictionaryPath)
+        {
+
+        }
     }
 }
