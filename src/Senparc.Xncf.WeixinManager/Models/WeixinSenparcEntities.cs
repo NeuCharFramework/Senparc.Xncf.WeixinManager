@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Senparc.Ncf.Core.Models;
+using Senparc.Ncf.Database;
 using Senparc.Ncf.XncfBase;
 using Senparc.Ncf.XncfBase.Database;
 using Senparc.Xncf.WeixinManager.Models;
@@ -10,6 +11,7 @@ using System.Text;
 
 namespace Senparc.Xncf.WeixinManager
 {
+    [MultipleMigrationDbContext(MultipleDatabaseType.SQLite, typeof(Register))]
     public class WeixinSenparcEntities : XncfDatabaseDbContext
     {
         public DbSet<MpAccount> MpAccounts { get; set; }
@@ -20,7 +22,5 @@ namespace Senparc.Xncf.WeixinManager
         public WeixinSenparcEntities(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
         }
-
-        public override IXncfDatabase XncfDatabaseRegister => new Register();
     }
 }

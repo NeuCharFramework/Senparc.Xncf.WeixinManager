@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Senparc.Ncf.Core.Areas;
+using Senparc.Ncf.Core.Models;
+using Senparc.Ncf.Database;
 using Senparc.Ncf.XncfBase;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Xncf.WeixinManager.Models;
@@ -63,10 +65,8 @@ namespace Senparc.Xncf.WeixinManager
 
         public Type XncfDatabaseDbContextType => typeof(WeixinSenparcEntities);
 
-        public override void DbContextOptionsAction(IRelationalDbContextOptionsBuilderInfrastructure dbContextOptionsAction, string assemblyName = null)
-        {
-            base.DbContextOptionsAction(dbContextOptionsAction, assemblyName);
-        }
+        public Type TryGetXncfDatabaseDbContextType => MultipleDatabasePool.Instance.GetXncfDbContextType(this);
+
 
         #endregion
     }

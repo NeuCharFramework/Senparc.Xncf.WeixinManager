@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Senparc.Xncf.WeixinManager.Migrations
+namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.SqlServer
 {
-    public partial class InitTables : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
