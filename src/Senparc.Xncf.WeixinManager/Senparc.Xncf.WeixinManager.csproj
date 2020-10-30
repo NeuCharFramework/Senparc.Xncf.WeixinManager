@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>0.5.100-beta1</Version>
+    <Version>0.5.102-beta1</Version>
     <AssemblyName>Senparc.Xncf.WeixinManager</AssemblyName>
     <RootNamespace>Senparc.Xncf.WeixinManager</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>

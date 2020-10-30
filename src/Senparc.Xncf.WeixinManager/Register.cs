@@ -24,7 +24,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.3.0-beta1";
+        public override string Version => "0.5.102-beta1";
 
 
         public override string MenuName => "微信管理";
@@ -54,26 +54,31 @@ namespace Senparc.Xncf.WeixinManager
 
         public async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
         {
-            //更新数据库
-            await base.MigrateDatabaseAsync<WeixinSenparcEntities>(serviceProvider);
+            //安装或升级版本时更新数据库
+            await base.MigrateDatabaseAsync(serviceProvider);
         }
 
         public async Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc)
         {
             //TODO:可以在基础模块里给出选项是否删除
 
-            WeixinSenparcEntities mySenparcEntities = serviceProvider.GetService<WeixinSenparcEntities>();
+            #region 删除数据库（演示）
+
+            var mySenparcEntitiesType = this.TryGetXncfDatabaseDbContextType;
+            WeixinSenparcEntities mySenparcEntities = serviceProvider.GetService(mySenparcEntitiesType) as WeixinSenparcEntities;
 
             //指定需要删除的数据实体
 
-            //注意：这里作为演示，删除了所有的表，实际操作过程中，请谨慎操作，并且按照删除顺序对实体进行排序！
-            var dropTableKeys = EntitySetKeys.GetEntitySetInfo(this.XncfDatabaseDbContextType).Keys.ToList();
-
+            //注意：这里作为演示，在卸载模块的时候删除了所有本模块创建的表，实际操作过程中，请谨慎操作，并且按照删除顺序对实体进行排序！
+            var dropTableKeys = EntitySetKeys.GetEntitySetInfo(this.TryGetXncfDatabaseDbContextType).Keys.ToArray();
             //按照删除顺序排序
             var types = new[] { typeof(UserTag_WeixinUser), typeof(UserTag), typeof(WeixinUser), typeof(MpAccount) };
             types.ToList().AddRange(dropTableKeys);
             types = types.Distinct().ToArray();
+            //指定需要删除的数据实体
             await base.DropTablesAsync(serviceProvider, mySenparcEntities, types);
+
+            #endregion
 
             await base.UninstallAsync(serviceProvider, unsinstallFunc).ConfigureAwait(false);
         }
