@@ -32,7 +32,7 @@
     <RepositoryUrl> https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
     <Configurations>Debug;Release;Test;LocalRelease</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'LocalRelease' ">
+  <!--<PropertyGroup Condition=" '$(Configuration)' == 'LocalRelease' ">
     <OutputPath>..\BuildOutPut</OutputPath>
     <DocumentationFile>..\BuildOutPut\Senparc.Ncf.XncfBase.XML</DocumentationFile>
     <DefineConstants>$(DefineConstants);RELEASE;LocalRelease</DefineConstants>
@@ -40,8 +40,8 @@
     <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  </PropertyGroup>-->
+  <PropertyGroup Condition="'$(Configuration)'=='LocalRelease'">
     <OutputPath>..\..\..\NcfPackageSources\src\BuildOutPut</OutputPath>
     <DocumentationFile>..\..\..\NcfPackageSources\src\BuildOutPut\Senparc.Xncf.WeixinManager.XML</DocumentationFile>
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
@@ -70,13 +70,13 @@
     <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.1" />-->
 
 
-    <PackageReference Include="Senparc.Ncf.AreaBase" Version="0.5.330-beta1" />
-    <PackageReference Include="Senparc.Ncf.Core" Version="0.5.330-beta1" />
-    <PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.5.330-beta1" />
-    <PackageReference Include="Senparc.Ncf.XncfBase" Version="0.5.330-beta1" />
+    <PackageReference Include="Senparc.Ncf.AreaBase" Version="0.5.340-beta1" />
+    <PackageReference Include="Senparc.Ncf.Core" Version="0.5.340-beta1" />
+    <PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.5.340-beta1" />
+    <PackageReference Include="Senparc.Ncf.XncfBase" Version="0.5.340-beta1" />
     <PackageReference Include="Senparc.Weixin.MP" Version="16.10.601" />
     <PackageReference Include="Senparc.Weixin.MP.Middleware" Version="0.1.600" />
-    <PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.8.330-beta1" />
+    <PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.8.340-beta1" />
   </ItemGroup>
 
   <ItemGroup>
