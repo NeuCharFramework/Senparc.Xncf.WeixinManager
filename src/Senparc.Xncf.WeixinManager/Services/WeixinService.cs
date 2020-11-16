@@ -2,7 +2,7 @@
 using Senparc.CO2NET;
 using Senparc.CO2NET.Extensions;
 using Senparc.Ncf.Core.Cache;
-using Senparc.Ncf.Core.Models.WeixinTemplate;
+using Senparc.Xncf.WeixinManager.WeixinTemplate;
 using Senparc.Ncf.Log;
 using Senparc.Ncf.Utility;
 using Senparc.Weixin;
