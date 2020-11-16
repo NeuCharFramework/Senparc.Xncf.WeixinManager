@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/Senparc.Xncf.WeixinManager.sln'
@@ -16,36 +16,32 @@ variables:
 
 steps:
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/Senparc.Xncf.WeixinManager.sln'
-    feedsToUse: 'select'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-
-- task: NuGetToolInstaller@1
-
-# - task: NuGetCommand@2
-#   inputs:
-#     restoreSolution: '$(solution)'
 # - task: NuGetCommand@2
 #   inputs:
 #     command: 'restore'
-#     restoreSolution: '**/*.sln'
-#     feedsToUse: 'config'
-#     externalFeedCredentials: 'nuget-jeffrey-full-key'
+#     restoreSolution: '**/Senparc.Xncf.WeixinManager.sln'
+#     feedsToUse: 'select'
+
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK 5'
+  inputs:
+    version: '5.0.x'
+    packageType: 'sdk'
+    
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: build
+    projects: '**/Senparc.Xncf.WeixinManager.sln'
+    arguments: '--configuration Release'
+
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet 5.2.0'
+  inputs:
+    versionSpec: 5.2.0
+    checkLatest: true
+    
+
 - task: NuGetCommand@2
   inputs:
     command: 'push'
