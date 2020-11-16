@@ -17,7 +17,7 @@ namespace Senparc.Xncf.WeixinManager
 			 new AreaPageMenuItem(GetAreaUrl("/Admin/WeixinManager/WeixinUser"),"用户管理","fa fa-users"),
 		};
 
-		public IMvcBuilder AuthorizeConfig(IMvcBuilder builder, IWebHostEnvironment env)
+		public IMvcBuilder AuthorizeConfig(IMvcBuilder builder)
 		{
 			return builder;
 		}
