@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Senparc.Ncf.Core.Areas;
 using System.Collections.Generic;
 
@@ -17,11 +18,11 @@ namespace Senparc.Xncf.WeixinManager
 			 new AreaPageMenuItem(GetAreaUrl("/Admin/WeixinManager/WeixinUser"),"用户管理","fa fa-users"),
 		};
 
-		public IMvcBuilder AuthorizeConfig(IMvcBuilder builder)
-		{
+        public IMvcBuilder AuthorizeConfig(IMvcBuilder builder, IHostEnvironment env)
+        {
 			return builder;
 		}
 
-		#endregion
-	}
+        #endregion
+    }
 }
