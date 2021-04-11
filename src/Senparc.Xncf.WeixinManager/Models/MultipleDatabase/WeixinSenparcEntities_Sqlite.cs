@@ -17,7 +17,7 @@ namespace Senparc.Xncf.WeixinManager.Models
     [MultipleMigrationDbContext(MultipleDatabaseType.Sqlite, typeof(Register))]
     public class WeixinSenparcEntities_Sqlite : WeixinSenparcEntities, IMultipleMigrationDbContext
     {
-        public WeixinSenparcEntities_Sqlite(DbContextOptions<WeixinSenparcEntities_SqlServer> dbContextOptions) : base(dbContextOptions)
+        public WeixinSenparcEntities_Sqlite(DbContextOptions<WeixinSenparcEntities_Sqlite> dbContextOptions) : base(dbContextOptions)
         {
         }
     }
