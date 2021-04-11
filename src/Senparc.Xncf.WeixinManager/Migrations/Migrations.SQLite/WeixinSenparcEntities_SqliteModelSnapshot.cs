@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Senparc.Xncf.WeixinManager;
 using Senparc.Xncf.WeixinManager.Models;
 
 namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
@@ -15,7 +14,7 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
                 {
@@ -27,22 +26,22 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AdminRemark")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AppId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AppSecret")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EncodingAESKey")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(500);
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Flag")
                         .HasColumnType("INTEGER");
@@ -51,22 +50,25 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Logo")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Remark")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(500);
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -83,8 +85,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasColumnType("datetime");
 
                     b.Property<string>("AdminRemark")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Count")
                         .HasColumnType("INTEGER");
@@ -103,10 +105,13 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Remark")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TagId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TenantId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -133,6 +138,9 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                     b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("UserTagId", "WeixinUserId");
 
                     b.HasIndex("WeixinUserId");
@@ -150,8 +158,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasColumnType("datetime");
 
                     b.Property<string>("AdminRemark")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("City")
                         .HasColumnType("TEXT");
@@ -209,6 +217,9 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                     b.Property<long>("Subscribe_Time")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UnionId")
                         .HasColumnType("TEXT");
 
@@ -227,6 +238,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasConstraintName("FK__UserTag__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("MpAccount");
                 });
 
             modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag_WeixinUser", b =>
@@ -242,6 +255,10 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasForeignKey("WeixinUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("UserTag");
+
+                    b.Navigation("WeixinUser");
                 });
 
             modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
@@ -252,6 +269,25 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
                         .HasConstraintName("FK__WeixinUser__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("MpAccount");
+                });
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
+                {
+                    b.Navigation("UserTags");
+
+                    b.Navigation("WeixinUsers");
+                });
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+                {
+                    b.Navigation("UserTags_WeixinUsers");
+                });
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+                {
+                    b.Navigation("UserTags_WeixinUsers");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,8 +14,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
                 {
@@ -27,22 +27,22 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("AdminRemark")
-                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
 
                     b.Property<string>("AppId")
                         .IsRequired()
-                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
                     b.Property<string>("AppSecret")
                         .IsRequired()
-                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
                     b.Property<string>("EncodingAESKey")
-                        .HasColumnType("varchar(500) CHARACTER SET utf8mb4")
-                        .HasMaxLength(500);
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500) CHARACTER SET utf8mb4");
 
                     b.Property<bool>("Flag")
                         .HasColumnType("tinyint(1)");
@@ -51,22 +51,25 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Logo")
-                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
-                        .HasMaxLength(100);
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Remark")
-                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("varchar(500) CHARACTER SET utf8mb4")
-                        .HasMaxLength(500);
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
@@ -83,8 +86,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasColumnType("datetime");
 
                     b.Property<string>("AdminRemark")
-                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
 
                     b.Property<int>("Count")
                         .HasColumnType("int");
@@ -103,10 +106,13 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Remark")
-                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
 
                     b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -133,6 +139,9 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                     b.Property<DateTime>("LastUpdateTime")
                         .HasColumnType("datetime");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
                     b.HasKey("UserTagId", "WeixinUserId");
 
                     b.HasIndex("WeixinUserId");
@@ -150,8 +159,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasColumnType("datetime");
 
                     b.Property<string>("AdminRemark")
-                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4")
-                        .HasMaxLength(300);
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300) CHARACTER SET utf8mb4");
 
                     b.Property<string>("City")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -209,6 +218,9 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                     b.Property<long>("Subscribe_Time")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UnionId")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -227,6 +239,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasConstraintName("FK__UserTag__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("MpAccount");
                 });
 
             modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag_WeixinUser", b =>
@@ -242,6 +256,10 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasForeignKey("WeixinUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("UserTag");
+
+                    b.Navigation("WeixinUser");
                 });
 
             modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
@@ -252,6 +270,25 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.MySql
                         .HasConstraintName("FK__WeixinUser__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("MpAccount");
+                });
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
+                {
+                    b.Navigation("UserTags");
+
+                    b.Navigation("WeixinUsers");
+                });
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+                {
+                    b.Navigation("UserTags_WeixinUsers");
+                });
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+                {
+                    b.Navigation("UserTags_WeixinUsers");
                 });
 #pragma warning restore 612, 618
         }
