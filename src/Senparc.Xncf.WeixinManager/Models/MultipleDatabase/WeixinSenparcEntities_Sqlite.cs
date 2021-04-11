@@ -32,7 +32,7 @@ namespace Senparc.Xncf.WeixinManager.Models
         protected override Action<IServiceCollection> ServicesAction => services =>
         {
             //指定其他数据库
-            services.AddDatabase("Senparc.Ncf.Database.Sqlite", "Senparc.Ncf.Database.Sqlite", "SqliteDatabaseConfiguration");
+            services.AddDatabase("Senparc.Ncf.Database.Sqlite", "Senparc.Ncf.Database.Sqlite", "SqliteMemoryDatabaseConfiguration");
         };
 
         public SenparcDbContextFactory_Sqlite()
