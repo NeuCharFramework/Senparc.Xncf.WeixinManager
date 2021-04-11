@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Senparc.Xncf.WeixinManager;
+using Senparc.Xncf.WeixinManager.Models;
 
-namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.SQLite
+namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
 {
-    [DbContext(typeof(WeixinSenparcEntities))]
-    partial class WeixinSenparcEntitiesModelSnapshot : ModelSnapshot
+    [DbContext(typeof(WeixinSenparcEntities_Sqlite))]
+    partial class WeixinSenparcEntities_SqliteModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

@@ -5,10 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Senparc.Xncf.WeixinManager;
+using Senparc.Xncf.WeixinManager.Models;
 
-namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.SQLite
+namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.Sqlite
 {
-    [DbContext(typeof(WeixinSenparcEntities))]
+    [DbContext(typeof(WeixinSenparcEntities_Sqlite))]
     [Migration("20201030091009_Init")]
     partial class Init
     {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1</TargetFrameworks>
-		<Version>0.6.200.1-beta1</Version>
+		<Version>0.6.200.2-beta1</Version>
 		<AssemblyName>Senparc.Xncf.WeixinManager</AssemblyName>
 		<RootNamespace>Senparc.Xncf.WeixinManager</RootNamespace>
 		<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
