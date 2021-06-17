@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1</TargetFrameworks>
-		<Version>0.6.300-beta1</Version>
+		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+		<Version>0.6.303-beta1</Version>
+		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
+		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
+		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+		
 		<AssemblyName>Senparc.Xncf.WeixinManager</AssemblyName>
 		<RootNamespace>Senparc.Xncf.WeixinManager</RootNamespace>
 		<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -13,14 +17,14 @@
 
 			微信 SDK 基于 Senparc.Weixin SDK 开发。
 		</Description>
-		<Copyright>SenparcCoreFramework</Copyright>
-		<PackageTags>SenparcCoreFramework,NCF,Senparc.Xncf.WeixinManager</PackageTags>
-		<Authors>SenparcCoreFramework</Authors>
-		<Owners>SenparcCoreFramework</Owners>
-		<PackageLicenseUrl>https://github.com/SenparcCoreFramework/NcfPackageSources/blob/master/LICENSE</PackageLicenseUrl>
+		<Copyright>NeuCharFramework</Copyright>
+		<PackageTags>NeuCharFramework,NCF,Senparc.Xncf.WeixinManager</PackageTags>
+		<Authors>NeuCharFramework</Authors>
+		<Owners>NeuCharFramework</Owners>
+		<PackageLicenseUrl>https://github.com/NeuCharFramework/NcfPackageSources/blob/master/LICENSE</PackageLicenseUrl>
 		<Title>NCF 模块：微信管理后台 盛派官方</Title>
-		<ProjectUrl>https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</ProjectUrl>
-		<PackageProjectUrl>https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</PackageProjectUrl>
+		<ProjectUrl>https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager</ProjectUrl>
+		<PackageProjectUrl>https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager</PackageProjectUrl>
 		<PackageIconUrl>http://sdk.weixin.senparc.com/Images/logo-square-ncf.jpg</PackageIconUrl>
 		<PackageReleaseNotes>
 			v0.1 创世
@@ -30,7 +34,7 @@
 			v0.6.100 支持 .NET 5
 			v0.6.300 添加 Swagger Api
 		</PackageReleaseNotes>
-		<RepositoryUrl> https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
+		<RepositoryUrl> https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
 		<Configurations>Debug;Release;Test;LocalRelease</Configurations>
 	</PropertyGroup>
 	<!--<PropertyGroup Condition=" '$(Configuration)' == 'LocalRelease' ">
@@ -52,7 +56,7 @@
 		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="Models\Register.Database.cs" />
+		<!--<Compile Remove="Models\Register.Database.cs" />-->
 	</ItemGroup>
 	<!--<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
 		
@@ -60,15 +64,16 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="wwwroot\**\*" />
+		<EmbeddedResource Include="App_Data\ApiDocXml\*" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.6" />
 	</ItemGroup>
 
-	
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="2.0.0-preview1-final" />
+		<!--<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />-->
+		<!--<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="2.0.0-preview1-final" />-->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.6">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -90,20 +95,16 @@
 
 		<!-- 为解决 VS 2019 v16.8 的一个bug，需要添加下方引用 -->
 		<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="3.1.10" />
+
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.1.4" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="App_Data\" />
 		<Folder Include="Areas\Admin\Pages\Shared\" />
 		<Folder Include="Areas\Admin\Pages\WeixinManager\UserTag\" />
-		<Folder Include="Properties\" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="appsettings.json" />
-	</ItemGroup>
 
 </Project>
