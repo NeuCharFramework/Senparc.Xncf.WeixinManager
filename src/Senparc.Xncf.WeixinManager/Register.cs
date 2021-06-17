@@ -8,6 +8,7 @@ using Senparc.Ncf.Service;
 using Senparc.Ncf.XncfBase;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Models;
+using Senparc.Xncf.WeixinManager.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,7 +101,6 @@ namespace Senparc.Xncf.WeixinManager
             {
                 return new List<MpAccount>();
             }
-
         }
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
@@ -122,12 +122,36 @@ namespace Senparc.Xncf.WeixinManager
                         {
                             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
                         });
+
+                        //TODO：更多执行过程中的动态注册
                     }
                 }
             }
             catch
             {
             }
+
+            app.UseSwaggerUI(c =>
+            {
+                //c.DocumentTitle = "Senparc Weixin SDK Demo API";
+                c.InjectJavascript("/lib/jquery/dist/jquery.min.js");
+                c.InjectJavascript("/js/swagger.js");
+                c.InjectJavascript("/js/tongji.js");
+                c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+                
+                foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyCollection)
+                {
+                    //TODO:真实的动态版本号
+                    var verion = WeixinApiService.WeixinApiAssemblyVersions[neucharApiDocAssembly.Key]; //neucharApiDocAssembly.Value.ImageRuntimeVersion;
+                    var docName = WeixinApiService.GetDocName(neucharApiDocAssembly.Key);
+                    c.SwaggerEndpoint($"/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
+                }
+
+                //OAuth     https://www.cnblogs.com/miskis/p/10083985.html
+                c.OAuthClientId("e65ea785b96b442a919965ccf857aba3");//客服端名称
+                c.OAuthAppName("微信 API Swagger 文档 "); // 描述
+            });
+
 
             return base.UseXncfModule(app, registerService);
         }
