@@ -70,12 +70,12 @@ namespace Senparc.Xncf.WeixinManager
                     {
                         var messageHandlerType = messageHandlerTypes.First();//TODO:筛选
 
-                        Func<Stream, PostModel, int, MessageHandler<DefaultMpMessageContext, IRequestMessageBase, IResponseMessageBase>> messageHandlerFunc =
-                            (stream, postModel, maxRecordCount) =>
+                        Func<Stream, PostModel, int, IServiceProvider, MessageHandler<DefaultMpMessageContext, IRequestMessageBase, IResponseMessageBase>> messageHandlerFunc =
+                            (stream, postModel, maxRecordCount, services) =>
                         {
                             try
                             {
-                                var messageHandler = Activator.CreateInstance(messageHandlerType, new object[] { stream, postModel, maxRecordCount });
+                                var messageHandler = Activator.CreateInstance(messageHandlerType, new object[] { stream, postModel, maxRecordCount, services });
 
                                 //SenparcTrace.SendCustomLog("messageHandler 类型", messageHandler.GetType().FullName);
                                 return messageHandler as MessageHandler<DefaultMpMessageContext, IRequestMessageBase, IResponseMessageBase>;

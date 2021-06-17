@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1</TargetFrameworks>
-		<Version>0.6.200.4-beta1</Version>
+		<Version>0.6.300-beta1</Version>
 		<AssemblyName>Senparc.Xncf.WeixinManager</AssemblyName>
 		<RootNamespace>Senparc.Xncf.WeixinManager</RootNamespace>
 		<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -28,6 +28,7 @@
 			v0.3 优化UI，匹配新版本NCF
 			v0.4.1 移植WeixinFace
 			v0.6.100 支持 .NET 5
+			v0.6.300 添加 Swagger Api
 		</PackageReleaseNotes>
 		<RepositoryUrl> https://github.com/SenparcCoreFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
 		<Configurations>Debug;Release;Test;LocalRelease</Configurations>
