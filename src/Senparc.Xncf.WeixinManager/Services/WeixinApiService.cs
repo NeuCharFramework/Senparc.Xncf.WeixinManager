@@ -117,8 +117,16 @@ namespace Senparc.Xncf.WeixinManager.Services
                 //ConstructorBuilder constructor = tb.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
                 //多个Get参数放在同一个Controller中可能发生问题：NotSupportedException: HTTP method "GET" & path "wxapi/WeChat_OfficialAccount/CommonApi_CreateMenu" overloaded by actions - WeChat_OfficialAccountController.CommonApi_CreateMenu (WeixinApiAssembly),WeChat_OfficialAccountController.CommonApi_CreateMenu (WeixinApiAssembly). Actions require unique method/path combination for OpenAPI 3.0. Use ConflictingActionsResolver as a workaround
 
+                /*以下方法会抛出异常：
+                 * InvalidOperationException: Action 'WeChat_MiniProgramController.TcbApi_UpdateIndex (NeuCharDocApi.WeChat_MiniProgram)' has more than one parameter that was specified or inferred as bound from request body. Only one parameter per action may be bound from body. Inspect the following parameters, and use 'FromQueryAttribute' to specify bound from query, 'FromRouteAttribute' to specify bound from route, and 'FromBodyAttribute' for parameters to be bound from body:
+                IEnumerable<CreateIndex> create_indexes
+                IEnumerable<DropIndex> drop_indexes
+                 */
+                //var t = typeof(ApiControllerAttribute);
+                //tb.SetCustomAttribute(new CustomAttributeBuilder(t.GetConstructor(new Type[0]), new object[0]));
                 var t = typeof(ApiControllerAttribute);
                 tb.SetCustomAttribute(new CustomAttributeBuilder(t.GetConstructor(new Type[0]), new object[0]));
+
 
                 var t_0 = typeof(AuthorizeAttribute);
                 tb.SetCustomAttribute(new CustomAttributeBuilder(t_0.GetConstructor(new Type[0]), new object[0]));
@@ -154,6 +162,10 @@ namespace Senparc.Xncf.WeixinManager.Services
                                          && z.Value.MethodInfo.ReturnType != typeof(Task<>)
                                          && z.Value.MethodInfo.ReturnType != typeof(void)
                                          && !z.Value.MethodInfo.IsGenericMethod //SemanticApi.SemanticSend 是泛型方法
+
+                                        //临时过滤 IEnumerable 对象   —— Jeffrey Su 2021.06.17
+                                        && !z.Value.MethodInfo.GetParameters().Any(z => z.ParameterType.Name.Contains("IEnumerable"))
+
                                          )
                                     .OrderBy(z => z.Value.ApiBindAttribute.Name)
                                     .ToList();

@@ -59,6 +59,8 @@ namespace Senparc.Xncf.WeixinManager
 
             #region Swagger
 
+            //.NET Core 3.0 for Swagger https://www.thecodebuzz.com/swagger-api-documentation-in-net-core-3-0/
+
             var mvcBuilder = services.AddMvc(options =>
             {
                 //options.Filters.Add<HttpGlobalExceptionFilter>();
@@ -135,6 +137,7 @@ namespace Senparc.Xncf.WeixinManager
                 c.DocumentFilter<RemoveVerbsFilter>();
                 c.CustomSchemaIds(x => x.FullName);//规避错误：InvalidOperationException: Can't use schemaId "$JsApiTicketResult" for type "$Senparc.Weixin.Open.Entities.JsApiTicketResult". The same schemaId was already used for type "$Senparc.Weixin.MP.Entities.JsApiTicketResult"
 
+                /* 需要登陆，暂不考虑    —— Jeffrey Su 2021.06.17
                 var oAuthDocName = "oauth2";// WeixinApiService.GetDocName(PlatformType.WeChat_OfficialAccount);
 
                 //添加授权
@@ -146,31 +149,35 @@ namespace Senparc.Xncf.WeixinManager
                                                ? "http://localhost:12222/App/LoginOAuth/Authorize?appId=xxx"
                                                : "https://www.neuchar.com/App/LoginOAuth/Authorize?appId=3035";
 
-                c.AddSecurityDefinition(oAuthDocName/*"Bearer"*/, new OpenApiSecurityScheme
-                {
-                    Description = "请输入带有Bearer开头的Token",
-                    Name = oAuthDocName,// "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.OAuth2,
-                    //OpenIdConnectUrl = new Uri("https://www.neuchar.com/"),
-                    Flows = new OpenApiOAuthFlows()
+                c.AddSecurityDefinition(oAuthDocName,//"Bearer" 
+                    new OpenApiSecurityScheme
                     {
-                        Implicit = new OpenApiOAuthFlow()
+                        Description = "请输入带有Bearer开头的Token",
+                        Name = oAuthDocName,// "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.OAuth2,
+                        //OpenIdConnectUrl = new Uri("https://www.neuchar.com/"),
+                        Flows = new OpenApiOAuthFlows()
                         {
-                            AuthorizationUrl = new Uri(authorizationUrl),
-                            Scopes = new Dictionary<string, string> { { "swagger_api", "Demo API - full access" } }
+                            Implicit = new OpenApiOAuthFlow()
+                            {
+                                AuthorizationUrl = new Uri(authorizationUrl),
+                                Scopes = new Dictionary<string, string> { { "swagger_api", "Demo API - full access" } }
+                            }
                         }
-                    }
-                });
+                    });
 
                 //认证方式，此方式为全局添加
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
-                    { new OpenApiSecurityScheme(){ Name =oAuthDocName/* "Bearer"*/} , new List<string>() }
+                    { new OpenApiSecurityScheme(){ Name =oAuthDocName//"Bearer"
+                    }, new List<string>() }
                     //{ "Bearer", Enumerable.Empty<string>() }
                 });
 
                 //c.OperationFilter<AuthResponsesOperationFilter>();//AuthorizeAttribute过滤
+
+                */
 
             });
 
@@ -259,7 +266,7 @@ namespace Senparc.Xncf.WeixinManager
 
             Console.WriteLine("UseSwaggerUI");
 
-
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 //c.DocumentTitle = "Senparc Weixin SDK Demo API";
@@ -277,7 +284,7 @@ namespace Senparc.Xncf.WeixinManager
 
                     Console.WriteLine($"\tAdd {docName}");
 
-                    c.SwaggerEndpoint($"/weixinapi/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
+                    c.SwaggerEndpoint($"/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
                 }
 
                 //OAuth     https://www.cnblogs.com/miskis/p/10083985.html
