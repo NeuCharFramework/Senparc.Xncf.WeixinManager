@@ -126,8 +126,9 @@ namespace Senparc.Xncf.WeixinManager.Services
                 tb.SetCustomAttribute(new CustomAttributeBuilder(t.GetConstructor(new Type[0]), new object[0]));
 
 
-                var t_0 = typeof(AuthorizeAttribute);
-                tb.SetCustomAttribute(new CustomAttributeBuilder(t_0.GetConstructor(new Type[0]), new object[0]));
+                //暂时取消登录验证  —— Jeffrey Su 2021.06.18
+                //var t_0 = typeof(AuthorizeAttribute);
+                //tb.SetCustomAttribute(new CustomAttributeBuilder(t_0.GetConstructor(new Type[0]), new object[0]));
 
 
                 var t2 = typeof(RouteAttribute);
@@ -153,8 +154,6 @@ namespace Senparc.Xncf.WeixinManager.Services
                 //    new[] { t2_0.GetProperty("GroupName") }, new[] { t2_2_groupName });
                 //tb.SetCustomAttribute(t2_2_tagAttrBuilder);
 
-
-
                 var filterList = apiGroup.Where(z => !z.Value.ApiBindAttribute.Name.EndsWith("Async")
                                          && !z.Value.MethodInfo.GetParameters().Any(p => p.IsOut)
                                          && z.Value.MethodInfo.ReturnType != typeof(Task<>)
@@ -162,15 +161,16 @@ namespace Senparc.Xncf.WeixinManager.Services
                                          && !z.Value.MethodInfo.IsGenericMethod //SemanticApi.SemanticSend 是泛型方法
 
                                         //临时过滤 IEnumerable 对象   —— Jeffrey Su 2021.06.17
-                                        && !z.Value.MethodInfo.GetParameters().Any(z => z.ParameterType.Name.Contains("IEnumerable"))
+                                        && !z.Value.MethodInfo.GetParameters().Any(z => z.ParameterType.Name.Contains("IEnumerable") || z.ParameterType.Name.Contains("IList`1"))
 
                                          )
                                     .OrderBy(z => z.Value.ApiBindAttribute.Name)
                                     .ToList();
 
                 //把 CommonApi 提前到头部
-                var commonApiList = filterList.Where(z => z.Value.ApiBindAttribute.Name.StartsWith("CommonApi.")).ToList();
-                filterList.RemoveAll(z => z.Value.ApiBindAttribute.Name.StartsWith("CommonApi."));
+                Func<KeyValuePair<string, ApiBindInfo>, bool> funcCommonApi = z => z.Value.ApiBindAttribute.Name.StartsWith("CommonApi.");
+                var commonApiList = filterList.Where(z => funcCommonApi(z)).ToList();
+                filterList.RemoveAll(z => funcCommonApi(z));
                 filterList.InsertRange(0, commonApiList);
 
                 int apiIndex = 0;
@@ -242,7 +242,7 @@ namespace Senparc.Xncf.WeixinManager.Services
                         var t3 = typeof(HttpGetAttribute);
                         setPropMthdBldr.SetCustomAttribute(new CustomAttributeBuilder(t3.GetConstructor(new Type[0]), new object[0]));
 
-                        //用户限制
+                        //用户限制  ——  Jeffrey Su 2021.06.18
                         //var t4 = typeof(UserAuthorizeAttribute);//[UserAuthorize("UserOnly")]
                         //setPropMthdBldr.SetCustomAttribute(new CustomAttributeBuilder(t4.GetConstructor(new Type[] { typeof(string) }), new[] { "UserOnly" }));
 
@@ -334,8 +334,8 @@ namespace Senparc.Xncf.WeixinManager.Services
                         il.Emit(OpCodes.Ret);
 
                         //生成文档
-                        var docName = $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name}(";
-                        WriteLog($"\t search for docName:  {docName}");
+                        var docName = $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name}(";//以(结尾确定匹配到完整的方法名
+                        WriteLog($"\t search for docName:  {docName}\t\tSDK Method：{apiMethodInfo.ToString()}");
 
                         var docMember = docMembers.FirstOrDefault(z => z.HasAttributes && z.FirstAttribute.Value.Contains(docName));
                         if (docMember != null)
@@ -364,7 +364,7 @@ namespace Senparc.Xncf.WeixinManager.Services
                 try
                 {
                     document.Save(newDocFile);//保存
-                    WriteLog($"new document file saved: {newDocFile}, assembly cose:{SystemTime.NowDiff(groupStartTime)}");
+                    WriteLog($"new document file saved: {newDocFile}, assembly cost:{SystemTime.NowDiff(groupStartTime)}");
                 }
                 catch (Exception ex)
                 {
