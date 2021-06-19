@@ -98,12 +98,12 @@ namespace Senparc.Xncf.WeixinManager.Services
 
                 #region 动态创建代码
                 //动态创建程序集
-                AssemblyName DemoName = new AssemblyName(assembleName); //Assembly.GetExecutingAssembly().GetName();// new AssemblyName("DynamicAssembly");
+                AssemblyName dynamicApiAssemblyName = new AssemblyName(assembleName); //Assembly.GetExecutingAssembly().GetName();// new AssemblyName("DynamicAssembly");
                 AppDomain currentDomain = Thread.GetDomain();
-                AssemblyBuilder dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(DemoName, AssemblyBuilderAccess.RunAndCollect);
+                AssemblyBuilder dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(dynamicApiAssemblyName, AssemblyBuilderAccess.RunAndCollect);
 
                 //动态创建模块
-                ModuleBuilder mb = dynamicAssembly.DefineDynamicModule(DemoName.Name);
+                ModuleBuilder mb = dynamicAssembly.DefineDynamicModule(dynamicApiAssemblyName.Name);
 
                 //储存 API
                 _apiCollection[apiGroup.Key] = new Dictionary<string, ApiBindInfo>(apiGroup);
@@ -234,9 +234,12 @@ namespace Senparc.Xncf.WeixinManager.Services
                         //[Route("/wxapi/...", Name="xxx")]
                         var t2_4 = typeof(RouteAttribute);
                         //var routeName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
+                        var apiPath = $"/wxapi/{keyName}/{apiGroupName}/{apiName}";
                         var routeAttrBuilder = new CustomAttributeBuilder(t2_4.GetConstructor(new Type[] { typeof(string) }),
-                            new object[] { $"/wxapi/{keyName}/{apiGroupName}/{apiName}" }/*, new[] { t2_2.GetProperty("Name") }, new[] { routeName }*/);
+                            new object[] { apiPath }/*, new[] { t2_2.GetProperty("Name") }, new[] { routeName }*/);
                         setPropMthdBldr.SetCustomAttribute(routeAttrBuilder);
+                        WriteLog($"added Api path: {apiPath}");
+
 
                         //[HttpGet]
                         var t3 = typeof(HttpGetAttribute);
