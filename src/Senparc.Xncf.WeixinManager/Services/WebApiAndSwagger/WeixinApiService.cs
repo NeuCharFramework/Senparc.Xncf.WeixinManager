@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Senparc.CO2NET.Utilities;
 using Senparc.Ncf.Core.Extensions;
 using Senparc.NeuChar;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,12 +20,12 @@ namespace Senparc.Xncf.WeixinManager.Services
 {
     public class WeixinApiService
     {
-        private static Dictionary<PlatformType, Dictionary<string, ApiBindInfo>> _apiCollection = new Dictionary<PlatformType, Dictionary<string, ApiBindInfo>>();
+        private static ConcurrentDictionary<PlatformType, Dictionary<string, ApiBindInfo>> _apiCollection = new ConcurrentDictionary<PlatformType, Dictionary<string, ApiBindInfo>>();
 
-        public static Dictionary<PlatformType, Assembly> WeixinApiAssemblyCollection { get; set; } = new Dictionary<PlatformType, Assembly>();
+        public static ConcurrentDictionary<PlatformType, Assembly> WeixinApiAssemblyCollection { get; set; } = new ConcurrentDictionary<PlatformType, Assembly>();
 
-        public static Dictionary<PlatformType, string> WeixinApiAssemblyNames { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
-        public static Dictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
+        public static ConcurrentDictionary<PlatformType, string> WeixinApiAssemblyNames { get; private set; } = new ConcurrentDictionary<PlatformType, string>(); //= "WeixinApiAssembly";
+        public static ConcurrentDictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new ConcurrentDictionary<PlatformType, string>(); //= "WeixinApiAssembly";
 
 
         public WeixinApiService()
@@ -39,7 +41,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// 控制台打印日志
         /// </summary>
         /// <param name="msg"></param>
-        public static void WriteLog(string msg)
+        private void WriteLog(string msg)
         {
             Console.WriteLine($"{SystemTime.Now.ToString("yyyy-MM-dd HH:ss:mm.ffff")}\t\t{msg}");
         }
@@ -55,6 +57,19 @@ namespace Senparc.Xncf.WeixinManager.Services
         }
 
 
+        /// <summary>
+        /// 检查并创建物理目录
+        /// </summary>
+        private void TryCreateDir()
+        {
+            var dir = ServerUtility.ContentRootMapPath("~/App_Data/ApiDocXml");
+            WriteLog($"检查目录：{dir}");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                WriteLog($"创建目录：{dir}");
+            }
+        }
 
         /// <summary>
         /// 创建动态 WebApi
@@ -77,7 +92,7 @@ namespace Senparc.Xncf.WeixinManager.Services
             var sourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(sourceName);
 
             var assembleName = WeixinApiAssemblyNames[apiGroup.Key];
-           
+
             XDocument document = XDocument.Load(sourceStream);
             var root = document.Root;
             WriteLog("Document Root Name:" + root.Name);
@@ -373,19 +388,6 @@ namespace Senparc.Xncf.WeixinManager.Services
             #endregion
         }
 
-        /// <summary>
-        /// 检查并创建物理目录
-        /// </summary>
-        private void TryCreateDir()
-        {
-            var dir = Path.Combine(Senparc.CO2NET.Config.RootDictionaryPath, "App_Data", "ApiDocXml");
-            WriteLog($"检查目录：{dir}");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-                WriteLog($"创建目录：{dir}");
-            }
-        }
 
         /// <summary>
         /// 获取 WeixinApiAssembly 程序集对象
@@ -394,14 +396,14 @@ namespace Senparc.Xncf.WeixinManager.Services
         public Assembly GetWeixinApiAssembly(PlatformType platformType, bool forceBindAgain)
         {
             //预载入程序集，确保在下一步 RegisterApiBind() 可以顺利读取所有接口
-            var preLoad = typeof(Senparc.Weixin.MP.AdvancedAPIs.AddGroupResult).ToString() != null
+            Func<bool> preLoad = () => typeof(Senparc.Weixin.MP.AdvancedAPIs.AddGroupResult).ToString() != null
                 && typeof(Senparc.Weixin.WxOpen.AdvancedAPIs.CustomApi).ToString() != null
                 && typeof(Senparc.Weixin.Open.AccountAPIs.AccountApi).ToString() != null
                 && typeof(Senparc.Weixin.TenPay.V3.TenPayV3).ToString() != null
                 && typeof(Senparc.Weixin.Work.AdvancedAPIs.AppApi).ToString() != null;
 
             //确保 ApiBind 已经执行
-            Senparc.NeuChar.Register.RegisterApiBind(preLoad && forceBindAgain);//参数为 true，确保重试绑定成功
+            Senparc.NeuChar.Register.RegisterApiBind(forceBindAgain && preLoad());//参数为 true，确保重试绑定成功
 
             if (forceBindAgain)
             {
