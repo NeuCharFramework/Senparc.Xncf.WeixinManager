@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Senparc.CO2NET.Utilities;
+using Senparc.Ncf.Core.Config;
 using Senparc.Ncf.Core.Extensions;
 using Senparc.NeuChar;
 using Swashbuckle.AspNetCore.Annotations;
@@ -62,7 +63,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// </summary>
         private void TryCreateDir()
         {
-            var dir = ServerUtility.ContentRootMapPath("~/App_Data/ApiDocXml");
+            var dir =  Path.Combine(SiteConfig.WebRootPath, "..", "App_Data", "ApiDocXml");// ServerUtility.ContentRootMapPath("~/App_Data/ApiDocXml");
             WriteLog($"检查目录：{dir}");
             if (!Directory.Exists(dir))
             {
@@ -343,7 +344,7 @@ namespace Senparc.Xncf.WeixinManager.Services
 
                     //生成文档
                     var docName = $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name}(";//以(结尾确定匹配到完整的方法名
-                    WriteLog($"\t search for docName:  {docName}\t\tSDK Method：{apiMethodInfo.ToString()}");
+                    WriteLog($"\t search for docName:  {docName}");//\t\tSDK Method：{apiMethodInfo.ToString()}
 
                     var docMember = docMembers.FirstOrDefault(z => z.HasAttributes && z.FirstAttribute.Value.Contains(docName));
                     if (docMember != null)
