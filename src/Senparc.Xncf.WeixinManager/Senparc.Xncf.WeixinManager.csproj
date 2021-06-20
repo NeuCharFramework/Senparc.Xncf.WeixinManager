@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-		<Version>0.6.323-beta1</Version>
+		<Version>0.6.326-beta1</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -104,6 +104,36 @@
 	<ItemGroup>
 		<Folder Include="Areas\Admin\Pages\Shared\" />
 		<Folder Include="Areas\Admin\Pages\WeixinManager\UserTag\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.WebSocket.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.MP.MvcExtension.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.MP.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.Open.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.TenPay.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.Work.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.WxOpen.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="App_Data\ApiDocXml\Senparc.Weixin.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="wwwroot\js\swagger.js">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 
