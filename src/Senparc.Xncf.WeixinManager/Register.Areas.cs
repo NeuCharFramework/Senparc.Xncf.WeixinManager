@@ -30,7 +30,7 @@ namespace Senparc.Xncf.WeixinManager
 
             var services = builder.Services;
 
-            services.AddMvcCore();
+            //services.AddMvcCore();//不启用
             services.AddControllers();
 
             #region Swagger
@@ -41,7 +41,7 @@ namespace Senparc.Xncf.WeixinManager
             //.NET Core 3.0 for Swagger https://www.thecodebuzz.com/swagger-api-documentation-in-net-core-3-0/
 
             //初始化 ApiDoc
-            WeixinApiService apiDocService =  new WeixinApiService();
+            WeixinApiService apiDocService = new WeixinApiService();
             foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyNames)
             {
                 var weixinApiAssembly = apiDocService.GetWeixinApiAssembly(neucharApiDocAssembly.Key);

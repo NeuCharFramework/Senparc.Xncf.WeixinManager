@@ -122,8 +122,8 @@ namespace Senparc.Xncf.WeixinManager.Services
                 IEnumerable<CreateIndex> create_indexes
                 IEnumerable<DropIndex> drop_indexes
                  */
-                var t = typeof(ApiControllerAttribute);
-                tb.SetCustomAttribute(new CustomAttributeBuilder(t.GetConstructor(new Type[0]), new object[0]));
+                //var t = typeof(ApiControllerAttribute);
+                //tb.SetCustomAttribute(new CustomAttributeBuilder(t.GetConstructor(new Type[0]), new object[0]));
 
 
                 //暂时取消登录验证  —— Jeffrey Su 2021.06.18
