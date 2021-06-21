@@ -163,39 +163,39 @@ namespace Senparc.Xncf.WeixinManager.Services
             //    new[] { t2_0.GetProperty("GroupName") }, new[] { t2_2_groupName });
             //tb.SetCustomAttribute(t2_2_tagAttrBuilder);
 
-            var filterList = apiGroup.Where(z => !z.Value.ApiBindAttribute.Name.EndsWith("Async")
-                                     && !z.Value.MethodInfo.GetParameters().Any(p => p.IsOut)
+            var apiFilterList = apiGroup.Where(z => !z.Value.ApiBindAttribute.Name.EndsWith("Async")
                                      && z.Value.MethodInfo.ReturnType != typeof(Task<>)
                                      && z.Value.MethodInfo.ReturnType != typeof(void)
                                      && !z.Value.MethodInfo.IsGenericMethod //SemanticApi.SemanticSend 是泛型方法
 
-                                    //临时过滤 IEnumerable 对象   —— Jeffrey Su 2021.06.17
-                                    && !z.Value.MethodInfo.GetParameters().Any(z => z.ParameterType.Name.Contains("IEnumerable") || z.ParameterType.Name.Contains("IList`1"))
-
-                                     )
+                                     //临时过滤 IEnumerable 对象   —— Jeffrey Su 2021.06.17
+                                     && !z.Value.MethodInfo.GetParameters().Any(z =>
+                                                        z.IsOut ||
+                                                        z.ParameterType.Name.Contains("IEnumerable") ||
+                                                        z.ParameterType.Name.Contains("IList`1")))
                                 .OrderBy(z => z.Value.ApiBindAttribute.Name)
                                 .ToList();
 
             //把 CommonApi 提前到头部
-            Func<KeyValuePair<string, ApiBindInfo>, bool> funcCommonApi = z => z.Value.ApiBindAttribute.Name.StartsWith("CommonApi.");
-            var commonApiList = filterList.Where(z => funcCommonApi(z)).ToList();
-            filterList.RemoveAll(z => funcCommonApi(z));
-            filterList.InsertRange(0, commonApiList);
+            //Func<KeyValuePair<string, ApiBindInfo>, bool> funcCommonApi = z => z.Value.ApiBindAttribute.Name.StartsWith("CommonApi.");
+            //var commonApiList = filterList.Where(z => funcCommonApi(z)).ToList();
+            //filterList.RemoveAll(z => funcCommonApi(z));
+            //filterList.InsertRange(0, commonApiList);
 
             int apiIndex = 0;
             object apiIndexLock = new object();
-            List<string> apiMethodName = new List<string>();
+            ConcurrentDictionary<string, string> apiMethodName = new ConcurrentDictionary<string, string>();
 
-            List<Task> l = new List<Task>();
+            List<Task> taskList = new List<Task>();
 
             //filterList.AsParallel().ForAll(apiBindInfo =>
             //{
 
 
             //});
-            foreach (var apiBindInfo in filterList)
+            foreach (var apiBindInfo in apiFilterList)
             {
-                var t = Task.Factory.StartNew(async () =>
+                var apiTask = Task.Factory.StartNew(async () =>
                 {
 
                     try
@@ -223,12 +223,12 @@ namespace Senparc.Xncf.WeixinManager.Services
                         var apiName = apiBindInfo.Value.ApiBindAttribute.Name.Substring(indexOfApiGroupDot + 1, apiBindInfo.Value.ApiBindAttribute.Name.Length - indexOfApiGroupDot - 1);
 
                         //确保名称不会有重复
-                        while (apiMethodName.Contains(methodName))
+                        while (apiMethodName.ContainsKey(methodName))
                         {
                             methodName += "0";
                             apiName += "0";
                         }
-                        apiMethodName.Add(methodName);
+                        apiMethodName[methodName] = apiName;
 
                         //当前 API 的 MethodInfo
                         MethodInfo apiMethodInfo = apiBindInfo.Value.MethodInfo;
@@ -389,10 +389,11 @@ namespace Senparc.Xncf.WeixinManager.Services
                     }
                 });
 
-                l.Add(t);
+                taskList.Add(apiTask);
             }
-            Task.WaitAll(l.ToArray());
 
+            WriteLog("Api Task Count:" + taskList.Count);
+            Task.WaitAll(taskList.ToArray());
 
             //foreach (var apiBindInfo in filterList)
             //{
@@ -466,10 +467,10 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             ConcurrentDictionary<PlatformType, (int apiCount, double costMs)> assemblyBuildStat = new ConcurrentDictionary<PlatformType, (int, double)>();
 
-            List<Task> l = new List<Task>();
+            List<Task> taskList = new List<Task>();
             foreach (var platformType in WeixinApiAssemblyNames.Keys)
             {
-                var t = Task.Factory.StartNew(async () =>
+                var assemblyTask = Task.Factory.StartNew(async () =>
                 {
                     WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
                     var dtStart = SystemTime.Now;
@@ -482,9 +483,9 @@ namespace Senparc.Xncf.WeixinManager.Services
 
                     assemblyBuildStat[platformType] = (apiCount: apiCount, costMs: SystemTime.DiffTotalMS(dtStart));
                 });
-                l.Add(t);
+                taskList.Add(assemblyTask);
             }
-            Task.WaitAll(l.ToArray());
+            Task.WaitAll(taskList.ToArray());
 
             var totalCost = SystemTime.DiffTotalMS(dt1);
 
@@ -505,16 +506,19 @@ namespace Senparc.Xncf.WeixinManager.Services
             Func<object, int, string> outputResult = (text, length) => string.Format($"{{0,{length}}}", text);
 
             WriteLog("");
-            WriteLog($"{outputResult("Platform Name", 25)}|{outputResult("API Count", 20)}|{outputResult("Cost Time", 15)}");
-            WriteLog(new string('-', 65));
+            WriteLog($"{outputResult("Platform Name", 25)}|{outputResult("API Count", 15)}|{outputResult("Cost Time", 15)}|{outputResult("Average", 15)}");
+            WriteLog(new string('-', 80));
             foreach (var item in assemblyBuildStat)
             {
-                WriteLog($"{outputResult(item.Key, 25)}|{outputResult(item.Value.apiCount, 20)}|{outputResult($"{item.Value.costMs}ms", 15)}");
+                var apiCount = item.Value.apiCount;
+                var cost = item.Value.costMs;
+                var avg = Math.Round(cost / apiCount, 3);
+                WriteLog($"{outputResult(item.Key, 25)}|{outputResult(apiCount, 15)}|{outputResult($"{cost}ms", 15)}|{outputResult($"{avg}ms", 15)}");
             }
-            WriteLog(new string('=', 65));
+            WriteLog(new string('=', 80));
             var totalApi = assemblyBuildStat.Values.Sum(z => z.apiCount);
-            WriteLog($"{outputResult($"Total", 25)}|{outputResult($"API Count:{totalApi}", 20)}|{outputResult($"Cost:{totalCost}ms", 15)}");
-            WriteLog($"Average Cost：{Math.Round(totalCost / totalApi, 2)} ms");
+            WriteLog($"{outputResult($"Total", 25)}|{outputResult($"API Count:{totalApi}", 15)}|{outputResult($"Cost:{totalCost}ms", 15)}");
+            WriteLog($"Total Average Cost：{Math.Round(totalCost / totalApi, 3)} ms");
             WriteLog("");
 
             #endregion
