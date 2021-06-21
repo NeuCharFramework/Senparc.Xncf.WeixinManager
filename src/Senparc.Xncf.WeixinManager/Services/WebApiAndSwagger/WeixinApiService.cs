@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Senparc.Xncf.WeixinManager.Services
@@ -76,7 +77,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <summary>
         /// 创建动态 WebApi
         /// </summary>
-        private int BuildWebApi(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
+        public async Task<int> BuildWebApi(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
         {
             var platformType = apiGroup.Key;
             var dt1 = SystemTime.Now;
@@ -185,199 +186,213 @@ namespace Senparc.Xncf.WeixinManager.Services
             object apiIndexLock = new object();
             List<string> apiMethodName = new List<string>();
 
-            filterList.ForEach(apiBindInfo =>
+            List<Task> l = new List<Task>();
+
+            //filterList.AsParallel().ForAll(apiBindInfo =>
+            //{
+
+
+            //});
+            foreach (var apiBindInfo in filterList)
             {
-                try
+                var t = Task.Factory.StartNew(async () =>
                 {
-                    //lock (apiIndexLock)
-                    {
-                        apiIndex++;
 
-                        if (apiIndex > 9999)//200-250
+                    try
+                    {
+                        //lock (apiIndexLock)
                         {
-                            return;//用于小范围分析
-                        }
-                    }
+                            apiIndex++;
 
-                    //定义版本号
-                    if (!WeixinApiAssemblyVersions.ContainsKey(platformType))
-                    {
-                        WeixinApiAssemblyVersions[platformType] = apiBindInfo.Value.MethodInfo.DeclaringType.Assembly.GetName().Version.ToString(3);
-                    }
-
-                    //当前方法名称
-                    var methodName = apiBindInfo.Value.ApiBindAttribute.Name.Replace(".", "_").Replace("-", "_").Replace("/", "_");
-                    var apiGroupName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
-                    var indexOfApiGroupDot = apiBindInfo.Value.ApiBindAttribute.Name.IndexOf(".");
-                    var apiName = apiBindInfo.Value.ApiBindAttribute.Name.Substring(indexOfApiGroupDot + 1, apiBindInfo.Value.ApiBindAttribute.Name.Length - indexOfApiGroupDot - 1);
-
-                    //确保名称不会有重复
-                    while (apiMethodName.Contains(methodName))
-                    {
-                        methodName += "0";
-                        apiName += "0";
-                    }
-                    apiMethodName.Add(methodName);
-
-                    //当前 API 的 MethodInfo
-                    MethodInfo apiMethodInfo = apiBindInfo.Value.MethodInfo;
-                    //当前 API 的所有参数信息
-                    var parameters = apiMethodInfo.GetParameters();
-
-                    if (_showDetailApiLog)
-                    {
-                        WriteLog($"\t search API[{apiIndex}]: {keyName} > {apiBindInfo.Key} -> {methodName} \t\t Parameters Count: {parameters.Count()}\t\t");
-                    }
-
-
-                    MethodBuilder setPropMthdBldr =
-                        tb.DefineMethod(methodName, MethodAttributes.Public | MethodAttributes.Virtual,
-                        apiMethodInfo.ReturnType, //返回类型
-                        parameters.Select(z => z.ParameterType).ToArray()//输入参数
-                        );
-
-                    //Controller已经使用过一次SwaggerOperationAttribute
-                    var t2_3 = typeof(SwaggerOperationAttribute);
-                    var tagName = new[] { $"{keyName}:{apiGroupName}" };
-                    var tagAttrBuilder = new CustomAttributeBuilder(t2_3.GetConstructor(new Type[] { typeof(string), typeof(string) }),
-                        new object[] { (string)null, (string)null },
-                        new[] { t2_3.GetProperty("Tags") }, new[] { tagName });
-                    setPropMthdBldr.SetCustomAttribute(tagAttrBuilder);
-                    //其他Method排序方法参考：https://stackoverflow.com/questions/34175018/grouping-of-api-methods-in-documentation-is-there-some-custom-attribute
-
-
-                    //[Route("/wxapi/...", Name="xxx")]
-                    var t2_4 = typeof(RouteAttribute);
-                    //var routeName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
-                    var apiPath = $"/wxapi/{keyName}/{apiGroupName}/{apiName}";
-                    var routeAttrBuilder = new CustomAttributeBuilder(t2_4.GetConstructor(new Type[] { typeof(string) }),
-                        new object[] { apiPath }/*, new[] { t2_2.GetProperty("Name") }, new[] { routeName }*/);
-                    setPropMthdBldr.SetCustomAttribute(routeAttrBuilder);
-
-                    if (_showDetailApiLog)
-                    { 
-                        WriteLog($"added Api path: {apiPath}");
-                    }
-
-                    //[HttpGet]
-                    var t3 = typeof(HttpGetAttribute);
-                    setPropMthdBldr.SetCustomAttribute(new CustomAttributeBuilder(t3.GetConstructor(new Type[0]), new object[0]));
-
-                    //用户限制  ——  Jeffrey Su 2021.06.18
-                    //var t4 = typeof(UserAuthorizeAttribute);//[UserAuthorize("UserOnly")]
-                    //setPropMthdBldr.SetCustomAttribute(new CustomAttributeBuilder(t4.GetConstructor(new Type[] { typeof(string) }), new[] { "UserOnly" }));
-
-
-                    //设置返回类型
-                    //setPropMthdBldr.SetReturnType(apiMethodInfo.ReturnType);
-
-                    //设置参数
-                    var boundType = false;
-                    //定义其他参数
-                    for (int i = 0; i < parameters.Length; i++)
-                    {
-                        var p = parameters[i];
-                        ParameterBuilder pb = setPropMthdBldr.DefineParameter(i + 1/*从1开始，0为返回值*/, p.Attributes, p.Name);
-                        //处理参数，反之出现复杂类型的参数，抛出异常：InvalidOperationException: Action 'WeChat_OfficialAccountController.CardApi_GetOrderList (WeixinApiAssembly)' has more than one parameter that was specified or inferred as bound from request body. Only one parameter per action may be bound from body. Inspect the following parameters, and use 'FromQueryAttribute' to specify bound from query, 'FromRouteAttribute' to specify bound from route, and 'FromBodyAttribute' for parameters to be bound from body:
-                        if (p.ParameterType.IsClass)
-                        {
-                            if (boundType == false)
+                            if (apiIndex > 9999)//200-250
                             {
-                                //第一个绑定，可以不处理
-                                boundType = true;
-                            }
-                            else
-                            {
-                                //第二个开始使用标签
-                                var tFromQuery = typeof(FromQueryAttribute);
-                                pb.SetCustomAttribute(new CustomAttributeBuilder(tFromQuery.GetConstructor(new Type[0]), new object[0]));
+                                return;//用于小范围分析
                             }
                         }
-                        try
+
+                        //定义版本号
+                        if (!WeixinApiAssemblyVersions.ContainsKey(platformType))
                         {
-                            //设置默认值
-                            if (p.HasDefaultValue)
+                            WeixinApiAssemblyVersions[platformType] = apiBindInfo.Value.MethodInfo.DeclaringType.Assembly.GetName().Version.ToString(3);
+                        }
+
+                        //当前方法名称
+                        var methodName = apiBindInfo.Value.ApiBindAttribute.Name.Replace(".", "_").Replace("-", "_").Replace("/", "_");
+                        var apiGroupName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
+                        var indexOfApiGroupDot = apiBindInfo.Value.ApiBindAttribute.Name.IndexOf(".");
+                        var apiName = apiBindInfo.Value.ApiBindAttribute.Name.Substring(indexOfApiGroupDot + 1, apiBindInfo.Value.ApiBindAttribute.Name.Length - indexOfApiGroupDot - 1);
+
+                        //确保名称不会有重复
+                        while (apiMethodName.Contains(methodName))
+                        {
+                            methodName += "0";
+                            apiName += "0";
+                        }
+                        apiMethodName.Add(methodName);
+
+                        //当前 API 的 MethodInfo
+                        MethodInfo apiMethodInfo = apiBindInfo.Value.MethodInfo;
+                        //当前 API 的所有参数信息
+                        var parameters = apiMethodInfo.GetParameters();
+
+                        if (_showDetailApiLog)
+                        {
+                            WriteLog($"\t search API[{apiIndex}]: {keyName} > {apiBindInfo.Key} -> {methodName} \t\t Parameters Count: {parameters.Count()}\t\t");
+                        }
+
+
+                        MethodBuilder setPropMthdBldr =
+                            tb.DefineMethod(methodName, MethodAttributes.Public | MethodAttributes.Virtual,
+                            apiMethodInfo.ReturnType, //返回类型
+                            parameters.Select(z => z.ParameterType).ToArray()//输入参数
+                            );
+
+                        //Controller已经使用过一次SwaggerOperationAttribute
+                        var t2_3 = typeof(SwaggerOperationAttribute);
+                        var tagName = new[] { $"{keyName}:{apiGroupName}" };
+                        var tagAttrBuilder = new CustomAttributeBuilder(t2_3.GetConstructor(new Type[] { typeof(string), typeof(string) }),
+                            new object[] { (string)null, (string)null },
+                            new[] { t2_3.GetProperty("Tags") }, new[] { tagName });
+                        setPropMthdBldr.SetCustomAttribute(tagAttrBuilder);
+                        //其他Method排序方法参考：https://stackoverflow.com/questions/34175018/grouping-of-api-methods-in-documentation-is-there-some-custom-attribute
+
+
+                        //[Route("/wxapi/...", Name="xxx")]
+                        var t2_4 = typeof(RouteAttribute);
+                        //var routeName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
+                        var apiPath = $"/wxapi/{keyName}/{apiGroupName}/{apiName}";
+                        var routeAttrBuilder = new CustomAttributeBuilder(t2_4.GetConstructor(new Type[] { typeof(string) }),
+                            new object[] { apiPath }/*, new[] { t2_2.GetProperty("Name") }, new[] { routeName }*/);
+                        setPropMthdBldr.SetCustomAttribute(routeAttrBuilder);
+
+                        if (_showDetailApiLog)
+                        {
+                            WriteLog($"added Api path: {apiPath}");
+                        }
+
+                        //[HttpGet]
+                        var t3 = typeof(HttpGetAttribute);
+                        setPropMthdBldr.SetCustomAttribute(new CustomAttributeBuilder(t3.GetConstructor(new Type[0]), new object[0]));
+
+                        //用户限制  ——  Jeffrey Su 2021.06.18
+                        //var t4 = typeof(UserAuthorizeAttribute);//[UserAuthorize("UserOnly")]
+                        //setPropMthdBldr.SetCustomAttribute(new CustomAttributeBuilder(t4.GetConstructor(new Type[] { typeof(string) }), new[] { "UserOnly" }));
+
+
+                        //设置返回类型
+                        //setPropMthdBldr.SetReturnType(apiMethodInfo.ReturnType);
+
+                        //设置参数
+                        var boundType = false;
+                        //定义其他参数
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            var p = parameters[i];
+                            ParameterBuilder pb = setPropMthdBldr.DefineParameter(i + 1/*从1开始，0为返回值*/, p.Attributes, p.Name);
+                            //处理参数，反之出现复杂类型的参数，抛出异常：InvalidOperationException: Action 'WeChat_OfficialAccountController.CardApi_GetOrderList (WeixinApiAssembly)' has more than one parameter that was specified or inferred as bound from request body. Only one parameter per action may be bound from body. Inspect the following parameters, and use 'FromQueryAttribute' to specify bound from query, 'FromRouteAttribute' to specify bound from route, and 'FromBodyAttribute' for parameters to be bound from body:
+                            if (p.ParameterType.IsClass)
                             {
-                                pb.SetConstant(p.DefaultValue);
+                                if (boundType == false)
+                                {
+                                    //第一个绑定，可以不处理
+                                    boundType = true;
+                                }
+                                else
+                                {
+                                    //第二个开始使用标签
+                                    var tFromQuery = typeof(FromQueryAttribute);
+                                    pb.SetCustomAttribute(new CustomAttributeBuilder(tFromQuery.GetConstructor(new Type[0]), new object[0]));
+                                }
                             }
+                            try
+                            {
+                                //设置默认值
+                                if (p.HasDefaultValue)
+                                {
+                                    pb.SetConstant(p.DefaultValue);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                throw;
+                            }
+
                         }
-                        catch (Exception)
+
+                        //执行具体方法
+                        var il = setPropMthdBldr.GetILGenerator();
+
+                        //FieldBuilder fb = tb.DefineField("id", typeof(System.String), FieldAttributes.Private);
+
+                        var methodInfo = apiMethodInfo;
+
+                        LocalBuilder local = null;
+                        if (methodInfo.ReturnType != typeof(void))
                         {
-                            throw;
+                            //il.Emit(OpCodes.Ldstr, "The I.M implementation of C");
+                            local = il.DeclareLocal(apiMethodInfo.ReturnType); // create a local variable
+                                                                               //il.Emit(OpCodes.Ldarg_0);
+                                                                               //动态创建字段   
                         }
 
+
+                        //il.Emit(OpCodes.Ldarg_0); // this  //静态方法不需要使用this
+                        //il.Emit(OpCodes.Ldarg_1); // the first one in arguments list
+                        il.Emit(OpCodes.Nop); // the first one in arguments list
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            var p = parameters[i];
+                            //WriteLog($"\t\t Ldarg: {p.Name}\t isOptional:{p.IsOptional}\t defaultValue:{p.DefaultValue}");
+                            il.Emit(OpCodes.Ldarg, i + 1); // the first one in arguments list
+                        }
+
+                        //WriteLog($"\t get static method: {methodInfo.Name}\t returnType:{methodInfo.ReturnType}");
+
+                        il.Emit(OpCodes.Call, methodInfo);
+
+                        ////if (apiMethodInfo.GetType() == apiMethodInfo.DeclaringType)//注意：此处使用不同的方法，会出现不同的异常
+                        //if (typeof(Senparc.Weixin.MP.CommonAPIs.CommonApi) == methodInfo.DeclaringType)
+                        //    il.Emit(OpCodes.Call, methodInfo);
+                        //else
+                        //    il.Emit(OpCodes.Callvirt, methodInfo);
+
+                        if (methodInfo.ReturnType != typeof(void))
+                        {
+                            il.Emit(OpCodes.Stloc, local); // set local variable
+                            il.Emit(OpCodes.Ldloc, local); // load local variable to stack 
+                                                           //il.Emit(OpCodes.Pop);
+                        }
+
+                        il.Emit(OpCodes.Ret);
+
+                        //生成文档
+                        var docName = $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name}(";//以(结尾确定匹配到完整的方法名
+
+                        if (_showDetailApiLog)
+                        {
+                            WriteLog($"\t search for docName:  {docName}");//\t\tSDK Method：{apiMethodInfo.ToString()}
+                        }
+
+                        var docMember = docMembers.FirstOrDefault(z => z.HasAttributes && z.FirstAttribute.Value.Contains(docName));
+                        if (docMember != null)
+                        {
+                            var attr = docMember.FirstAttribute;
+                            var newAttrName = $"M:{tb.FullName}.{methodName}({attr.Value.ToString().Split('(')[1]}";
+                            attr.SetValue(newAttrName);
+                            //WriteLog($"\t change document name:  {attr.Value} -> {newAttrName}");
+                        }
                     }
-
-                    //执行具体方法
-                    var il = setPropMthdBldr.GetILGenerator();
-
-                    //FieldBuilder fb = tb.DefineField("id", typeof(System.String), FieldAttributes.Private);
-
-                    var methodInfo = apiMethodInfo;
-
-                    LocalBuilder local = null;
-                    if (methodInfo.ReturnType != typeof(void))
+                    catch (Exception ex)
                     {
-                        //il.Emit(OpCodes.Ldstr, "The I.M implementation of C");
-                        local = il.DeclareLocal(apiMethodInfo.ReturnType); // create a local variable
-                                                                           //il.Emit(OpCodes.Ldarg_0);
-                                                                           //动态创建字段   
+                        //遇到错误
+                        WriteLog($"==== Error ====\r\n \t{ex.ToString()}");
                     }
+                });
 
+                l.Add(t);
+            }
+            Task.WaitAll(l.ToArray());
 
-                    //il.Emit(OpCodes.Ldarg_0); // this  //静态方法不需要使用this
-                    //il.Emit(OpCodes.Ldarg_1); // the first one in arguments list
-                    il.Emit(OpCodes.Nop); // the first one in arguments list
-                    for (int i = 0; i < parameters.Length; i++)
-                    {
-                        var p = parameters[i];
-                        //WriteLog($"\t\t Ldarg: {p.Name}\t isOptional:{p.IsOptional}\t defaultValue:{p.DefaultValue}");
-                        il.Emit(OpCodes.Ldarg, i + 1); // the first one in arguments list
-                    }
-
-                    //WriteLog($"\t get static method: {methodInfo.Name}\t returnType:{methodInfo.ReturnType}");
-
-                    il.Emit(OpCodes.Call, methodInfo);
-
-                    ////if (apiMethodInfo.GetType() == apiMethodInfo.DeclaringType)//注意：此处使用不同的方法，会出现不同的异常
-                    //if (typeof(Senparc.Weixin.MP.CommonAPIs.CommonApi) == methodInfo.DeclaringType)
-                    //    il.Emit(OpCodes.Call, methodInfo);
-                    //else
-                    //    il.Emit(OpCodes.Callvirt, methodInfo);
-
-                    if (methodInfo.ReturnType != typeof(void))
-                    {
-                        il.Emit(OpCodes.Stloc, local); // set local variable
-                        il.Emit(OpCodes.Ldloc, local); // load local variable to stack 
-                                                       //il.Emit(OpCodes.Pop);
-                    }
-
-                    il.Emit(OpCodes.Ret);
-
-                    //生成文档
-                    var docName = $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name}(";//以(结尾确定匹配到完整的方法名
-
-                    if (_showDetailApiLog)
-                    { 
-                        WriteLog($"\t search for docName:  {docName}");//\t\tSDK Method：{apiMethodInfo.ToString()}
-                    }
-
-                    var docMember = docMembers.FirstOrDefault(z => z.HasAttributes && z.FirstAttribute.Value.Contains(docName));
-                    if (docMember != null)
-                    {
-                        var attr = docMember.FirstAttribute;
-                        var newAttrName = $"M:{tb.FullName}.{methodName}({attr.Value.ToString().Split('(')[1]}";
-                        attr.SetValue(newAttrName);
-                        //WriteLog($"\t change document name:  {attr.Value} -> {newAttrName}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //遇到错误
-                    WriteLog($"==== Error ====\r\n \t{ex.ToString()}");
-                }
-
-            });
 
             //foreach (var apiBindInfo in filterList)
             //{
@@ -393,7 +408,12 @@ namespace Senparc.Xncf.WeixinManager.Services
             var newDocFile = $"App_Data/ApiDocXml/{assembleName}.xml";
             try
             {
-                document.Save(newDocFile);//保存
+                //using (XmlWriter xw = XmlWriter.Create(newDocFile, new XmlWriterSettings() { Async = true }))
+                //{
+                //    await document.SaveAsync(xw, new CancellationToken()).ConfigureAwait(false);//保存
+                //}
+                document.Save(newDocFile);
+
                 WriteLog($"new document file saved: {newDocFile}, assembly cost:{SystemTime.NowDiff(groupStartTime)}");
             }
             catch (Exception ex)
@@ -418,10 +438,9 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// 获取 WeixinApiAssembly 程序集对象
         /// </summary>
         /// <returns></returns>
-        public (Assembly buildAssemblyResult, int apiCount) GetWeixinApiAssembly(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
+        public Assembly GetWeixinApiAssembly(PlatformType platformType)
         {
-            var apiCount = BuildWebApi(apiGroup);
-            return (buildAssemblyResult: WeixinApiAssemblyCollection[apiGroup.Key], apiCount: apiCount);
+            return WeixinApiAssemblyCollection[platformType];
         }
 
         /// <summary>
@@ -447,17 +466,39 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             ConcurrentDictionary<PlatformType, (int apiCount, double costMs)> assemblyBuildStat = new ConcurrentDictionary<PlatformType, (int, double)>();
 
-            WeixinApiAssemblyNames.Keys.ToList().ForEach(platformType =>
+            List<Task> l = new List<Task>();
+            foreach (var platformType in WeixinApiAssemblyNames.Keys)
             {
-                WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
-                var dtStart = SystemTime.Now;
-                var apiGroup = weixinApis.FirstOrDefault(z => z.Key == platformType);
-                var buildAssemblyResult = GetWeixinApiAssembly(apiGroup);
-                var weixinApiAssembly = buildAssemblyResult.buildAssemblyResult;
-                builder.AddApplicationPart(weixinApiAssembly);//程序部件：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/advanced/app-parts?view=aspnetcore-2.2
+                var t = Task.Factory.StartNew(async () =>
+                {
+                    WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
+                    var dtStart = SystemTime.Now;
+                    var apiGroup = weixinApis.FirstOrDefault(z => z.Key == platformType);
 
-                assemblyBuildStat[platformType] = (apiCount: buildAssemblyResult.apiCount, costMs: SystemTime.DiffTotalMS(dtStart));
-            });
+                    var apiCount = await BuildWebApi(apiGroup);
+                    var weixinApiAssembly = GetWeixinApiAssembly(platformType);
+
+                    builder.AddApplicationPart(weixinApiAssembly);//程序部件：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/advanced/app-parts?view=aspnetcore-2.2
+
+                    assemblyBuildStat[platformType] = (apiCount: apiCount, costMs: SystemTime.DiffTotalMS(dtStart));
+                });
+                l.Add(t);
+            }
+            Task.WaitAll(l.ToArray());
+
+            var totalCost = SystemTime.DiffTotalMS(dt1);
+
+            //WeixinApiAssemblyNames.Keys.AsParallel().ForAll(async platformType =>
+            //{
+            //    WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
+            //    var dtStart = SystemTime.Now;
+            //    var apiGroup = weixinApis.FirstOrDefault(z => z.Key == platformType);
+            //    var buildAssemblyResult = await GetWeixinApiAssembly(apiGroup);
+            //    var weixinApiAssembly = buildAssemblyResult.buildAssemblyResult;
+            //    builder.AddApplicationPart(weixinApiAssembly);//程序部件：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/advanced/app-parts?view=aspnetcore-2.2
+
+            //    assemblyBuildStat[platformType] = (apiCount: buildAssemblyResult.apiCount, costMs: SystemTime.DiffTotalMS(dtStart));
+            //});
 
             #region 统计数据
 
@@ -471,7 +512,9 @@ namespace Senparc.Xncf.WeixinManager.Services
                 WriteLog($"{outputResult(item.Key, 25)}|{outputResult(item.Value.apiCount, 20)}|{outputResult($"{item.Value.costMs}ms", 15)}");
             }
             WriteLog(new string('=', 65));
-            WriteLog($"{outputResult($"Total", 25)}|{outputResult($"API Count:{assemblyBuildStat.Values.Sum(z => z.apiCount)}", 20)}|{outputResult($"Cost:{SystemTime.DiffTotalMS(dt1)}ms", 15)}");
+            var totalApi = assemblyBuildStat.Values.Sum(z => z.apiCount);
+            WriteLog($"{outputResult($"Total", 25)}|{outputResult($"API Count:{totalApi}", 20)}|{outputResult($"Cost:{totalCost}ms", 15)}");
+            WriteLog($"Average Cost：{Math.Round(totalCost / totalApi, 2)} ms");
             WriteLog("");
 
             #endregion

@@ -30,8 +30,11 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
             {
                 throw new Exception("找不到 Platform");
             }
-            var result = weixinApiService.GetWeixinApiAssembly(apiGroup);
-            Console.WriteLine("API Count:" + result.apiCount);
+
+            var apiCount = weixinApiService.BuildWebApi(apiGroup).Result;
+            var weixinApiAssembly = weixinApiService.GetWeixinApiAssembly(apiGroup.Key);
+            Console.WriteLine("API Count:" + apiCount);
+            Console.WriteLine("Test Platform Assembly:" + weixinApiAssembly.FullName);
         }
     }
 }
