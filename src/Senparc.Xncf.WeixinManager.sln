@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.Xncf.WeixinManager", "Senparc.Xncf.WeixinManager\Senparc.Xncf.WeixinManager.csproj", "{B93E92C6-CEDC-4DE5-A9F2-FDC8A07A5A3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senparc.Xncf.WeixinManager.Tests", "Senparc.Xncf.WeixinManager.Tests\Senparc.Xncf.WeixinManager.Tests.csproj", "{BD98287C-24E0-44BE-8808-07BB104CE8CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,12 @@ Global
 		{B93E92C6-CEDC-4DE5-A9F2-FDC8A07A5A3A}.LocalRelease|Any CPU.Build.0 = LocalRelease|Any CPU
 		{B93E92C6-CEDC-4DE5-A9F2-FDC8A07A5A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B93E92C6-CEDC-4DE5-A9F2-FDC8A07A5A3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD98287C-24E0-44BE-8808-07BB104CE8CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD98287C-24E0-44BE-8808-07BB104CE8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD98287C-24E0-44BE-8808-07BB104CE8CF}.LocalRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{BD98287C-24E0-44BE-8808-07BB104CE8CF}.LocalRelease|Any CPU.Build.0 = Release|Any CPU
+		{BD98287C-24E0-44BE-8808-07BB104CE8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD98287C-24E0-44BE-8808-07BB104CE8CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

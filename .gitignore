@@ -30,12 +30,11 @@
 *.exe
 *.out
 *.app
-/.vs
-/src/.vs/Senparc.Xscf.WeixinManager
 /src/Senparc.Xscf.WeixinManager/obj
 /src/Senparc.Xscf.WeixinManager/bin/Debug/netcoreapp3.1
 /src/BuildOutPut
-/src/.vs/Senparc.Xncf.WeixinManager
-/src/Senparc.Xncf.WeixinManager/obj
-/src/Senparc.Xncf.WeixinManager/bin
+/**/.vs/*
 /src/Senparc.Xncf.WeixinManager/App_Data/SenparcTraceLog
+/**/bin/*
+/**/obj/*
+/src/Senparc.Xncf.WeixinManager.Tests/App_Data/SenparcTraceLog
