@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Senparc.CO2NET.Utilities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Senparc.Ncf.Core.Config;
 using Senparc.Ncf.Core.Extensions;
 using Senparc.NeuChar;
@@ -12,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -44,7 +42,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <param name="msg"></param>
         private void WriteLog(string msg)
         {
-            Console.WriteLine($"{SystemTime.Now.ToString("yyyy-MM-dd HH:ss:mm.ffff")}\t\t{msg}");
+            Console.WriteLine($"{SystemTime.Now:yyyy-MM-dd HH:ss:mm.ffff}\t\t{msg}");
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// </summary>
         private void TryCreateDir()
         {
-            var dir =  Path.Combine(SiteConfig.WebRootPath, "..", "App_Data", "ApiDocXml");// ServerUtility.ContentRootMapPath("~/App_Data/ApiDocXml");
+            var dir = Path.Combine(SiteConfig.WebRootPath, "..", "App_Data", "ApiDocXml");// ServerUtility.ContentRootMapPath("~/App_Data/ApiDocXml");
             WriteLog($"检查目录：{dir}");
             if (!Directory.Exists(dir))
             {
@@ -75,7 +73,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <summary>
         /// 创建动态 WebApi
         /// </summary>
-        private void BuildWebApi(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
+        private int BuildWebApi(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
         {
             var dt1 = SystemTime.Now;
             WriteLog("==== Begin BuildWebApi ====");
@@ -83,7 +81,7 @@ namespace Senparc.Xncf.WeixinManager.Services
             if (apiGroup.Count() == 0 || !WeixinApiAssemblyNames.ContainsKey(apiGroup.Key))
             {
                 WriteLog($"apiGroup 不存在可用对象: {apiGroup.Key}");
-                return;
+                return 0;
             }
 
             var groupStartTime = SystemTime.Now;
@@ -100,7 +98,6 @@ namespace Senparc.Xncf.WeixinManager.Services
             root.Element("assembly").Element("name").Value = assembleName;
             var docMembers = root.Element("members").Elements("member");
             WriteLog($"find docMembers:{docMembers.Count()}");
-
 
             #region 动态创建代码
             //动态创建程序集
@@ -180,17 +177,21 @@ namespace Senparc.Xncf.WeixinManager.Services
             filterList.InsertRange(0, commonApiList);
 
             int apiIndex = 0;
+            object apiIndexLock = new object();
             List<string> apiMethodName = new List<string>();
 
-            foreach (var apiBindInfo in filterList)
+            filterList.AsParallel().ForAll(apiBindInfo =>
             {
                 try
                 {
-                    apiIndex++;
-
-                    if (apiIndex > 9999)//200-250
+                    //lock (apiIndexLock)
                     {
-                        continue;//用于小范围分析
+                        apiIndex++;
+
+                        if (apiIndex > 9999)//200-250
+                        {
+                            return;//用于小范围分析
+                        }
                     }
 
                     //定义版本号
@@ -360,7 +361,12 @@ namespace Senparc.Xncf.WeixinManager.Services
                     //遇到错误
                     WriteLog($"==== Error ====\r\n \t{ex.ToString()}");
                 }
-            }
+
+            });
+
+            //foreach (var apiBindInfo in filterList)
+            //{
+            //}
 
             TypeInfo objectTypeInfo = tb.CreateTypeInfo();
             var myType = objectTypeInfo.AsType();
@@ -387,6 +393,8 @@ namespace Senparc.Xncf.WeixinManager.Services
             WriteLog($"==== Finish BuildWebApi / Total Time: {timeCost.TotalMilliseconds:###,###} ms ====");
 
             #endregion
+
+            return apiMethodName.Count;
         }
 
 
@@ -394,34 +402,63 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// 获取 WeixinApiAssembly 程序集对象
         /// </summary>
         /// <returns></returns>
-        public Assembly GetWeixinApiAssembly(PlatformType platformType, bool forceBindAgain)
+        public (Assembly buildAssemblyResult, int apiCount) GetWeixinApiAssembly(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
+        {
+            var apiCount = BuildWebApi(apiGroup);
+            return (buildAssemblyResult: WeixinApiAssemblyCollection[apiGroup.Key], apiCount: apiCount);
+        }
+
+        /// <summary>
+        /// 初始化动态API
+        /// </summary>
+        public void InitDynamicApi(IMvcBuilder builder)
         {
             //预载入程序集，确保在下一步 RegisterApiBind() 可以顺利读取所有接口
-            Func<bool> preLoad = () => typeof(Senparc.Weixin.MP.AdvancedAPIs.AddGroupResult).ToString() != null
+            bool preLoad = typeof(Senparc.Weixin.MP.AdvancedAPIs.AddGroupResult).ToString() != null
                 && typeof(Senparc.Weixin.WxOpen.AdvancedAPIs.CustomApi).ToString() != null
                 && typeof(Senparc.Weixin.Open.AccountAPIs.AccountApi).ToString() != null
                 && typeof(Senparc.Weixin.TenPay.V3.TenPayV3).ToString() != null
                 && typeof(Senparc.Weixin.Work.AdvancedAPIs.AppApi).ToString() != null;
 
             //确保 ApiBind 已经执行
-            Senparc.NeuChar.Register.RegisterApiBind(forceBindAgain && preLoad());//参数为 true，确保重试绑定成功
+            Senparc.NeuChar.Register.RegisterApiBind(preLoad);//参数为 true，确保重试绑定成功
+            //确保目录存在
+            TryCreateDir();
 
-            if (forceBindAgain)
-            {
-                TryCreateDir();
-            }
+            var dt1 = SystemTime.Now;
 
             var weixinApis = Senparc.NeuChar.ApiBind.ApiBindInfoCollection.Instance.GetGroupedCollection();
-            WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
 
-            if (weixinApis.FirstOrDefault(z => z.Key == platformType) is IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup &&
-                apiGroup != null &&
-                !WeixinApiAssemblyCollection.ContainsKey(platformType))
+            ConcurrentDictionary<PlatformType, (int apiCount, double costMs)> assemblyBuildStat = new ConcurrentDictionary<PlatformType, (int, double)>();
+
+            WeixinApiAssemblyNames.Keys.AsParallel().ForAll(platformType =>
             {
-                BuildWebApi(apiGroup);
-            }
+                WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
+                var dtStart = SystemTime.Now;
+                var apiGroup = weixinApis.FirstOrDefault(z => z.Key == platformType);
+                var buildAssemblyResult = GetWeixinApiAssembly(apiGroup);
+                var weixinApiAssembly = buildAssemblyResult.buildAssemblyResult;
+                builder.AddApplicationPart(weixinApiAssembly);//程序部件：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/advanced/app-parts?view=aspnetcore-2.2
 
-            return WeixinApiAssemblyCollection[platformType];
+                assemblyBuildStat[platformType] = (apiCount: buildAssemblyResult.apiCount, costMs: SystemTime.DiffTotalMS(dtStart));
+            });
+
+            #region 统计数据
+
+            Func<object, int, string> outputResult = (text, length) => string.Format($"{{0,{length}}}", text);
+
+            WriteLog("");
+            WriteLog($"{outputResult("Platform Name", 25)}|{outputResult("API Count", 20)}|{outputResult("Cost Time", 15)}");
+            WriteLog(new string('-', 65));
+            foreach (var item in assemblyBuildStat)
+            {
+                WriteLog($"{outputResult(item.Key, 25)}|{outputResult(item.Value.apiCount, 20)}|{outputResult($"{item.Value.costMs}ms", 15)}");
+            }
+            WriteLog(new string('=', 65));
+            WriteLog($"{outputResult($"Total", 25)}|{outputResult($"API Count:{assemblyBuildStat.Values.Sum(z => z.apiCount)}", 20)}|{outputResult($"Cost:{SystemTime.DiffTotalMS(dt1)}ms", 15)}");
+            WriteLog("");
+
+            #endregion
         }
     }
 }

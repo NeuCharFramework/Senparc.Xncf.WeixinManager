@@ -52,27 +52,19 @@ namespace Senparc.Xncf.WeixinManager
             //services.AddScoped<PostModel>(ServiceProvider =>
             //{
             //    //根据条件生成不同的PostModel
-
-
             //});
 
             #region Swagger
 
             services.AddScoped<WeixinApiService>();
+            //services.AddMvcCore();
+            var builder = services.AddControllers();
 
             //.NET Core 3.0 for Swagger https://www.thecodebuzz.com/swagger-api-documentation-in-net-core-3-0/
-            //services.AddMvcCore();//不启用
-            var builder = services.AddControllers();
 
             //初始化 ApiDoc
             WeixinApiService apiDocService = new WeixinApiService();
-            var forceBindAgain = true;
-            foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyNames)
-            {
-                var weixinApiAssembly = apiDocService.GetWeixinApiAssembly(neucharApiDocAssembly.Key, forceBindAgain);
-                forceBindAgain = false;
-                builder.AddApplicationPart(weixinApiAssembly);//程序部件：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/advanced/app-parts?view=aspnetcore-2.2
-            }
+            apiDocService.InitDynamicApi(builder);
 
             //添加Swagger
             services.AddSwaggerGen(c =>
@@ -180,6 +172,7 @@ namespace Senparc.Xncf.WeixinManager
             #endregion
 
 
+
             return base.AddXncfModule(services, configuration);//如果重写此方法，必须调用基类方法
         }
 
@@ -274,6 +267,7 @@ namespace Senparc.Xncf.WeixinManager
 
                 foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyCollection)
                 {
+
                     //TODO:真实的动态版本号
                     var verion = WeixinApiService.WeixinApiAssemblyVersions[neucharApiDocAssembly.Key]; //neucharApiDocAssembly.Value.ImageRuntimeVersion;
                     var docName = WeixinApiService.GetDocName(neucharApiDocAssembly.Key);
@@ -283,18 +277,17 @@ namespace Senparc.Xncf.WeixinManager
                     c.SwaggerEndpoint($"/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
                 }
 
-                //OAuth 暂时不使用   —— Jeffrey Su   2021.06.20
-                ////OAuth     https://www.cnblogs.com/miskis/p/10083985.html
-                //c.OAuthClientId("e65ea785b96b442a919965ccf857aba3");//客服端名称
-                //c.OAuthAppName("微信 API Swagger 文档 "); // 描述
+                //OAuth     https://www.cnblogs.com/miskis/p/10083985.html
+                c.OAuthClientId("e65ea785b96b442a919965ccf857aba3");//客服端名称
+                c.OAuthAppName("微信 API Swagger 文档 "); // 描述
             });
 
 
             return base.UseXncfModule(app, registerService);
         }
+        #endregion
 
     }
-    #endregion
 
     class RemoveVerbsFilter : IDocumentFilter
     {
@@ -341,7 +334,7 @@ namespace Senparc.Xncf.WeixinManager
                 throw new NotImplementedException($"未提供的 PlatformType 类型，Title：{title}");
             }
 
-            var pathList = swaggerDoc.Paths.Keys;
+            var pathList = swaggerDoc.Paths.Keys.ToList();
 
             foreach (var path in pathList)
             {
