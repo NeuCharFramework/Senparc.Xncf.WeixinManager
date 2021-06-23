@@ -38,7 +38,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// </summary>
         /// <param name="taskCount">同时执行线程数</param>
         /// <param name="showDetailApiLog"></param>
-        public WeixinApiService(int taskCount = 30, bool showDetailApiLog = false)
+        public WeixinApiService(int taskCount = 400, bool showDetailApiLog = false)
         {
             _taskCount = taskCount;
             _showDetailApiLog = showDetailApiLog;
@@ -314,12 +314,12 @@ namespace Senparc.Xncf.WeixinManager.Services
             var platformType = apiGroup.Key;
 
             //动态创建程序集
-            AssemblyName dynamicApiAssemblyName = new AssemblyName(assembleName); //Assembly.GetExecutingAssembly().GetName();// new AssemblyName("DynamicAssembly");
-            AppDomain currentDomain = Thread.GetDomain();
-            AssemblyBuilder dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(dynamicApiAssemblyName, AssemblyBuilderAccess.RunAndCollect);
+            AssemblyName dynamicApiAssembly = new AssemblyName(assembleName); //Assembly.GetExecutingAssembly().GetName();// new AssemblyName("DynamicAssembly");
+            //AppDomain currentDomain = Thread.GetDomain();
+            AssemblyBuilder dynamicAssemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(dynamicApiAssembly, AssemblyBuilderAccess.RunAndCollect);
 
             //动态创建模块
-            ModuleBuilder mb = dynamicAssembly.DefineDynamicModule(dynamicApiAssemblyName.Name);
+            ModuleBuilder mb = dynamicAssemblyBuilder.DefineDynamicModule(dynamicApiAssembly.Name);
 
             //储存 API
             //_apiCollection[platformType] = new Dictionary<string, ApiBindInfo>(apiGroup);
@@ -370,7 +370,7 @@ namespace Senparc.Xncf.WeixinManager.Services
             //    new[] { t2_0.GetProperty("GroupName") }, new[] { t2_2_groupName });
             //tb.SetCustomAttribute(t2_2_tagAttrBuilder);
 
-            return new BuildDynamicAssemblyResult(assemblyBuilder: dynamicAssembly, mb: mb, tb: tb, controllerKeyName: controllerClassName);
+            return new BuildDynamicAssemblyResult(dynamicAssemblyBuilder, mb, tb, controllerKeyName);
         }
 
         /// <summary>
