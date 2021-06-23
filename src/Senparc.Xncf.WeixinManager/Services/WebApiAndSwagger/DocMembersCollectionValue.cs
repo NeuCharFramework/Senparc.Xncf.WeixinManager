@@ -7,16 +7,22 @@ namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger
 {
     public class DocMembersCollectionValue
     {
-        public DocMembersCollectionValue(XElement element, string paramsPart)
+        public DocMembersCollectionValue(/*XElement element,*/ XAttribute nameAttr, string paramsPart)
         {
-            Element = element;
+            //Element = element;
+            NameAttr = nameAttr;
             ParamsPart = paramsPart;
         }
 
+        ///// <summary>
+        ///// Xml 节点
+        ///// </summary>
+        //public XElement Element => NameAttr.Parent;
         /// <summary>
-        /// Xml 节点
+        /// name 属性，如： name="M:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary(System.String,System.String,System.String,System.Int32)"
         /// </summary>
-        public XElement Element { get; }
+        public XAttribute NameAttr { get; }
+
         /// <summary>
         /// 参数部分，如：(System.String,System.String,System.String,System.Int32)
         /// </summary>

@@ -26,8 +26,8 @@ namespace Senparc.Xncf.WeixinManager.Services
 
         public static ConcurrentDictionary<PlatformType, Assembly> WeixinApiAssemblyCollection { get; set; } = new ConcurrentDictionary<PlatformType, Assembly>();
 
-        public static ConcurrentDictionary<PlatformType, string> WeixinApiAssemblyNames { get; private set; } = new ConcurrentDictionary<PlatformType, string>(); //= "WeixinApiAssembly";
-        public static ConcurrentDictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new ConcurrentDictionary<PlatformType, string>(); //= "WeixinApiAssembly";
+        public static Dictionary<PlatformType, string> WeixinApiAssemblyNames { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
+        public static Dictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
 
         private bool _showDetailApiLog = false;
 
@@ -60,7 +60,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         {
             if (!addLogCondition || _showDetailApiLog)
             {
-                Console.WriteLine($"{SystemTime.Now:yyyy-MM-dd HH:ss:mm.ffff}[{Thread.CurrentThread.ManagedThreadId:00}]\t\t{msg}");
+                Console.WriteLine($"[{Thread.CurrentThread.ManagedThreadId:00}] {SystemTime.Now:yyyy-MM-dd HH:ss:mm.ffff}\t\t{msg}");
             }
         }
 
@@ -92,12 +92,12 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <summary>
         /// 获取 DocName
         /// </summary>
-        /// <param name="xmlAttr"></param>
+        /// <param name="nameAttr"></param>
         /// <returns></returns>
-        public DocMethodInfo GetDocMethodInfo(string xmlAttr)
+        public DocMethodInfo GetDocMethodInfo(XAttribute nameAttr)
         {
             var pattern = @"(M\:)(?<docName>[^(]+)(?<paramsPart>\({1}.+\){1})";
-            var result = Regex.Match(xmlAttr, pattern);
+            var result = Regex.Match(nameAttr.Value, pattern);
             if (result.Success && result.Groups["docName"] != null && result.Groups["paramsPart"] != null)
             {
                 return new DocMethodInfo(result.Groups["docName"].Value, result.Groups["paramsPart"].Value);
@@ -119,7 +119,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <summary>
         /// 生成单个线程（或 Task任务）的 API 操作（最小粒度）
         /// </summary>
-        private void BuildApiForOneThread(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup,
+        private void BuildApiForOneThread(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiBindGroup,
             KeyValuePair<string, ApiBindInfo>[] apiBindInfoBlock, ConcurrentDictionary<string, string> apiMethodName, string keyName,
             TypeBuilder tb, ConcurrentDictionary<string, DocMembersCollectionValue> docMembersCollection, int apiIndex)
         {
@@ -134,7 +134,7 @@ namespace Senparc.Xncf.WeixinManager.Services
                         return;//用于小范围分析
                     }
 
-                    var platformType = apiGroup.Key;
+                    var platformType = apiBindGroup.Key;
 
                     //定义版本号
                     if (!WeixinApiAssemblyVersions.ContainsKey(platformType))
@@ -144,7 +144,7 @@ namespace Senparc.Xncf.WeixinManager.Services
 
                     //当前方法名称
                     var methodName = apiBindInfo.Value.ApiBindAttribute.Name.Replace(".", "_").Replace("-", "_").Replace("/", "_");
-                    var apiGroupName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
+                    var apiBindGroupName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
                     var indexOfApiGroupDot = apiBindInfo.Value.ApiBindAttribute.Name.IndexOf(".");
                     var apiName = apiBindInfo.Value.ApiBindAttribute.Name.Substring(indexOfApiGroupDot + 1, apiBindInfo.Value.ApiBindAttribute.Name.Length - indexOfApiGroupDot - 1);
 
@@ -161,11 +161,7 @@ namespace Senparc.Xncf.WeixinManager.Services
                     //当前 API 的所有参数信息
                     var parameters = apiMethodInfo.GetParameters();
 
-                    if (_showDetailApiLog)
-                    {
-                        WriteLog($"\t search API[{apiIndex}]: {keyName} > {apiBindInfo.Key} -> {methodName} \t\t Parameters Count: {parameters.Count()}\t\t");
-                    }
-
+                    WriteLog($"\t search API[{apiIndex}]: {keyName} > {apiBindInfo.Key} -> {methodName} \t\t Parameters Count: {parameters.Count()}\t\t", true);
 
                     MethodBuilder setPropMthdBldr =
                         tb.DefineMethod(methodName, MethodAttributes.Public | MethodAttributes.Virtual,
@@ -175,7 +171,7 @@ namespace Senparc.Xncf.WeixinManager.Services
 
                     //Controller已经使用过一次SwaggerOperationAttribute
                     var t2_3 = typeof(SwaggerOperationAttribute);
-                    var tagName = new[] { $"{keyName}:{apiGroupName}" };
+                    var tagName = new[] { $"{keyName}:{apiBindGroupName}" };
                     var tagAttrBuilder = new CustomAttributeBuilder(t2_3.GetConstructor(new Type[] { typeof(string), typeof(string) }),
                         new object[] { (string)null, (string)null },
                         new[] { t2_3.GetProperty("Tags") }, new[] { tagName });
@@ -186,7 +182,7 @@ namespace Senparc.Xncf.WeixinManager.Services
                     //[Route("/wxapi/...", Name="xxx")]
                     var t2_4 = typeof(RouteAttribute);
                     //var routeName = apiBindInfo.Value.ApiBindAttribute.Name.Split('.')[0];
-                    var apiPath = $"/wxapi/{keyName}/{apiGroupName}/{apiName}";
+                    var apiPath = $"/wxapi/{keyName}/{apiBindGroupName}/{apiName}";
                     var routeAttrBuilder = new CustomAttributeBuilder(t2_4.GetConstructor(new Type[] { typeof(string) }),
                         new object[] { apiPath }/*, new[] { t2_2.GetProperty("Name") }, new[] { routeName }*/);
                     setPropMthdBldr.SetCustomAttribute(routeAttrBuilder);
@@ -239,7 +235,6 @@ namespace Senparc.Xncf.WeixinManager.Services
                         {
                             throw;
                         }
-
                     }
 
                     //执行具体方法
@@ -307,11 +302,11 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// 创建动态程序集
         /// </summary>
         /// <param name="assembleName"></param>
-        /// <param name="apiGroup"></param>
+        /// <param name="apiBindGroup"></param>
         /// <returns></returns>
-        private BuildDynamicAssemblyResult BuildDynamicAssembly(string assembleName, IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
+        private BuildDynamicAssemblyResult BuildDynamicAssembly(string assembleName, IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiBindGroup)
         {
-            var platformType = apiGroup.Key;
+            var platformType = apiBindGroup.Key;
 
             //动态创建程序集
             AssemblyName dynamicApiAssembly = new AssemblyName(assembleName); //Assembly.GetExecutingAssembly().GetName();// new AssemblyName("DynamicAssembly");
@@ -322,7 +317,7 @@ namespace Senparc.Xncf.WeixinManager.Services
             ModuleBuilder mb = dynamicAssemblyBuilder.DefineDynamicModule(dynamicApiAssembly.Name);
 
             //储存 API
-            //_apiCollection[platformType] = new Dictionary<string, ApiBindInfo>(apiGroup);
+            //_apiCollection[platformType] = new Dictionary<string, ApiBindInfo>(apiBindGroup);
             var controllerKeyName = platformType.ToString();//不要随意改规则，全局需要保持一致
 
             WriteLog($"search key: {platformType} -> {controllerKeyName}", true);
@@ -389,22 +384,22 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <summary>
         /// 创建动态 WebApi
         /// </summary>
-        public async Task<int> BuildWebApi(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiGroup)
+        public async Task<int> BuildWebApi(IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>> apiBindGroup)
         {
-            var platformType = apiGroup.Key;
+            var platformType = apiBindGroup.Key;
             var dt1 = SystemTime.Now;
             WriteLog("", true);
             WriteLog($"==== Begin BuildWebApi for {platformType} ====", true);
 
-            if (apiGroup.Count() == 0 || !WeixinApiAssemblyNames.ContainsKey(platformType))
+            if (apiBindGroup.Count() == 0 || !WeixinApiAssemblyNames.ContainsKey(platformType))
             {
-                WriteLog($"apiGroup 不存在可用对象: {platformType}");
+                WriteLog($"apiBindGroup 不存在可用对象: {platformType}");
                 return 0;
             }
 
             var groupStartTime = SystemTime.Now;
 
-            var xmlFileName = $"{apiGroup.First().Value.MethodInfo.DeclaringType.Assembly.GetName().Name}.xml";//XML 文件名
+            var xmlFileName = $"{apiBindGroup.First().Value.MethodInfo.DeclaringType.Assembly.GetName().Name}.xml";//XML 文件名
             var sourceName = $"Senparc.Xncf.WeixinManager.App_Data.ApiDocXml.{xmlFileName}";//嵌入资源地址
             var sourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(sourceName);
 
@@ -422,10 +417,11 @@ namespace Senparc.Xncf.WeixinManager.Services
             {
                 if (x.HasAttributes)
                 {
-                    var docMethodInfo = GetDocMethodInfo(x.FirstAttribute.Value);
+                    var nameAttr = x.FirstAttribute;
+                    var docMethodInfo = GetDocMethodInfo(nameAttr);
                     if (docMethodInfo.MethodName != null && docMethodInfo.ParamsPart != null)
                     {
-                        docMembersCollection[docMethodInfo.MethodName] = new DocMembersCollectionValue(x, docMethodInfo.ParamsPart);
+                        docMembersCollection[docMethodInfo.MethodName] = new DocMembersCollectionValue(/*x, */nameAttr, docMethodInfo.ParamsPart);
                     }
                 }
             }
@@ -437,11 +433,11 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             #region 动态创建程序集
 
-            var dynamicAssembly = BuildDynamicAssembly(assembleName, apiGroup);
+            var dynamicAssembly = BuildDynamicAssembly(assembleName, apiBindGroup);
 
             #endregion
 
-            var apiFilterList = apiGroup.Where(z => !z.Value.ApiBindAttribute.Name.EndsWith("Async")
+            var apiBindFilterList = apiBindGroup.Where(z => !z.Value.ApiBindAttribute.Name.EndsWith("Async")
                                      && z.Value.MethodInfo.ReturnType != typeof(Task<>)
                                      && z.Value.MethodInfo.ReturnType != typeof(void)
                                      && !z.Value.MethodInfo.IsGenericMethod //SemanticApi.SemanticSend 是泛型方法
@@ -466,8 +462,8 @@ namespace Senparc.Xncf.WeixinManager.Services
             List<Task> taskList = new List<Task>();
 
             //预分配每个线程需要领取的任务（索引范围）
-            var apiFilterMaxIndex = apiFilterList.Length - 1;//最大索引
-            var avgBlockCount = (int)((apiFilterList.Length - 1) / _taskCount);//每个线程（块）领取的平均数量
+            var apiFilterMaxIndex = apiBindFilterList.Length - 1;//最大索引
+            var avgBlockCount = (int)((apiBindFilterList.Length - 1) / _taskCount);//每个线程（块）领取的平均数量
             var lastEndIndex = -1;//上一个块的结束索引
 
             for (int taskIndex = 0; taskIndex < _taskCount; taskIndex++)
@@ -493,13 +489,13 @@ namespace Senparc.Xncf.WeixinManager.Services
                 var apiTask = Task.Factory.StartNew(() =>
                 {
                     Range blockRange = blockStart..(blockEnd + 1);
-                    var apiBindInfoBlock = apiFilterList[blockRange];//截取一段，分配给当前任务
+                    var apiBindInfoBlock = apiBindFilterList[blockRange];//截取一段，分配给当前任务
 
                     apiIndex++;
 
                     #region ApiBuild
 
-                    BuildApiForOneThread(apiGroup, apiBindInfoBlock, apiMethodName, dynamicAssembly.ControllerKeyName, dynamicAssembly.Tb, docMembersCollection, apiIndex);
+                    BuildApiForOneThread(apiBindGroup, apiBindInfoBlock, apiMethodName, dynamicAssembly.ControllerKeyName, dynamicAssembly.Tb, docMembersCollection, apiIndex);
 
                     #endregion
                 });
@@ -519,16 +515,16 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             #region 保存新的 Xml 文件
 
-            var newDocFile = $"App_Data/ApiDocXml/{assembleName}.xml";
+            var newDocFileName = $"App_Data/ApiDocXml/{assembleName}.xml";
             try
             {
                 //using (XmlWriter xw = XmlWriter.Create(newDocFile, new XmlWriterSettings() { Async = true }))
                 //{
                 //    await document.SaveAsync(xw, new CancellationToken()).ConfigureAwait(false);//保存
                 //}
-                document.Save(newDocFile);
+                document.Save(newDocFileName);
 
-                WriteLog($"new document file saved: {newDocFile}, assembly cost:{SystemTime.NowDiff(groupStartTime)}");
+                WriteLog($"new document file saved: {newDocFileName}, assembly cost:{SystemTime.NowDiff(groupStartTime)}");
             }
             catch (Exception ex)
             {
@@ -562,7 +558,8 @@ namespace Senparc.Xncf.WeixinManager.Services
                 var docMethodInfo = docMembersCollection[docMethodName];
                 // like: "M:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary(System.String,System.String,System.String,System.Int32)"
                 var newAttrName = $"M:{tb.FullName}.{methodName}{docMethodInfo.ParamsPart}";
-                docMethodInfo.Element.SetValue(newAttrName);
+
+                docMethodInfo.NameAttr.SetValue(newAttrName);
                 //WriteLog($"\t change document name:  {attr.Value} -> {newAttrName}");
             }
         }
@@ -613,9 +610,9 @@ namespace Senparc.Xncf.WeixinManager.Services
                        //此处使用 Task 效率并不比 Keys.ToList() 方法快
                        WriteLog($"get weixinApis groups: {weixinApis.Count()}, now dealing with: {platformType}");
                        var dtStart = SystemTime.Now;
-                       var apiGroup = weixinApis.FirstOrDefault(z => z.Key == platformType);
+                       var apiBindGroup = weixinApis.FirstOrDefault(z => z.Key == platformType);
 
-                       var apiCount = await BuildWebApi(apiGroup).ConfigureAwait(false);
+                       var apiCount = await BuildWebApi(apiBindGroup).ConfigureAwait(false);
                        var weixinApiAssembly = GetWeixinApiAssembly(platformType);
 
                        builder.AddApplicationPart(weixinApiAssembly);//程序部件：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/advanced/app-parts?view=aspnetcore-2.2

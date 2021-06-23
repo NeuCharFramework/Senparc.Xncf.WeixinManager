@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Senparc.Xncf.WeixinManager.Services.Tests
 {
@@ -52,25 +53,25 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
             var weixinApiService = new WeixinApiService();
 
             {
-                var input = "M:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary(System.String,System.String,System.String,System.Int32)";
+                var input = new XAttribute("name", "M:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary(System.String,System.String,System.String,System.Int32)");
                 var result = weixinApiService.GetDocMethodInfo(input);
                 Assert.AreEqual("Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary", result.MethodName);
                 Assert.AreEqual("(System.String,System.String,System.String,System.Int32)", result.ParamsPart);
             }
             {
-                var input = "T:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi";
+                var input = new XAttribute("name", "T:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi");
                 var result = weixinApiService.GetDocMethodInfo(input);
                 Assert.AreEqual(null, result.MethodName);
                 Assert.AreEqual(null, result.ParamsPart);
             }
             {
-                var input = "P:Senparc.Weixin.MP.AdvancedAPIs.ShakeAround.QueryLottery_Result.drawed_value";
+                var input  = new XAttribute("name", "P:Senparc.Weixin.MP.AdvancedAPIs.ShakeAround.QueryLottery_Result.drawed_value");
                 var result = weixinApiService.GetDocMethodInfo(input);
                 Assert.AreEqual(null, result.MethodName);
                 Assert.AreEqual(null, result.ParamsPart);
             }
             {
-                var input = "F:Senparc.Weixin.MP.MemberCard_CustomField_NameType.FIELD_NAME_TYPE_UNKNOW";
+                var input  = new XAttribute("name", "F:Senparc.Weixin.MP.MemberCard_CustomField_NameType.FIELD_NAME_TYPE_UNKNOW");
                 var result = weixinApiService.GetDocMethodInfo(input);
                 Assert.AreEqual(null, result.MethodName);
                 Assert.AreEqual(null, result.ParamsPart);
@@ -81,7 +82,7 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
                 Console.WriteLine();
                 {
                     var dt1 = SystemTime.Now;
-                    var input = "M:Senparc.Weixin.MP.AdvancedAPIs.TemplateApi.SendTemplateMessage(System.String,System.String,Senparc.Weixin.Entities.TemplateMessage.ITemplateMessageBase,Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage.TempleteModel_MiniProgram,System.Int32)";
+                    var input = new XAttribute("name", "M:Senparc.Weixin.MP.AdvancedAPIs.TemplateApi.SendTemplateMessage(System.String,System.String,Senparc.Weixin.Entities.TemplateMessage.ITemplateMessageBase,Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage.TempleteModel_MiniProgram,System.Int32)");
                     var result = weixinApiService.GetDocMethodInfo(input);
                     Console.WriteLine("Method 1 Cost:" + SystemTime.DiffTotalMS(dt1) + "ms");
 
@@ -89,7 +90,7 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
                     Assert.AreEqual("(System.String,System.String,Senparc.Weixin.Entities.TemplateMessage.ITemplateMessageBase,Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage.TempleteModel_MiniProgram,System.Int32)", result.ParamsPart);
                 }
             }
-            
+
         }
     }
 
