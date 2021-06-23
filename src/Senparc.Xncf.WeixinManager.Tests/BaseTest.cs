@@ -24,20 +24,23 @@ namespace Senparc.Xncf.WeixinManager.Tests
     public class BaseTest
     {
         public IServiceCollection ServiceCollection { get; }
-        public static IServiceProvider ServiceProvider { get; set; }
-        public static IConfiguration Configuration { get; set; }
+        public IServiceProvider ServiceProvider { get; set; }
+        public IConfiguration Configuration { get; set; }
 
-        protected static IRegisterService registerService;
-        protected static SenparcSetting _senparcSetting;
+        protected IRegisterService registerService;
+        protected SenparcSetting _senparcSetting;
 
-        protected static Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/> _env;
+        protected Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/> _env;
 
         public BaseTest()
         {
             _env = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/>();
             _env.Setup(z => z.ContentRootPath).Returns(() => Path.GetFullPath("..\\..\\..\\"));
 
-            ServiceCollection = new ServiceCollection();
+            //SiteConfig.WebRootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
+            //ServiceCollection = new ServiceCollection();
+            //var result = ServiceCollection.StartEngine(Configuration);
+
         }
 
         public void Init()
@@ -51,7 +54,7 @@ namespace Senparc.Xncf.WeixinManager.Tests
         /// <summary>
         /// ×¢²á IServiceCollection ºÍ MemoryCache
         /// </summary>
-        public static void RegisterServiceCollection()
+        public void RegisterServiceCollection()
         {
             var serviceCollection = new ServiceCollection();
             var configBuilder = new ConfigurationBuilder();
@@ -90,7 +93,7 @@ namespace Senparc.Xncf.WeixinManager.Tests
         /// <summary>
         /// ×¢²á RegisterService.Start()
         /// </summary>
-        public static void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
+        public void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
         {
             //×¢²á
             registerService = Senparc.CO2NET.AspNet.RegisterServices.RegisterService.Start(_env.Object, _senparcSetting)

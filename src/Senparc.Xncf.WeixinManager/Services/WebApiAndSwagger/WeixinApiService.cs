@@ -30,16 +30,18 @@ namespace Senparc.Xncf.WeixinManager.Services
         public static Dictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
 
         private bool _showDetailApiLog = false;
-
+        private readonly FindWeixinApiService _findWeixinApiService;
         private int _taskCount;
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="taskCount">同时执行线程数</param>
         /// <param name="showDetailApiLog"></param>
-        public WeixinApiService(int taskCount = 400, bool showDetailApiLog = false)
+        public WeixinApiService(FindWeixinApiService findWeixinApiService = null, int taskCount = 400, bool showDetailApiLog = false)
         {
+            _findWeixinApiService = findWeixinApiService ?? new FindWeixinApiService();
             _taskCount = taskCount;
             _showDetailApiLog = showDetailApiLog;
 
@@ -324,7 +326,7 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             //动态创建类 XXController
             var controllerClassName = $"{controllerKeyName}Controller";
-            TypeBuilder tb = mb.DefineType(controllerClassName, TypeAttributes.Public, typeof(Controller));
+            TypeBuilder tb = mb.DefineType(controllerClassName, TypeAttributes.Public, typeof(ControllerBase) /*typeof(Controller)*/);
             //ConstructorBuilder constructor = tb.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
             //多个Get参数放在同一个Controller中可能发生问题：NotSupportedException: HTTP method "GET" & path "wxapi/WeChat_OfficialAccount/CommonApi_CreateMenu" overloaded by actions - WeChat_OfficialAccountController.CommonApi_CreateMenu (WeixinApiAssembly),WeChat_OfficialAccountController.CommonApi_CreateMenu (WeixinApiAssembly). Actions require unique method/path combination for OpenAPI 3.0. Use ConflictingActionsResolver as a workaround
 
@@ -421,7 +423,14 @@ namespace Senparc.Xncf.WeixinManager.Services
                     var docMethodInfo = GetDocMethodInfo(nameAttr);
                     if (docMethodInfo.MethodName != null && docMethodInfo.ParamsPart != null)
                     {
+                        //记录索引信息
                         docMembersCollection[docMethodInfo.MethodName] = new DocMembersCollectionValue(/*x, */nameAttr, docMethodInfo.ParamsPart);
+
+                        //记录接口信息，用于搜索
+                        var isAsync = docMethodInfo.MethodName.EndsWith("Async", StringComparison.OrdinalIgnoreCase) ||
+                                        docMethodInfo.MethodName.Contains("Async``", StringComparison.OrdinalIgnoreCase);//是否是异步方法
+                        _findWeixinApiService.RecordApiItem(platformType, docMethodInfo.MethodName, docMethodInfo.ParamsPart,
+                            x.Element("summary")?.Value, isAsync);
                     }
                 }
             }

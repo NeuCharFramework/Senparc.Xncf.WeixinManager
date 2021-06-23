@@ -12,6 +12,7 @@ using Senparc.NeuChar;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Models;
 using Senparc.Xncf.WeixinManager.Services;
+using Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -53,7 +54,8 @@ namespace Senparc.Xncf.WeixinManager
             //{
             //    //根据条件生成不同的PostModel
             //});
-            Console.WriteLine("AddXncfModule");
+
+            services.AddScoped<FindWeixinApiService>();
 
             #region Swagger
 
@@ -63,7 +65,7 @@ namespace Senparc.Xncf.WeixinManager
 
             //.NET Core 3.0 for Swagger https://www.thecodebuzz.com/swagger-api-documentation-in-net-core-3-0/
 
-            //初始化 ApiDoc
+            //初始化 ApiDoc    TODO：放到 app.UseXX 中
             WeixinApiService apiDocService = new WeixinApiService();
             apiDocService.InitDynamicApi(builder);
 
@@ -173,7 +175,6 @@ namespace Senparc.Xncf.WeixinManager
             #endregion
 
 
-
             return base.AddXncfModule(services, configuration);//如果重写此方法，必须调用基类方法
         }
 
@@ -255,7 +256,7 @@ namespace Senparc.Xncf.WeixinManager
             {
             }
 
-            Console.WriteLine("UseSwaggerUI");
+            //Console.WriteLine("UseSwaggerUI");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -273,7 +274,7 @@ namespace Senparc.Xncf.WeixinManager
                     var verion = WeixinApiService.WeixinApiAssemblyVersions[neucharApiDocAssembly.Key]; //neucharApiDocAssembly.Value.ImageRuntimeVersion;
                     var docName = WeixinApiService.GetDocName(neucharApiDocAssembly.Key);
 
-                    Console.WriteLine($"\tAdd {docName}");
+                    //Console.WriteLine($"\tAdd {docName}");
 
                     c.SwaggerEndpoint($"/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
                 }

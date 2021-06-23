@@ -18,6 +18,7 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
     {
         public WeixinApiServiceTests() : base()
         {
+
         }
 
         [TestMethod()]
@@ -27,9 +28,7 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
             //Init();
             //Console.WriteLine("Finish Init()");
 
-            SiteConfig.WebRootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
-            var result = ServiceCollection.StartEngine(Configuration);
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Init();
 
             //程序执行会自动触发
             var weixinApis = Senparc.NeuChar.ApiBind.ApiBindInfoCollection.Instance.GetGroupedCollection();

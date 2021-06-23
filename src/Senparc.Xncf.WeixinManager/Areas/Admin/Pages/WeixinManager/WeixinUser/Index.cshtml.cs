@@ -90,7 +90,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                 z => z.Id, Ncf.Core.Enums.OrderingType.Descending, z => z.Include(p => p.UserTags_WeixinUsers).ThenInclude(p => p.UserTag));
 
             //ViewData["Test"] = result.FirstOrDefault();
-            var weixinUserDtos = new PagedList<WeixinUserDto>(result.Select(z => _mpAccountService.Mapper.Map<WeixinUserDto>(z)).ToList(), result.PageIndex, result.PageCount, result.TotalCount);
+            var weixinUserDtos = new PagedList<WeixinUserDto>(result.Select(z => _weixinUserService.Mapper.Map<WeixinUserDto>(z)).ToList(), result.PageIndex, result.PageCount, result.TotalCount);
             return Ok(new { mpAccountDto, weixinUserDtos = new { weixinUserDtos.TotalCount, list = weixinUserDtos.Select(_ => new 
             {
                 _.AddTime,
@@ -113,7 +113,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                 _.Subscribe,
                 _.Subscribe_Scene,
                 Subscribe_Time = new DateTime(1970, 1, 1).AddSeconds(_.Subscribe_Time).ToString(),
-                _.Tagid_List,
+                //_.Tagid_List,
                 _.UnionId,
                 UserTags_WeixinUsers = _.UserTags_WeixinUsers.Select(__ => new { __.UserTag, __.UserTagId, __.WeixinUserId }),
             }).AsEnumerable() } });
