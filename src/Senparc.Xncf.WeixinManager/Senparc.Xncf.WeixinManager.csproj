@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-		<Version>0.6.344-beta1</Version>
+		<Version>0.6.348-beta1</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -83,7 +83,7 @@
 		<PackageReference Include="Senparc.Ncf.Core" Version="0.6.128-beta1" />
 		<PackageReference Include="Senparc.Ncf.Database.Sqlite" Version="0.6.128-beta1" />
 		<PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.6.128-beta1" />
-		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.6.128-beta1" />
+		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.6.129-beta1" />
 		<PackageReference Include="Senparc.Weixin.AspNet" Version="0.3.501" />
 		<PackageReference Include="Senparc.Weixin.MP" Version="16.12.501.1" />
 		<PackageReference Include="Senparc.Weixin.MP.Middleware" Version="0.3.501" />

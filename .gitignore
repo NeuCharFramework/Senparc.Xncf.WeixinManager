@@ -38,3 +38,4 @@
 /**/bin/*
 /**/obj/*
 /src/Senparc.Xncf.WeixinManager.Tests/App_Data/SenparcTraceLog
+*.user

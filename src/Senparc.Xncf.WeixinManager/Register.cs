@@ -53,6 +53,7 @@ namespace Senparc.Xncf.WeixinManager
             //{
             //    //根据条件生成不同的PostModel
             //});
+            Console.WriteLine("AddXncfModule");
 
             #region Swagger
 
@@ -176,13 +177,13 @@ namespace Senparc.Xncf.WeixinManager
             return base.AddXncfModule(services, configuration);//如果重写此方法，必须调用基类方法
         }
 
-        public async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
+        public override async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
         {
             //安装或升级版本时更新数据库
             await base.MigrateDatabaseAsync(serviceProvider);
         }
 
-        public async Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc)
+        public override async Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc)
         {
             //TODO:可以在基础模块里给出选项是否删除
 
