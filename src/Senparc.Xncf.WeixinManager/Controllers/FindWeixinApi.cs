@@ -10,11 +10,11 @@ namespace Senparc.Xncf.WeixinManager.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FindWeixinApi : ControllerBase
+    public class FindWeixinApiController : ControllerBase
     {
         private readonly FindWeixinApiService _findWeixinApiService;
 
-        public FindWeixinApi(FindWeixinApiService findWeixinApiService)
+        public FindWeixinApiController(FindWeixinApiService findWeixinApiService)
         {
             this._findWeixinApiService = findWeixinApiService;
         }

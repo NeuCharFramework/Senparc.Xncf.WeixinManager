@@ -26,8 +26,8 @@ namespace Senparc.Xncf.WeixinManager.Services
 
         public static ConcurrentDictionary<PlatformType, Assembly> WeixinApiAssemblyCollection { get; set; } = new ConcurrentDictionary<PlatformType, Assembly>();
 
-        public static Dictionary<PlatformType, string> WeixinApiAssemblyNames { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
-        public static Dictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new Dictionary<PlatformType, string>(); //= "WeixinApiAssembly";
+        public static ConcurrentDictionary<PlatformType, string> WeixinApiAssemblyNames { get; private set; } = new ConcurrentDictionary<PlatformType, string>(); //= "WeixinApiAssembly";
+        public static ConcurrentDictionary<PlatformType, string> WeixinApiAssemblyVersions { get; private set; } = new ConcurrentDictionary<PlatformType, string>(); //= "WeixinApiAssembly";
 
         private bool _showDetailApiLog = false;
         private readonly FindWeixinApiService _findWeixinApiService;
