@@ -39,7 +39,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// </summary>
         /// <param name="taskCount">同时执行线程数</param>
         /// <param name="showDetailApiLog"></param>
-        public WeixinApiService(FindWeixinApiService findWeixinApiService = null, int taskCount = 400, bool showDetailApiLog = false)
+        public WeixinApiService(FindWeixinApiService findWeixinApiService = null, int taskCount = 4, bool showDetailApiLog = false)
         {
             _findWeixinApiService = findWeixinApiService ?? new FindWeixinApiService();
             _taskCount = taskCount;
@@ -91,6 +91,9 @@ namespace Senparc.Xncf.WeixinManager.Services
             }
         }
 
+        private static Regex regex = new Regex(@"(M\:)(?<docName>[^(]+)(?<paramsPart>\({1}.+\){1})", RegexOptions.Compiled);
+
+
         /// <summary>
         /// 获取 DocName
         /// </summary>
@@ -99,11 +102,12 @@ namespace Senparc.Xncf.WeixinManager.Services
         public DocMethodInfo GetDocMethodInfo(XAttribute nameAttr)
         {
             var pattern = @"(M\:)(?<docName>[^(]+)(?<paramsPart>\({1}.+\){1})";
-            var result = Regex.Match(nameAttr.Value, pattern);
+            var result = regex.Match(pattern);
             if (result.Success && result.Groups["docName"] != null && result.Groups["paramsPart"] != null)
             {
                 return new DocMethodInfo(result.Groups["docName"].Value, result.Groups["paramsPart"].Value);
             }
+
             return new DocMethodInfo(null, null);
 
             //以下方法速度略慢：
@@ -414,13 +418,17 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             ConcurrentDictionary<string, DocMembersCollectionValue> docMembersCollection = new ConcurrentDictionary<string, DocMembersCollectionValue>();
 
+            double dtlong = 0;
+
             //var dtDoc = SystemTime.Now;
             await foreach (var x in docMembers)
             {
                 if (x.HasAttributes)
                 {
                     var nameAttr = x.FirstAttribute;
+                    var dt00 = SystemTime.Now;
                     var docMethodInfo = GetDocMethodInfo(nameAttr);
+                    dtlong += SystemTime.DiffTotalMS(dt00);
                     if (docMethodInfo.MethodName != null && docMethodInfo.ParamsPart != null)
                     {
                         //记录索引信息
@@ -434,7 +442,6 @@ namespace Senparc.Xncf.WeixinManager.Services
                     }
                 }
             }
-
             //WriteLog($"docMembersCollection init cost:{SystemTime.DiffTotalMS(dtDoc)}ms");
 
             //WriteLog("Document Root Name:" + root.Name);
