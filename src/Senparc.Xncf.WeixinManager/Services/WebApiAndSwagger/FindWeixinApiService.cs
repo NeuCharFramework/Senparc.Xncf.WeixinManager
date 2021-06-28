@@ -47,6 +47,7 @@ namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger
         /// <param name="isAsync"></param>
         /// <param name="keyword"></param>
         /// <returns></returns>
+        //[ApiBind(PlatformType.General, "FindWeixinApi", false)]
         public FindWeixinApiResult FindWeixinApiResult(PlatformType? platformType, bool? isAsync, string keyword)
         {
             Func<ApiItem, bool> where = z =>

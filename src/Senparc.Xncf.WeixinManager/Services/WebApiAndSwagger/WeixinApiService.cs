@@ -37,6 +37,7 @@ namespace Senparc.Xncf.WeixinManager.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="findWeixinApiService"></param>
         /// <param name="taskCount">同时执行线程数</param>
         /// <param name="showDetailApiLog"></param>
         public WeixinApiService(FindWeixinApiService findWeixinApiService = null, int taskCount = 4, bool showDetailApiLog = false)
@@ -50,6 +51,7 @@ namespace Senparc.Xncf.WeixinManager.Services
             WeixinApiAssemblyNames[PlatformType.WeChat_MiniProgram] = $"NeuCharDocApi.{PlatformType.WeChat_MiniProgram}";
             WeixinApiAssemblyNames[PlatformType.WeChat_Open] = $"NeuCharDocApi.{PlatformType.WeChat_Open}";
             WeixinApiAssemblyNames[PlatformType.WeChat_Work] = $"NeuCharDocApi.{PlatformType.WeChat_Work}";
+            //WeixinApiAssemblyNames[PlatformType.General] = $"NeuCharDocApi.{PlatformType.General}";
             //WeixinApiAssemblyNames[PlatformType.WeChat_Tenpay] = $"NeuCharDocApi.{PlatformType.WeChat_Tenpay}";
         }
 

@@ -96,8 +96,10 @@ namespace Senparc.Xncf.WeixinManager
                         //TermsOfService = new Uri("https://github.com/JeffreySu/WeiXinMPSDK")
                     });
                     //暂时停用，检查效率
-
-                    c.IncludeXmlComments($"App_Data/ApiDocXml/{WeixinApiService.WeixinApiAssemblyNames[neucharApiDocAssembly.Key]}.xml");
+                    if (neucharApiDocAssembly.Key!= PlatformType.General)
+                    {
+                        c.IncludeXmlComments($"App_Data/ApiDocXml/{WeixinApiService.WeixinApiAssemblyNames[neucharApiDocAssembly.Key]}.xml");
+                    }
                 }
 
                 //分组显示  https://www.cnblogs.com/toiv/archive/2018/07/28/9379249.html
@@ -331,6 +333,10 @@ namespace Senparc.Xncf.WeixinManager
             {
                 platformType = PlatformType.WeChat_MiniProgram.ToString();
             }
+            //else if (title.Contains(PlatformType.General.ToString()))
+            //{
+            //    platformType = PlatformType.General.ToString();
+            //}
             else
             {
                 throw new NotImplementedException($"未提供的 PlatformType 类型，Title：{title}");
