@@ -12,7 +12,6 @@ using Senparc.NeuChar;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Models;
 using Senparc.Xncf.WeixinManager.Services;
-using Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -32,7 +31,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.6.1-beta1";
+        public override string Version => "0.7.0-beta1";
 
 
         public override string MenuName => "微信管理";
@@ -54,128 +53,6 @@ namespace Senparc.Xncf.WeixinManager
             //{
             //    //根据条件生成不同的PostModel
             //});
-
-            services.AddScoped<FindWeixinApiService>();
-
-            #region Swagger
-
-            services.AddScoped<WeixinApiService>();
-            //services.AddMvcCore();
-            var builder = services.AddControllers();
-
-            //.NET Core 3.0 for Swagger https://www.thecodebuzz.com/swagger-api-documentation-in-net-core-3-0/
-
-            //初始化 ApiDoc    TODO：放到 app.UseXX 中
-            WeixinApiService apiDocService = new WeixinApiService();
-            apiDocService.InitDynamicApi(builder);
-
-            //添加Swagger
-            services.AddSwaggerGen(c =>
-            {
-                //为每个程序集创建文档
-                foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyCollection)
-                {
-                    var version = WeixinApiService.WeixinApiAssemblyVersions[neucharApiDocAssembly.Key]; //neucharApiDocAssembly.Value.ImageRuntimeVersion;
-                    var docName = WeixinApiService.GetDocName(neucharApiDocAssembly.Key);
-                    c.SwaggerDoc(docName, new OpenApiInfo
-                    {
-                        Title = $"NeuChar Dynamic WebApi Engine : {neucharApiDocAssembly.Key}",
-                        Version = $"v{version}",//"v16.5.4"
-                        Description = $"Senparc NeuChar WebApi 自生成引擎（{neucharApiDocAssembly.Key} - v{version}）",
-                        //License = new OpenApiLicense()
-                        //{
-                        //    Name = "Apache License Version 2.0",
-                        //    Url = new Uri("https://github.com/JeffreySu/WeiXinMPSDK")
-                        //},
-                        Contact = new OpenApiContact()
-                        {
-                            Email = "zsu@senparc.com",
-                            Name = "Senparc SDK Team",
-                            Url = new Uri("https://www.senparc.com")
-                        },
-                        //TermsOfService = new Uri("https://github.com/JeffreySu/WeiXinMPSDK")
-                    });
-                    //暂时停用，检查效率
-                    if (neucharApiDocAssembly.Key!= PlatformType.General)
-                    {
-                        c.IncludeXmlComments($"App_Data/ApiDocXml/{WeixinApiService.WeixinApiAssemblyNames[neucharApiDocAssembly.Key]}.xml");
-                    }
-                }
-
-                //分组显示  https://www.cnblogs.com/toiv/archive/2018/07/28/9379249.html
-                c.DocInclusionPredicate((docName, apiDesc) =>
-                {
-                    if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo))
-                    {
-                        return false;
-                    }
-
-                    var versions = methodInfo.DeclaringType
-                          .GetCustomAttributes(true)
-                          .OfType<SwaggerOperationAttribute>()
-                          .Select(z => z.Tags[0].Split(':')[0]);
-
-                    if (versions.FirstOrDefault() == null)
-                    {
-                        return false;//不符合要求的都不显示
-                    }
-
-                    //docName: $"{neucharApiDocAssembly.Key}-v1"
-                    return versions.Any(z => docName.StartsWith(z));
-                });
-
-                c.OrderActionsBy(z => z.RelativePath);
-                //c.DescribeAllEnumsAsStrings();//枚举显示字符串
-                c.EnableAnnotations();
-                c.DocumentFilter<RemoveVerbsFilter>();
-                c.CustomSchemaIds(x => x.FullName);//规避错误：InvalidOperationException: Can't use schemaId "$JsApiTicketResult" for type "$Senparc.Weixin.Open.Entities.JsApiTicketResult". The same schemaId was already used for type "$Senparc.Weixin.MP.Entities.JsApiTicketResult"
-
-                /* 需要登陆，暂不考虑    —— Jeffrey Su 2021.06.17
-                var oAuthDocName = "oauth2";// WeixinApiService.GetDocName(PlatformType.WeChat_OfficialAccount);
-
-                //添加授权
-                var authorizationUrl = NeuChar.App.AppStore.Config.IsDebug
-                                               //以下是 appPurachase 的 Id，实际应该是 appId
-                                               //? "http://localhost:12222/App/LoginOAuth/Authorize/1002/"
-                                               //: "https://www.neuchar.com/App/LoginOAuth/Authorize/4664/";
-                                               //以下是正确的 appId
-                                               ? "http://localhost:12222/App/LoginOAuth/Authorize?appId=xxx"
-                                               : "https://www.neuchar.com/App/LoginOAuth/Authorize?appId=3035";
-
-                c.AddSecurityDefinition(oAuthDocName,//"Bearer" 
-                    new OpenApiSecurityScheme
-                    {
-                        Description = "请输入带有Bearer开头的Token",
-                        Name = oAuthDocName,// "Authorization",
-                        In = ParameterLocation.Header,
-                        Type = SecuritySchemeType.OAuth2,
-                        //OpenIdConnectUrl = new Uri("https://www.neuchar.com/"),
-                        Flows = new OpenApiOAuthFlows()
-                        {
-                            Implicit = new OpenApiOAuthFlow()
-                            {
-                                AuthorizationUrl = new Uri(authorizationUrl),
-                                Scopes = new Dictionary<string, string> { { "swagger_api", "Demo API - full access" } }
-                            }
-                        }
-                    });
-
-                //认证方式，此方式为全局添加
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    { new OpenApiSecurityScheme(){ Name =oAuthDocName//"Bearer"
-                    }, new List<string>() }
-                    //{ "Bearer", Enumerable.Empty<string>() }
-                });
-
-                //c.OperationFilter<AuthResponsesOperationFilter>();//AuthorizeAttribute过滤
-
-                */
-
-            });
-
-            #endregion
-
 
             return base.AddXncfModule(services, configuration);//如果重写此方法，必须调用基类方法
         }
@@ -258,33 +135,28 @@ namespace Senparc.Xncf.WeixinManager
             {
             }
 
-            //Console.WriteLine("UseSwaggerUI");
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c =>
+            //{
+            //    //c.DocumentTitle = "Senparc Weixin SDK Demo API";
+            //    c.InjectJavascript("/lib/jquery/dist/jquery.min.js");
+            //    c.InjectJavascript("/js/swagger.js");
+            //    //c.InjectJavascript("/js/tongji.js");
+            //    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                //c.DocumentTitle = "Senparc Weixin SDK Demo API";
-                c.InjectJavascript("/lib/jquery/dist/jquery.min.js");
-                c.InjectJavascript("/js/swagger.js");
-                //c.InjectJavascript("/js/tongji.js");
-                c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+            //    foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyCollection)
+            //    {
 
-                foreach (var neucharApiDocAssembly in WeixinApiService.WeixinApiAssemblyCollection)
-                {
+            //        //TODO:真实的动态版本号
+            //        var verion = WeixinApiService.WeixinApiAssemblyVersions[neucharApiDocAssembly.Key]; //neucharApiDocAssembly.Value.ImageRuntimeVersion;
+            //        var docName = WeixinApiService.GetDocName(neucharApiDocAssembly.Key);
 
-                    //TODO:真实的动态版本号
-                    var verion = WeixinApiService.WeixinApiAssemblyVersions[neucharApiDocAssembly.Key]; //neucharApiDocAssembly.Value.ImageRuntimeVersion;
-                    var docName = WeixinApiService.GetDocName(neucharApiDocAssembly.Key);
+            //        //Console.WriteLine($"\tAdd {docName}");
 
-                    //Console.WriteLine($"\tAdd {docName}");
+            //        c.SwaggerEndpoint($"/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
+            //    }
 
-                    c.SwaggerEndpoint($"/swagger/{docName}/swagger.json", $"{neucharApiDocAssembly.Key} v{verion}");
-                }
-
-                //OAuth     https://www.cnblogs.com/miskis/p/10083985.html
-                c.OAuthClientId("e65ea785b96b442a919965ccf857aba3");//客服端名称
-                c.OAuthAppName("微信 API Swagger 文档 "); // 描述
-            });
+            //});
 
 
             return base.UseXncfModule(app, registerService);

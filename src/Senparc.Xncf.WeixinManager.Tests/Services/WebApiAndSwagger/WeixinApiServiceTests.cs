@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Senparc.CO2NET.Extensions;
+using Senparc.CO2NET.WebApi;
 using Senparc.Ncf.Core.Config;
 using Senparc.Ncf.XncfBase;
 using Senparc.Xncf.WeixinManager.Services;
@@ -31,16 +32,16 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
             Init();
 
             //程序执行会自动触发
-            var weixinApis = Senparc.NeuChar.ApiBind.ApiBindInfoCollection.Instance.GetGroupedCollection();
-            var weixinApiService = new WeixinApiService();
-            var apiGroup = weixinApis.FirstOrDefault(z => z.Key == NeuChar.PlatformType.WeChat_OfficialAccount);
+            var weixinApis = Senparc.CO2NET.ApiBind.ApiBindInfoCollection.Instance.GetGroupedCollection();
+            var webApiEngine = new WebApiEngine(null);
+            var apiGroup = weixinApis.FirstOrDefault(z => z.Key == NeuChar.PlatformType.WeChat_OfficialAccount.ToString());
             if (apiGroup == null)
             {
                 throw new Exception("找不到 Platform");
             }
 
-            var apiCount = weixinApiService.BuildWebApi(apiGroup).Result;
-            var weixinApiAssembly = weixinApiService.GetWeixinApiAssembly(apiGroup.Key);
+            var apiCount = webApiEngine.BuildWebApi(apiGroup).Result;
+            var weixinApiAssembly = webApiEngine.GetApiAssembly(apiGroup.Key);
             Console.WriteLine("API Count:" + apiCount);
             Console.WriteLine("Test Platform Assembly:" + weixinApiAssembly.FullName);
         }
@@ -49,29 +50,29 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
         [TestMethod()]
         public void GetDocMethodNameTest()
         {
-            var weixinApiService = new WeixinApiService();
+            var webApiEngine = new WebApiEngine(null);
 
             {
                 var input = new XAttribute("name", "M:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary(System.String,System.String,System.String,System.Int32)");
-                var result = weixinApiService.GetDocMethodInfo(input);
+                var result = webApiEngine.GetDocMethodInfo(input);
                 Assert.AreEqual("Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi.GetArticleSummary", result.MethodName);
                 Assert.AreEqual("(System.String,System.String,System.String,System.Int32)", result.ParamsPart);
             }
             {
                 var input = new XAttribute("name", "T:Senparc.Weixin.MP.AdvancedAPIs.AnalysisApi");
-                var result = weixinApiService.GetDocMethodInfo(input);
+                var result = webApiEngine.GetDocMethodInfo(input);
                 Assert.AreEqual(null, result.MethodName);
                 Assert.AreEqual(null, result.ParamsPart);
             }
             {
                 var input  = new XAttribute("name", "P:Senparc.Weixin.MP.AdvancedAPIs.ShakeAround.QueryLottery_Result.drawed_value");
-                var result = weixinApiService.GetDocMethodInfo(input);
+                var result = webApiEngine.GetDocMethodInfo(input);
                 Assert.AreEqual(null, result.MethodName);
                 Assert.AreEqual(null, result.ParamsPart);
             }
             {
                 var input  = new XAttribute("name", "F:Senparc.Weixin.MP.MemberCard_CustomField_NameType.FIELD_NAME_TYPE_UNKNOW");
-                var result = weixinApiService.GetDocMethodInfo(input);
+                var result = webApiEngine.GetDocMethodInfo(input);
                 Assert.AreEqual(null, result.MethodName);
                 Assert.AreEqual(null, result.ParamsPart);
             }
@@ -82,7 +83,7 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
                 {
                     var dt1 = SystemTime.Now;
                     var input = new XAttribute("name", "M:Senparc.Weixin.MP.AdvancedAPIs.TemplateApi.SendTemplateMessage(System.String,System.String,Senparc.Weixin.Entities.TemplateMessage.ITemplateMessageBase,Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage.TempleteModel_MiniProgram,System.Int32)");
-                    var result = weixinApiService.GetDocMethodInfo(input);
+                    var result = webApiEngine.GetDocMethodInfo(input);
                     Console.WriteLine("Method 1 Cost:" + SystemTime.DiffTotalMS(dt1) + "ms");
 
                     Assert.AreEqual("Senparc.Weixin.MP.AdvancedAPIs.TemplateApi.SendTemplateMessage", result.MethodName);

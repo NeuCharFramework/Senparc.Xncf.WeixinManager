@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Senparc.CO2NET.Extensions;
 using System.Linq;
 using Senparc.NeuChar;
+using Senparc.CO2NET.WebApi;
 
 namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger.Tests
 {
@@ -19,7 +20,7 @@ namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger.Tests
         {
             Init();
 
-            var finWeixinApiService = base.ServiceProvider.GetService<FindWeixinApiService>();
+            var finWeixinApiService = base.ServiceProvider.GetService<FindApiService>();
 
             {
                 Console.WriteLine("FindWeixinApiResultTest Test 1");
@@ -28,8 +29,8 @@ namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger.Tests
                 PlatformType? platformType = null;
                 bool? isAsync = null;
 
-                var result = finWeixinApiService.FindWeixinApiResult(platformType, isAsync, kw);
-                Assert.AreEqual(platformType, result.PlatformType);
+                var result = finWeixinApiService.FindWeixinApiResult(platformType.ToString(), isAsync, kw);
+                Assert.AreEqual(platformType.ToString(), result.Category);
                 Assert.AreEqual(isAsync, result.IsAsync);
                 Assert.AreEqual(kw, result.Keyword);
                 Assert.IsTrue(result.ApiItemList.Count() > 0);
@@ -46,7 +47,7 @@ namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger.Tests
                 PlatformType? platformType = null;
                 bool? isAsync = false;//搜索同步方法
 
-                var result = finWeixinApiService.FindWeixinApiResult(platformType, isAsync, kw);
+                var result = finWeixinApiService.FindWeixinApiResult(platformType.ToString(), isAsync, kw);
 
                 Console.WriteLine("结果数：" + result.ApiItemList.Count());
                 Console.WriteLine(result.ToJson(true));
@@ -63,7 +64,7 @@ namespace Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger.Tests
                 PlatformType? platformType = PlatformType.WeChat_OfficialAccount;//搜索 Senparc.Weixin.MP 程序集
                 bool? isAsync = true;//搜索异步方法
 
-                var result = finWeixinApiService.FindWeixinApiResult(platformType, isAsync, kw);
+                var result = finWeixinApiService.FindWeixinApiResult(platformType.ToString(), isAsync, kw);
 
                 Console.WriteLine("结果数：" + result.ApiItemList.Count());
                 Console.WriteLine(result.ToJson(true));

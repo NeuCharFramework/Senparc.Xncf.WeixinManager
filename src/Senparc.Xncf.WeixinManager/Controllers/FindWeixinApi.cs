@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Senparc.CO2NET.WebApi;
 using Senparc.NeuChar;
-using Senparc.Xncf.WeixinManager.Services.WebApiAndSwagger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +12,17 @@ namespace Senparc.Xncf.WeixinManager.Controllers
     [Route("[controller]")]
     public class FindWeixinApiController : ControllerBase
     {
-        private readonly FindWeixinApiService _findWeixinApiService;
+        private readonly FindApiService _findApiService;
 
-        public FindWeixinApiController(FindWeixinApiService findWeixinApiService)
+        public FindWeixinApiController(FindApiService findWeixinApiService)
         {
-            this._findWeixinApiService = findWeixinApiService;
+            this._findApiService = findWeixinApiService;
         }
 
         [HttpGet]
         public FindWeixinApiResult OnGetAsync(PlatformType? platformType, bool? isAsync, string keyword)
         {
-            var result = _findWeixinApiService.FindWeixinApiResult(platformType, isAsync, keyword);
+            var result = _findApiService.FindWeixinApiResult(platformType.ToString(), isAsync, keyword);
             return result;
         }
     }
