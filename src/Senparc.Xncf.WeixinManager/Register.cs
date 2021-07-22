@@ -55,10 +55,10 @@ namespace Senparc.Xncf.WeixinManager
             //    //根据条件生成不同的PostModel
             //});
 
-            services.AddScoped<FindWeixinApiService>();
 
             #region Swagger
 
+            services.AddScoped<FindWeixinApiService>();
             services.AddScoped<WeixinApiService>();
             //services.AddMvcCore();
             var builder = services.AddControllers();
