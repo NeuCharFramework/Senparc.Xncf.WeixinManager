@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Senparc.Xncf.WeixinManager.Cache;
+using Senparc.CO2NET.WebApi;
 
 namespace Senparc.Xncf.WeixinManager.Services
 {
@@ -23,10 +24,12 @@ namespace Senparc.Xncf.WeixinManager.Services
     {
 
         private readonly IServiceProvider _serviceProvider;
+        private readonly FindApiService _findApiService;
 
-        public WeixinService(IServiceProvider serviceProvider)
+        public WeixinService(IServiceProvider serviceProvider, FindApiService findApiService)
         {
             _serviceProvider = serviceProvider;
+            _findApiService = findApiService;
         }
 
         public string ReplaceWeixinFace(string content)
@@ -177,5 +180,13 @@ namespace Senparc.Xncf.WeixinManager.Services
 
             return OAuthApi.GetUserInfo(result.access_token, result.openid);
         }
+
+
+        //[ApiBind("WeixinApi", "FindWeixinApi")]
+        //public FindWeixinApiResult FindWeixinApi(PlatformType? platformType, bool? isAsync, string keyword)
+        //{
+        //    var result = _findApiService.FindWeixinApiResult(platformType.ToString(), isAsync, keyword);
+        //    return result;
+        //}
     }
 }
