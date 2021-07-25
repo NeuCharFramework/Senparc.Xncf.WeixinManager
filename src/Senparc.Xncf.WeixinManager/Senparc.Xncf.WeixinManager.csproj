@@ -2,10 +2,12 @@
 	<!--<Project Sdk="Microsoft.NET.Sdk.Razor">-->
 	<PropertyGroup>
 		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+		<!--<RazorLangVersion>3.0</RazorLangVersion>-->
 		<Version>0.6.396-beta3</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 		
 		<AssemblyName>Senparc.Xncf.WeixinManager</AssemblyName>
 		<RootNamespace>Senparc.Xncf.WeixinManager</RootNamespace>
@@ -41,15 +43,7 @@
 		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
-	<!--<PropertyGroup Condition=" '$(Configuration)' == 'LocalRelease' ">
-    <OutputPath>..\BuildOutPut</OutputPath>
-    <DocumentationFile>..\BuildOutPut\Senparc.Ncf.XncfBase.XML</DocumentationFile>
-    <DefineConstants>$(DefineConstants);RELEASE;LocalRelease</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>-->
+
 	<PropertyGroup Condition="'$(Configuration)'=='LocalRelease'">
 		<OutputPath>..\..\..\NcfPackageSources\src\BuildOutPut</OutputPath>
 		<DocumentationFile>..\..\..\NcfPackageSources\src\BuildOutPut\Senparc.Xncf.WeixinManager.XML</DocumentationFile>
