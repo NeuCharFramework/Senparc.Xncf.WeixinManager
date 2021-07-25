@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
+	<!--<Project Sdk="Microsoft.NET.Sdk.Razor">-->
 	<PropertyGroup>
 		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-		<Version>0.6.380-beta3</Version>
+		<Version>0.6.396-beta3</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -101,11 +102,6 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.1.4" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Areas\Admin\Pages\Shared\" />
-		<Folder Include="Areas\Admin\Pages\WeixinManager\UserTag\" />
 	</ItemGroup>
 
 	<ItemGroup>
