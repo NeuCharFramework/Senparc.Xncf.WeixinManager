@@ -26,7 +26,6 @@ namespace Senparc.Xncf.WeixinManager
 
         public void AddXncfDatabaseModule(IServiceCollection services)
         {
-            Console.WriteLine("-----------------AddXncfDatabaseModule for Weixin 1");
             services.AddScoped<MpAccount>();
             services.AddScoped<MpAccountDto>();
             services.AddScoped<MpAccount_CreateOrUpdateDto>();
@@ -41,7 +40,6 @@ namespace Senparc.Xncf.WeixinManager
             //base.AddAutoMapMapping(profile =>
             //{
             //});
-
         }
 
         public const string DATABASE_PREFIX = "WeixinManager_";

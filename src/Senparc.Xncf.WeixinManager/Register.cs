@@ -130,7 +130,6 @@ namespace Senparc.Xncf.WeixinManager
                 //UserTag_WeixinUser
                 profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
                 profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
-                Console.WriteLine("-----------------AddXncfDatabaseModule for Weixin 3");
             };
             this.AddAutoMapMapping(mapping);
         }
