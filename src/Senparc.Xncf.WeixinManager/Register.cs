@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,7 @@ using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Service;
 using Senparc.Ncf.XncfBase;
 using Senparc.NeuChar;
+using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Models;
 using Senparc.Xncf.WeixinManager.Services;
@@ -44,7 +46,7 @@ namespace Senparc.Xncf.WeixinManager
 使用此插件可以在 NCF 中快速集成微信公众号、小程序的部分基础管理功能，欢迎大家一起扩展！
 微信 SDK 基于 Senparc.Weixin SDK 开发。";
 
-        public override IList<Type> Functions => new Type[] { };
+        //public override IList<Type> Functions => new Type[] { };
 
 
         public override IServiceCollection AddXncfModule(IServiceCollection services, IConfiguration configuration)
@@ -56,6 +58,7 @@ namespace Senparc.Xncf.WeixinManager
 
             return base.AddXncfModule(services, configuration);//如果重写此方法，必须调用基类方法
         }
+
 
         public override async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
         {
@@ -88,6 +91,7 @@ namespace Senparc.Xncf.WeixinManager
             await base.UninstallAsync(serviceProvider, unsinstallFunc).ConfigureAwait(false);
         }
 
+
         private List<MpAccount> _allMpAccounts = null;
 
         private List<MpAccount> GetAllMpAccounts(IServiceProvider serviceProvider)
@@ -105,6 +109,30 @@ namespace Senparc.Xncf.WeixinManager
             {
                 return new List<MpAccount>();
             }
+        }
+        public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
+        {
+            Action<Profile> mapping = profile => {
+                //MpAccount
+                profile.CreateMap<MpAccountDto, MpAccount>();
+                profile.CreateMap<MpAccount, MpAccountDto>();
+                //WeixinUser
+                profile.CreateMap<Weixin.MP.AdvancedAPIs.User.UserInfoJson, WeixinUser_UpdateFromApiDto>();
+                profile.CreateMap<WeixinUser_UpdateFromApiDto, WeixinUser>();
+                profile.CreateMap<WeixinUser, WeixinUser_UpdateFromApiDto>();
+                profile.CreateMap<WeixinUserDto, WeixinUser>();
+                profile.CreateMap<WeixinUser, WeixinUserDto>();
+                //UserTag
+                profile.CreateMap<UserTag, UserTag_CreateOrUpdateDto>();
+                profile.CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>();
+                profile.CreateMap<UserTag_CreateOrUpdateDto, UserTag>();
+                profile.CreateMap<TagJson_Tag, UserTag>();
+                //UserTag_WeixinUser
+                profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
+                profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
+                Console.WriteLine("-----------------AddXncfDatabaseModule for Weixin 3");
+            };
+            this.AddAutoMapMapping(mapping);
         }
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
