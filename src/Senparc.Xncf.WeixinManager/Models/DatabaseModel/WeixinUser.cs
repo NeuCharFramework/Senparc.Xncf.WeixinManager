@@ -91,11 +91,33 @@ namespace Senparc.Xncf.WeixinManager.Models
         {
         }
 
+        public WeixinUser(int mpAccountId, int subscribe, string openId, string nickName, int sex, string language, string city, string province, string country, string headImgUrl, long subscribe_Time, string unionId, string remark, int groupid, string subscribe_Scene, uint qr_Scene, string qr_Scene_Str)
+        {
+            MpAccountId = mpAccountId;
+            Subscribe = subscribe;
+            OpenId = openId;
+            NickName = nickName;
+            Sex = sex;
+            Language = language;
+            City = city;
+            Province = province;
+            Country = country;
+            HeadImgUrl = headImgUrl;
+            Subscribe_Time = subscribe_Time;
+            UnionId = unionId;
+            Remark = remark;
+            Groupid = groupid;
+            Subscribe_Scene = subscribe_Scene;
+            Qr_Scene = qr_Scene;
+            Qr_Scene_Str = qr_Scene_Str;
+        }
+
         /// <summary>
         /// 用户标签
         /// <para>对应微信API tagid_list 属性</para>
         /// </summary>
         public IList<UserTag_WeixinUser> UserTags_WeixinUsers { get; private set; } = new List<UserTag_WeixinUser>();
+
 
         public void UpdateTime()
         {
