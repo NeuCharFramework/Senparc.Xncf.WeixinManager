@@ -84,7 +84,7 @@ namespace Senparc.Xncf.WeixinManager.Tests
             AssembleScanHelper.RunScan();
 
 
-            var result = serviceCollection.StartEngine(Configuration);
+            var result = serviceCollection.StartEngine(Configuration, _env.Object);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
