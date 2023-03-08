@@ -11,7 +11,6 @@ using System.Text;
 
 namespace Senparc.Xncf.WeixinManager
 {
-    [MultipleMigrationDbContext(MultipleDatabaseType.Sqlite, typeof(Register))]
     public class WeixinSenparcEntities : XncfDatabaseDbContext
     {
         public DbSet<MpAccount> MpAccounts { get; set; }

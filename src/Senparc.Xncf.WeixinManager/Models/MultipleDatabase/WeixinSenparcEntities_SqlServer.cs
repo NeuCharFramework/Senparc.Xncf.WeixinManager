@@ -34,7 +34,7 @@ namespace Senparc.Xncf.WeixinManager.Models
             //指定其他数据库
             services.AddDatabase("Senparc.Ncf.Database.SqlServer", "Senparc.Ncf.Database.SqlServer", "SQLServerDatabaseConfiguration");
         };
-
+        
         public SenparcDbContextFactory_SqlServer()
             : base(
                  /* Debug模式下项目根目录

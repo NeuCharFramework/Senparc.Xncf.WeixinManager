@@ -22,13 +22,13 @@ namespace Senparc.Xncf.WeixinManager.Models
 
         private UserTag() { }
 
-        public UserTag(int mpAccountId, int tagId, string name, int count)
-        {
-            MpAccountId = mpAccountId;
-            TagId = tagId;
-            Name = name;
-            Count = count;
-        }
+        //public UserTag(int mpAccountId, int tagId, string name, int count)
+        //{
+        //    MpAccountId = mpAccountId;
+        //    TagId = tagId;
+        //    Name = name;
+        //    Count = count;
+        //}
 
         public MpAccount MpAccount { get; private set; }
 

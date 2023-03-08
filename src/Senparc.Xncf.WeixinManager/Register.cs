@@ -113,7 +113,8 @@ namespace Senparc.Xncf.WeixinManager
         }
         public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
         {
-            Action<Profile> mapping = profile => {
+            Action<Profile> mapping = profile =>
+            {
                 //MpAccount
                 profile.CreateMap<MpAccountDto, MpAccount>();
                 profile.CreateMap<MpAccount, MpAccountDto>();
@@ -134,6 +135,8 @@ namespace Senparc.Xncf.WeixinManager
             };
             this.AddAutoMapMapping(mapping);
         }
+
+
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {

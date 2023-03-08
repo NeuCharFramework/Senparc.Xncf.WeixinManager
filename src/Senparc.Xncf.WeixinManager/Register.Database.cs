@@ -26,15 +26,15 @@ namespace Senparc.Xncf.WeixinManager
 
         public void AddXncfDatabaseModule(IServiceCollection services)
         {
-            services.AddScoped<MpAccount>();
+            //services.AddScoped<MpAccount>();
             services.AddScoped<MpAccountDto>();
             services.AddScoped<MpAccount_CreateOrUpdateDto>();
 
-            services.AddScoped<WeixinUser>();
+            //services.AddScoped<WeixinUser>();
             services.AddScoped<WeixinUserDto>();
 
-            services.AddScoped<UserTag>();
-            services.AddScoped<UserTag_WeixinUser>();
+            //services.AddScoped<UserTag>();
+            //services.AddScoped<UserTag_WeixinUser>();
 
             //AutoMap映射不能在这里做，因为执行到此处时，相关过程已经执行完毕
             //base.AddAutoMapMapping(profile =>
