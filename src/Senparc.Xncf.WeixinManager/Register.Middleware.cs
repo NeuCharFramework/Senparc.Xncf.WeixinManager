@@ -66,7 +66,7 @@ namespace Senparc.Xncf.WeixinManager
                     }
 
                     var mpAccounts = GetAllMpAccounts(scope.ServiceProvider).Where(z => true);
-                    foreach (var mpAccount in mpAccounts)
+                    foreach (var mpAccountDto in mpAccounts)
                     {
                         var messageHandlerType = messageHandlerTypes.First();//TODO:筛选
 
@@ -75,19 +75,21 @@ namespace Senparc.Xncf.WeixinManager
                         {
                             try
                             {
-                                var messageHandler = Activator.CreateInstance(messageHandlerType, new object[] { stream, postModel, maxRecordCount, services });
+                                var messageHandler = Activator.CreateInstance(messageHandlerType, new object[] { mpAccountDto, stream, postModel, maxRecordCount, services });
+
+                                //TODO：使用依赖注入生成 MessageHandler
 
                                 //SenparcTrace.SendCustomLog("messageHandler 类型", messageHandler.GetType().FullName);
                                 return messageHandler as MessageHandler<DefaultMpMessageContext, IRequestMessageBase, IResponseMessageBase>;
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception($"{messageHandlerType.FullName} 必须具有以下结构和参数顺序的构造函数：(Stream inputStream, PostModel postModel, int maxRecordCount)");
+                                throw new Exception($"{messageHandlerType.FullName} 必须具有以下结构和参数顺序的构造函数：(MpAccountDto mpAccountDto, Stream inputStream, PostModel postModel, int maxRecordCount, IServiceProvider serviceProvider)", ex);
                             }
                         };
 
                         //注册中间件
-                        app.UseMessageHandlerForMp($"/WeixinMp/{mpAccount.Id}", messageHandlerFunc, options =>
+                        app.UseMessageHandlerForMp($"/WeixinMp/{mpAccountDto.Id}", messageHandlerFunc, options =>
                         {
                             //说明：此代码块中演示了较为全面的功能点，简化的使用可以参考下面小程序和企业微信
 
@@ -95,10 +97,10 @@ namespace Senparc.Xncf.WeixinManager
 
                             var senparcWeixinSetting = new SenparcWeixinSetting();
 
-                            senparcWeixinSetting.WeixinAppId = mpAccount.AppId;
-                            senparcWeixinSetting.WeixinAppSecret = mpAccount.AppSecret;
-                            senparcWeixinSetting.Token = mpAccount.Token;
-                            senparcWeixinSetting.EncodingAESKey = mpAccount.EncodingAESKey;
+                            senparcWeixinSetting.WeixinAppId = mpAccountDto.AppId;
+                            senparcWeixinSetting.WeixinAppSecret = mpAccountDto.AppSecret;
+                            senparcWeixinSetting.Token = mpAccountDto.Token;
+                            senparcWeixinSetting.EncodingAESKey = mpAccountDto.EncodingAESKey;
 
                             //此处为委托，可以根据条件动态判断输入条件（必须）
                             options.AccountSettingFunc = context => senparcWeixinSetting;

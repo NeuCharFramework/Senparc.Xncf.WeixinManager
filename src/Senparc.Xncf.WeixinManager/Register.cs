@@ -93,22 +93,24 @@ namespace Senparc.Xncf.WeixinManager
         }
 
 
-        private List<MpAccount> _allMpAccounts = null;
+        private List<MpAccountDto> _allMpAccounts = null;
 
-        private List<MpAccount> GetAllMpAccounts(IServiceProvider serviceProvider)
+        private List<MpAccountDto> GetAllMpAccounts(IServiceProvider serviceProvider)
         {
             try
             {
                 if (_allMpAccounts == null)
                 {
                     var mpAccountService = serviceProvider.GetService<ServiceBase<MpAccount>>();
-                    _allMpAccounts = mpAccountService.GetFullList(z => z.AppId != null && z.AppId.Length > 0, z => z.Id, OrderingType.Ascending);
+                    var accounts = mpAccountService.GetFullList(z => z.AppId != null && z.AppId.Length > 0, z => z.Id, OrderingType.Ascending);
+                    _allMpAccounts = new List<MpAccountDto>();
+                    accounts.ForEach(z => _allMpAccounts.Add(mpAccountService.Mapper.Map<MpAccountDto>(z)));
                 }
                 return _allMpAccounts;
             }
             catch
             {
-                return new List<MpAccount>();
+                return new List<MpAccountDto>();
             }
         }
         public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
