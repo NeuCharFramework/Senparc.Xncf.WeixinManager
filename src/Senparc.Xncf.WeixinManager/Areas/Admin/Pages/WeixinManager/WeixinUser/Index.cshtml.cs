@@ -97,31 +97,31 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                 weixinUserDtos = new
                 {
                     weixinUserDtos.TotalCount,
-                    list = weixinUserDtos.Select(_ => new
+                    list = weixinUserDtos.Select(z => new
                     {
-                        _.AddTime,
-                        _.Remark,
-                        _.AdminRemark,
-                        _.City,
-                        _.Country,
-                        _.Groupid,
-                        _.HeadImgUrl,
-                        _.Id,
-                        _.Language,
-                        _.LastUpdateTime,
-                        _.MpAccountId,
-                        _.NickName,
-                        _.OpenId,
-                        _.Province,
-                        _.Qr_Scene,
-                        _.Qr_Scene_Str,
-                        _.Sex,
-                        _.Subscribe,
-                        _.Subscribe_Scene,
-                        Subscribe_Time = new DateTime(1970, 1, 1).AddSeconds(_.Subscribe_Time).ToString(),
+                        z.AddTime,
+                        z.Remark,
+                        z.AdminRemark,
+                        z.City,
+                        z.Country,
+                        z.Groupid,
+                        z.HeadImgUrl,
+                        z.Id,
+                        z.Language,
+                        z.LastUpdateTime,
+                        z.MpAccountId,
+                        z.NickName,
+                        z.OpenId,
+                        z.Province,
+                        z.Qr_Scene,
+                        z.Qr_Scene_Str,
+                        z.Sex,
+                        z.Subscribe,
+                        z.Subscribe_Scene,
+                        Subscribe_Time = new DateTime(1970, 1, 1).AddSeconds(z.Subscribe_Time).ToString(),
                         //_.Tagid_List,
-                        _.UnionId,
-                        UserTags_WeixinUsers = _.UserTags_WeixinUsers.Select(__ => new { __.UserTag, __.UserTagId, __.WeixinUserId }),
+                        z.UnionId,
+                        UserTags_WeixinUsers = z.UserTags_WeixinUsers.Select(u => new { u.UserTag, u.UserTagId, u.WeixinUserId }),
                     }).AsEnumerable()
                 }
             });
@@ -186,8 +186,15 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
 
                 UserTag_CreateOrUpdateDto tagDto;
                 tagDto = dbUserTag == null
-                    ? _userTagService.Mapper.Map<UserTag_CreateOrUpdateDto>(tag)//创建新tag
-                    : _userTagService.Mapper.Map<UserTag_CreateOrUpdateDto>(dbUserTag)//从数据库获取
+                //? _userTagService.Mapper.Map<UserTag_CreateOrUpdateDto>(tag)//创建新tag
+                ? new UserTag_CreateOrUpdateDto()
+                    {
+                        Count = tag.count,
+                        TagId = tag.id,
+                        Name = tag.name,
+                        MpAccountId = mpId
+                    }
+                : _userTagService.Mapper.Map<UserTag_CreateOrUpdateDto>(dbUserTag)//从数据库获取
                     ;
 
                 tagDto.MpAccountId = mpId;
@@ -197,7 +204,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
 
                 if (dbUserTag == null)
                 {
-                    SenparcTrace.SendCustomLog("新增UserTag", $"{tagDto.TagId}:{tagDto.Name}");
+                    SenparcTrace.SendCustomLog("新增UserTag", $"TagId({tagDto.TagId}):{tagDto.Name}");
                     dbUserTag = _userTagService.Mapper.Map<UserTag>(tagDto);
                     //await _userTagService.SaveObjectAsync(dbUserTag);
                     allDbUserTags.Add(dbUserTag);
@@ -280,8 +287,6 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                                     var userTag_Weixinuser = new UserTag_WeixinUser(userTag.Id, weixinUser.Id);
                                     userTag_Weixinuser.UpdateTime();
                                     weixinUser.UserTags_WeixinUsers.Add(userTag_Weixinuser);
-
-
                                 }
                             }
 

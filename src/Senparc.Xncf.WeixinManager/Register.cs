@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Senparc.CO2NET.RegisterServices;
+using Senparc.CO2NET.Trace;
 using Senparc.Ncf.Core.Enums;
 using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Service;
@@ -15,6 +16,7 @@ using Senparc.NeuChar;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Models;
+using Senparc.Xncf.WeixinManager.Models.AutoMapper;
 using Senparc.Xncf.WeixinManager.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -57,6 +59,7 @@ namespace Senparc.Xncf.WeixinManager
             //{
             //    //根据条件生成不同的PostModel
             //});
+            services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
 
             return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }
@@ -115,31 +118,48 @@ namespace Senparc.Xncf.WeixinManager
         }
         public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
         {
-            Action<Profile> mapping = profile =>
-            {
-                //MpAccount
-                profile.CreateMap<MpAccountDto, MpAccount>();
-                profile.CreateMap<MpAccount, MpAccountDto>();
-                //WeixinUser
-                profile.CreateMap<Weixin.MP.AdvancedAPIs.User.UserInfoJson, WeixinUser_UpdateFromApiDto>();
-                profile.CreateMap<WeixinUser_UpdateFromApiDto, WeixinUser>();
-                profile.CreateMap<WeixinUser, WeixinUser_UpdateFromApiDto>();
-                profile.CreateMap<WeixinUserDto, WeixinUser>();
-                profile.CreateMap<WeixinUser, WeixinUserDto>();
-                //UserTag
-                profile.CreateMap<UserTag, UserTag_CreateOrUpdateDto>();
-                profile.CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>();
-                profile.CreateMap<UserTag_CreateOrUpdateDto, UserTag>();
-                profile.CreateMap<TagJson_Tag, UserTag>();
-                //UserTag_WeixinUser
-                profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
-                profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
-            };
-            this.AddAutoMapMapping(mapping);
+            //Console.WriteLine("----------");
+            //Console.WriteLine("WeixinManager OnAutoMapMapping");
+            //Console.WriteLine("----------");
+            ////此处会执行IMapper 
+            ////throw new Exception("stop test 3");//测试是否执行
+            //Action<Profile> mapping = profile =>
+            //{
+            //    Console.WriteLine("----------");
+            //    Console.WriteLine("WeixinManager OnAutoMapMapping - Action<Profile> mapping = profile =>");
+            //    Console.WriteLine("----------");
+
+            //    //MpAccount
+            //    profile.CreateMap<MpAccountDto, MpAccount>();
+            //    profile.CreateMap<MpAccount, MpAccountDto>();
+            //    //WeixinUser
+            //    profile.CreateMap<Weixin.MP.AdvancedAPIs.User.UserInfoJson, WeixinUser_UpdateFromApiDto>();
+            //    profile.CreateMap<WeixinUser_UpdateFromApiDto, WeixinUser>();
+            //    profile.CreateMap<WeixinUser, WeixinUser_UpdateFromApiDto>();
+            //    profile.CreateMap<WeixinUserDto, WeixinUser>();
+            //    profile.CreateMap<WeixinUser, WeixinUserDto>();
+            //    //UserTag
+            //    profile.CreateMap<UserTag, UserTag_CreateOrUpdateDto>()
+            //            .ForSourceMember(z => z.Id, opt => { 
+            //                opt.Ignore(); });
+            //    profile.CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>()
+            //            .ForMember(z => z.TagId, opt => opt.MapFrom(src => src.id));
+            //    profile.CreateMap<UserTag_CreateOrUpdateDto, UserTag>()
+            //            .ForMember(z => z.Id, opt => {
+            //                opt.Ignore();
+            //        SenparcTrace.SendCustomLog("UserTag_CreateOrUpdateDto -> UserTag", $"opt.Ignore()");
+
+            //            });
+            //    profile.CreateMap<TagJson_Tag, UserTag>();
+            //    //UserTag_WeixinUser
+            //    profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
+            //    profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
+            //};
+            //base.AddAutoMapMapping(mapping);
+            //base.OnAutoMapMapping(services, configuration);
         }
 
-
-
+        
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {
             //注册微信
