@@ -98,6 +98,26 @@ namespace Senparc.Xncf.WeixinManager
 
         private List<MpAccountDto> _allMpAccounts = null;
 
+
+        /// <summary>
+        /// 获取指定的 MpAccount 对象
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        private MpAccountDto GetAllMpAccount(IServiceProvider serviceProvider, int accountId)
+        {
+            try
+            {
+                var allMpAccounts = GetAllMpAccounts(serviceProvider);
+                return allMpAccounts.FirstOrDefault(z => z.Id == accountId);
+            }
+            catch
+            {
+                return new MpAccountDto();
+            }
+        }
+
         private List<MpAccountDto> GetAllMpAccounts(IServiceProvider serviceProvider)
         {
             try
@@ -159,7 +179,7 @@ namespace Senparc.Xncf.WeixinManager
             //base.OnAutoMapMapping(services, configuration);
         }
 
-        
+
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {
             //注册微信
