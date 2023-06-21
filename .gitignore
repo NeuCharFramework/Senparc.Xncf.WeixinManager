@@ -39,3 +39,4 @@
 /**/obj/*
 /src/Senparc.Xncf.WeixinManager.Tests/App_Data/SenparcTraceLog
 *.user
+*.DS_Store

@@ -26,37 +26,20 @@ namespace Senparc.Xncf.WeixinManager
 
         public void AddXncfDatabaseModule(IServiceCollection services)
         {
-            services.AddScoped<MpAccount>();
+            //services.AddScoped<MpAccount>();
             services.AddScoped<MpAccountDto>();
             services.AddScoped<MpAccount_CreateOrUpdateDto>();
 
-            services.AddScoped<WeixinUser>();
+            //services.AddScoped<WeixinUser>();
             services.AddScoped<WeixinUserDto>();
 
-            services.AddScoped<UserTag>();
-            services.AddScoped<UserTag_WeixinUser>();
+            //services.AddScoped<UserTag>();
+            //services.AddScoped<UserTag_WeixinUser>();
 
-            //AutoMap映射
-            base.AddAutoMapMapping(profile =>
-            {
-                //MpAccount
-                profile.CreateMap<MpAccountDto, MpAccount>();
-                profile.CreateMap<MpAccount, MpAccountDto>();
-                //WeixinUser
-                profile.CreateMap<Weixin.MP.AdvancedAPIs.User.UserInfoJson, WeixinUser_UpdateFromApiDto>();
-                profile.CreateMap<WeixinUser_UpdateFromApiDto, WeixinUser>();
-                profile.CreateMap<WeixinUser, WeixinUser_UpdateFromApiDto>();
-                profile.CreateMap<WeixinUserDto, WeixinUser>();
-                profile.CreateMap<WeixinUser, WeixinUserDto>();
-                //UserTag
-                profile.CreateMap<UserTag, UserTag_CreateOrUpdateDto>();
-                profile.CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>();
-                profile.CreateMap<UserTag_CreateOrUpdateDto, UserTag>();
-                profile.CreateMap<TagJson_Tag, UserTag>();
-                //UserTag_WeixinUser
-                profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
-                profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
-            });
+            //AutoMap映射不能在这里做，因为执行到此处时，相关过程已经执行完毕
+            //base.AddAutoMapMapping(profile =>
+            //{
+            //});
         }
 
         public const string DATABASE_PREFIX = "WeixinManager_";

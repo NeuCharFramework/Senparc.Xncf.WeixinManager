@@ -1,16 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Senparc.CO2NET.RegisterServices;
+using Senparc.CO2NET.Trace;
 using Senparc.Ncf.Core.Enums;
 using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Service;
 using Senparc.Ncf.XncfBase;
+using Senparc.Ncf.XncfBase.Database;
 using Senparc.NeuChar;
+using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Models;
+using Senparc.Xncf.WeixinManager.Models.AutoMapper;
 using Senparc.Xncf.WeixinManager.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -31,7 +37,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.7.1-beta1";
+        public override string Version => "0.9.0-beta1";
 
 
         public override string MenuName => "微信管理";
@@ -44,23 +50,24 @@ namespace Senparc.Xncf.WeixinManager
 使用此插件可以在 NCF 中快速集成微信公众号、小程序的部分基础管理功能，欢迎大家一起扩展！
 微信 SDK 基于 Senparc.Weixin SDK 开发。";
 
-        public override IList<Type> Functions => new Type[] { };
+        //public override IList<Type> Functions => new Type[] { };
 
 
-        public override IServiceCollection AddXncfModule(IServiceCollection services, IConfiguration configuration)
+        public override IServiceCollection AddXncfModule(IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
         {
             //services.AddScoped<PostModel>(ServiceProvider =>
             //{
             //    //根据条件生成不同的PostModel
             //});
+            services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
 
-            return base.AddXncfModule(services, configuration);//如果重写此方法，必须调用基类方法
+            return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }
 
         public override async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
         {
             //安装或升级版本时更新数据库
-            await base.MigrateDatabaseAsync(serviceProvider);
+            await XncfDatabaseDbContext.MigrateOnInstallAsync(serviceProvider, this);
         }
 
         public override async Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc)
@@ -88,24 +95,90 @@ namespace Senparc.Xncf.WeixinManager
             await base.UninstallAsync(serviceProvider, unsinstallFunc).ConfigureAwait(false);
         }
 
-        private List<MpAccount> _allMpAccounts = null;
 
-        private List<MpAccount> GetAllMpAccounts(IServiceProvider serviceProvider)
+        private List<MpAccountDto> _allMpAccounts = null;
+
+
+        /// <summary>
+        /// 获取指定的 MpAccount 对象
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        private MpAccountDto GetMpAccount(IServiceProvider serviceProvider, int accountId)
+        {
+            try
+            {
+                var allMpAccounts = GetAllMpAccounts(serviceProvider);
+                return allMpAccounts.FirstOrDefault(z => z.Id == accountId);
+            }
+            catch
+            {
+                return new MpAccountDto();
+            }
+        }
+
+        private List<MpAccountDto> GetAllMpAccounts(IServiceProvider serviceProvider)
         {
             try
             {
                 if (_allMpAccounts == null)
                 {
                     var mpAccountService = serviceProvider.GetService<ServiceBase<MpAccount>>();
-                    _allMpAccounts = mpAccountService.GetFullList(z => z.AppId != null && z.AppId.Length > 0, z => z.Id, OrderingType.Ascending);
+                    var accounts = mpAccountService.GetFullList(z => z.AppId != null && z.AppId.Length > 0, z => z.Id, OrderingType.Ascending);
+                    _allMpAccounts = new List<MpAccountDto>();
+                    accounts.ForEach(z => _allMpAccounts.Add(mpAccountService.Mapper.Map<MpAccountDto>(z)));
                 }
                 return _allMpAccounts;
             }
             catch
             {
-                return new List<MpAccount>();
+                return new List<MpAccountDto>();
             }
         }
+        public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
+        {
+            //Console.WriteLine("----------");
+            //Console.WriteLine("WeixinManager OnAutoMapMapping");
+            //Console.WriteLine("----------");
+            ////此处会执行IMapper 
+            ////throw new Exception("stop test 3");//测试是否执行
+            //Action<Profile> mapping = profile =>
+            //{
+            //    Console.WriteLine("----------");
+            //    Console.WriteLine("WeixinManager OnAutoMapMapping - Action<Profile> mapping = profile =>");
+            //    Console.WriteLine("----------");
+
+            //    //MpAccount
+            //    profile.CreateMap<MpAccountDto, MpAccount>();
+            //    profile.CreateMap<MpAccount, MpAccountDto>();
+            //    //WeixinUser
+            //    profile.CreateMap<Weixin.MP.AdvancedAPIs.User.UserInfoJson, WeixinUser_UpdateFromApiDto>();
+            //    profile.CreateMap<WeixinUser_UpdateFromApiDto, WeixinUser>();
+            //    profile.CreateMap<WeixinUser, WeixinUser_UpdateFromApiDto>();
+            //    profile.CreateMap<WeixinUserDto, WeixinUser>();
+            //    profile.CreateMap<WeixinUser, WeixinUserDto>();
+            //    //UserTag
+            //    profile.CreateMap<UserTag, UserTag_CreateOrUpdateDto>()
+            //            .ForSourceMember(z => z.Id, opt => { 
+            //                opt.Ignore(); });
+            //    profile.CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>()
+            //            .ForMember(z => z.TagId, opt => opt.MapFrom(src => src.id));
+            //    profile.CreateMap<UserTag_CreateOrUpdateDto, UserTag>()
+            //            .ForMember(z => z.Id, opt => {
+            //                opt.Ignore();
+            //        SenparcTrace.SendCustomLog("UserTag_CreateOrUpdateDto -> UserTag", $"opt.Ignore()");
+
+            //            });
+            //    profile.CreateMap<TagJson_Tag, UserTag>();
+            //    //UserTag_WeixinUser
+            //    profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
+            //    profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
+            //};
+            //base.AddAutoMapMapping(mapping);
+            //base.OnAutoMapMapping(services, configuration);
+        }
+
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {

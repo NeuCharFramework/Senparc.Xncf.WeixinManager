@@ -19,7 +19,7 @@ namespace Senparc.Xncf.WeixinManager
 
         public string HomeUrl => "/Admin/WeixinManager/Index";
 
-        public List<AreaPageMenuItem> AareaPageMenuItems => new List<AreaPageMenuItem>() {
+        public List<AreaPageMenuItem> AreaPageMenuItems => new List<AreaPageMenuItem>() {
              new AreaPageMenuItem(GetAreaUrl("/Admin/WeixinManager/Index"),"首页","fa fa-laptop"),
              new AreaPageMenuItem(GetAreaUrl("/swagger"),"Web Api Swagger","fa fa-file-code-o"),
              new AreaPageMenuItem(GetAreaUrl("/Admin/WeixinManager/MpAccount"),"公众号管理","fa fa-comments"),
