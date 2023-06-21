@@ -84,7 +84,7 @@
 		<PackageReference Include="Senparc.Ncf.Core" Version="0.11.5.2-beta9" />
 		<PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.11.5.1-beta9" />
 		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.11.6.12-beta9" />
-		<PackageReference Include="Senparc.Weixin.AspNet" Version="1.0.1-beta1" />
+		<PackageReference Include="Senparc.Weixin.AspNet" Version="1.0.0-beta1" />
 		<PackageReference Include="Senparc.Weixin.MP" Version="16.18.13" />
 		<PackageReference Include="Senparc.Weixin.MP.Middleware" Version="1.0.0-beta1" />
 		<PackageReference Include="Senparc.Weixin.Open" Version="4.14.19" />
