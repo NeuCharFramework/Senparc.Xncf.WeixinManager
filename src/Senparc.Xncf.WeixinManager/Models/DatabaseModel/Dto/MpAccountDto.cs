@@ -10,6 +10,11 @@ using System.Text;
 namespace Senparc.Xncf.WeixinManager.Models
 {
 
+    public class MpAccountDto_WithName : MpAccountDto
+    {
+        public string MessageHandlerName { get; set; }
+    }
+
     public class MpAccountDto : MpAccount_CreateOrUpdateDto
     {
         //[IgnoreMap]

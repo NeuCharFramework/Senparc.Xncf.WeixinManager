@@ -37,7 +37,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.7.3-beta1";
+        public override string Version => "0.9.0-beta1";
 
 
         public override string MenuName => "微信管理";
@@ -105,7 +105,7 @@ namespace Senparc.Xncf.WeixinManager
         /// <param name="serviceProvider"></param>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        private MpAccountDto GetAllMpAccount(IServiceProvider serviceProvider, int accountId)
+        private MpAccountDto GetMpAccount(IServiceProvider serviceProvider, int accountId)
         {
             try
             {

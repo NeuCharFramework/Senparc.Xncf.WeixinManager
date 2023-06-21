@@ -1,26 +1,23 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Senparc.CO2NET;
+using Microsoft.Extensions.Options;
+using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Trace;
-using Senparc.NeuChar.Context;
+using Senparc.Ncf.XncfBase;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.MessageHandlers;
-using Senparc.Ncf.Core.Config;
-using Senparc.Ncf.XncfBase;
 using Senparc.Weixin.Entities;
+using Senparc.Weixin.Exceptions;
 using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageContexts;
-using Senparc.Weixin.MP.MessageHandlers;
 using Senparc.Weixin.MP.MessageHandlers.Middleware;
+using Senparc.Xncf.WeixinManager.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using Senparc.Xncf.WeixinManager.Models;
-using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Http;
-using Senparc.Weixin.Exceptions;
 
 namespace Senparc.Xncf.WeixinManager
 {
@@ -74,9 +71,9 @@ namespace Senparc.Xncf.WeixinManager
                         var mpMessageHandlerName = mpMessageHandlerNamePair.Key;
                         var mpMessageHandlerType = mpMessageHandlerNamePair.Value;
 
-                        Func<MpAccountDto> mpAccountDtoFunc = () =>
+                        Func<IServiceProvider, MpAccountDto> mpAccountDtoFunc = serviceProvider =>
                         {
-                            var httpCotextAssessor = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+                            var httpCotextAssessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
                             var httpContext = httpCotextAssessor.HttpContext;
                             var param = httpContext.Request.Query["parameter"].ToString();
 
@@ -85,7 +82,7 @@ namespace Senparc.Xncf.WeixinManager
                                 throw new WeixinException("ID 错误！");
                             }
 
-                            var mpAccountDto = GetAllMpAccount(scope.ServiceProvider, mpAccountId);
+                            var mpAccountDto = GetMpAccount(scope.ServiceProvider, mpAccountId);
                             return mpAccountDto;
                         };
 
@@ -94,7 +91,15 @@ namespace Senparc.Xncf.WeixinManager
                           {
                               try
                               {
-                                  var mpAccountDto = mpAccountDtoFunc();
+                                  var mpAccountDto = mpAccountDtoFunc(scope.ServiceProvider);
+
+                                  var senparcWeixinSetting = new SenparcWeixinSetting();
+                                  senparcWeixinSetting.WeixinAppId = mpAccountDto.AppId;
+                                  senparcWeixinSetting.WeixinAppSecret = mpAccountDto.AppSecret;
+                                  senparcWeixinSetting.Token = mpAccountDto.Token;
+                                  senparcWeixinSetting.EncodingAESKey = mpAccountDto.EncodingAESKey;
+
+                                  Senparc.Weixin.Config.SenparcWeixinSetting[$"DynamicMP-{mpAccountDto.Id}"] = senparcWeixinSetting;
 
                                   var messageHandler = Activator.CreateInstance(mpMessageHandlerType, new object[] { mpAccountDto, stream, postModel, maxRecordCount, services });
 
@@ -109,25 +114,28 @@ namespace Senparc.Xncf.WeixinManager
                               }
                           };
 
+
                         //注册中间件
-                        app.UseMessageHandlerForMp($"/WeixinMp/{mpMessageHandlerName}/{{parameter}}", messageHandlerFunc, options =>
+                        app.UseMessageHandlerForMp($"/WeixinMp/{mpMessageHandlerName}", messageHandlerFunc, options =>
                         {
                             //说明：此代码块中演示了较为全面的功能点，简化的使用可以参考下面小程序和企业微信
 
                             #region 配置 SenparcWeixinSetting 参数，以自动提供 Token、EncodingAESKey 等参数
 
-                            var senparcWeixinSetting = new SenparcWeixinSetting();
-
-                            var mpAccountDto = mpAccountDtoFunc();
-
-                            senparcWeixinSetting.WeixinAppId = mpAccountDto.AppId;
-                            senparcWeixinSetting.WeixinAppSecret = mpAccountDto.AppSecret;
-                            senparcWeixinSetting.Token = mpAccountDto.Token;
-                            senparcWeixinSetting.EncodingAESKey = mpAccountDto.EncodingAESKey;
-
                             //此处为委托，可以根据条件动态判断输入条件（必须）
-                            options.AccountSettingFunc = context => senparcWeixinSetting;
+                            options.AccountSettingFunc = context =>
+                            {
+                                var senparcWeixinSetting = new SenparcWeixinSetting();
 
+                                var mpAccountDto = mpAccountDtoFunc(context.RequestServices);
+
+                                senparcWeixinSetting.WeixinAppId = mpAccountDto.AppId;
+                                senparcWeixinSetting.WeixinAppSecret = mpAccountDto.AppSecret;
+                                senparcWeixinSetting.Token = mpAccountDto.Token;
+                                senparcWeixinSetting.EncodingAESKey = mpAccountDto.EncodingAESKey;
+                                return senparcWeixinSetting;
+
+                            };
 
                             //TODO：注册 Config.SenparcWeixinSetting
 
