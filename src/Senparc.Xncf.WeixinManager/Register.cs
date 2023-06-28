@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
 using Senparc.CO2NET.RegisterServices;
 using Senparc.CO2NET.Trace;
 using Senparc.Ncf.Core.Enums;
@@ -60,6 +61,7 @@ namespace Senparc.Xncf.WeixinManager
             //    //根据条件生成不同的PostModel
             //});
             services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
+            services.AddScoped<MpAccountService>();
 
             return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }
@@ -96,46 +98,6 @@ namespace Senparc.Xncf.WeixinManager
         }
 
 
-        private List<MpAccountDto> _allMpAccounts = null;
-
-
-        /// <summary>
-        /// 获取指定的 MpAccount 对象
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        private MpAccountDto GetMpAccount(IServiceProvider serviceProvider, int accountId)
-        {
-            try
-            {
-                var allMpAccounts = GetAllMpAccounts(serviceProvider);
-                return allMpAccounts.FirstOrDefault(z => z.Id == accountId);
-            }
-            catch
-            {
-                return new MpAccountDto();
-            }
-        }
-
-        private List<MpAccountDto> GetAllMpAccounts(IServiceProvider serviceProvider)
-        {
-            try
-            {
-                if (_allMpAccounts == null)
-                {
-                    var mpAccountService = serviceProvider.GetService<ServiceBase<MpAccount>>();
-                    var accounts = mpAccountService.GetFullList(z => z.AppId != null && z.AppId.Length > 0, z => z.Id, OrderingType.Ascending);
-                    _allMpAccounts = new List<MpAccountDto>();
-                    accounts.ForEach(z => _allMpAccounts.Add(mpAccountService.Mapper.Map<MpAccountDto>(z)));
-                }
-                return _allMpAccounts;
-            }
-            catch
-            {
-                return new List<MpAccountDto>();
-            }
-        }
         public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
         {
             //Console.WriteLine("----------");
@@ -190,7 +152,8 @@ namespace Senparc.Xncf.WeixinManager
                 //未安装数据库表的情况下可能会出错，因此需要try
                 using (var scope = app.ApplicationServices.CreateScope())
                 {
-                    var allMpAccount = GetAllMpAccounts(scope.ServiceProvider);
+                    var mpAccountService = scope.ServiceProvider.GetRequiredService<MpAccountService>();
+                    var allMpAccount = mpAccountService.GetAllMpAccounts();
 
                     //批量自动注册公众号
                     foreach (var mpAccount in allMpAccount)

@@ -13,6 +13,7 @@ using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageContexts;
 using Senparc.Weixin.MP.MessageHandlers.Middleware;
 using Senparc.Xncf.WeixinManager.Models;
+using Senparc.Xncf.WeixinManager.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -82,7 +83,8 @@ namespace Senparc.Xncf.WeixinManager
                                 throw new WeixinException("ID 错误！");
                             }
 
-                            var mpAccountDto = GetMpAccount(scope.ServiceProvider, mpAccountId);
+                            var mpAccountService = serviceProvider.GetRequiredService<MpAccountService>();
+                            var mpAccountDto = mpAccountService.GetMpAccount(mpAccountId);
                             return mpAccountDto;
                         };
 
@@ -91,22 +93,26 @@ namespace Senparc.Xncf.WeixinManager
                           {
                               try
                               {
-                                  var mpAccountDto = mpAccountDtoFunc(scope.ServiceProvider);
+                                  using (var middlewareScope = scope.ServiceProvider.CreateScope())
+                                  {
 
-                                  var senparcWeixinSetting = new SenparcWeixinSetting();
-                                  senparcWeixinSetting.WeixinAppId = mpAccountDto.AppId;
-                                  senparcWeixinSetting.WeixinAppSecret = mpAccountDto.AppSecret;
-                                  senparcWeixinSetting.Token = mpAccountDto.Token;
-                                  senparcWeixinSetting.EncodingAESKey = mpAccountDto.EncodingAESKey;
+                                      var mpAccountDto = mpAccountDtoFunc(middlewareScope.ServiceProvider);
 
-                                  Senparc.Weixin.Config.SenparcWeixinSetting[$"DynamicMP-{mpAccountDto.Id}"] = senparcWeixinSetting;
+                                      var senparcWeixinSetting = new SenparcWeixinSetting();
+                                      senparcWeixinSetting.WeixinAppId = mpAccountDto.AppId;
+                                      senparcWeixinSetting.WeixinAppSecret = mpAccountDto.AppSecret;
+                                      senparcWeixinSetting.Token = mpAccountDto.Token;
+                                      senparcWeixinSetting.EncodingAESKey = mpAccountDto.EncodingAESKey;
 
-                                  var messageHandler = Activator.CreateInstance(mpMessageHandlerType, new object[] { mpAccountDto, stream, postModel, maxRecordCount, services });
+                                      Senparc.Weixin.Config.SenparcWeixinSetting[$"DynamicMP-{mpAccountDto.Id}"] = senparcWeixinSetting;
 
-                                  //TODO：使用依赖注入生成 MessageHandler
+                                      var messageHandler = Activator.CreateInstance(mpMessageHandlerType, new object[] { mpAccountDto, stream, postModel, maxRecordCount, services });
 
-                                  //SenparcTrace.SendCustomLog("messageHandler 类型", messageHandler.GetType().FullName);
-                                  return messageHandler as MessageHandler<DefaultMpMessageContext, IRequestMessageBase, IResponseMessageBase>;
+                                      //TODO：使用依赖注入生成 MessageHandler
+
+                                      //SenparcTrace.SendCustomLog("messageHandler 类型", messageHandler.GetType().FullName);
+                                      return messageHandler as MessageHandler<DefaultMpMessageContext, IRequestMessageBase, IResponseMessageBase>;
+                                  }
                               }
                               catch (Exception ex)
                               {
