@@ -80,14 +80,23 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
 
             //重新进行公众号注册
             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
-            //立即获取 AccessToken
-            await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
+
+            try
+            {
+                //立即获取 AccessToken
+                await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { id = mpAccount.Id, uid = Uid, msg = "账号已经添加，但 AppId 或 Secret 有误，无法正常工作，请检查！" });
+            }
+
 
             //return RedirectToPage("./Edit", new { id = mpAccount.Id, uid = Uid });
             return Ok(new { id = mpAccount.Id, uid = Uid });
         }
 
-        public async Task<IActionResult> OnPostAjaxAsync([FromBody]MpAccountDto mpAccountDto)
+        public async Task<IActionResult> OnPostAjaxAsync([FromBody] MpAccountDto mpAccountDto)
         {
             MpAccount mpAccount = null;
             if (mpAccountDto.Id > 0)
@@ -109,8 +118,17 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
 
             //重新进行公众号注册
             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
-            //立即获取 AccessToken
-            await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
+
+            try
+            {
+                //立即获取 AccessToken
+                await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { id = mpAccount.Id, uid = Uid, msg = "账号已经添加，但 AppId 或 Secret 有误，无法正常工作，请检查！" });
+            }
+
 
             //return RedirectToPage("./Edit", new { id = mpAccount.Id, uid = Uid });
             return Ok(new { id = mpAccount.Id, uid = Uid });
