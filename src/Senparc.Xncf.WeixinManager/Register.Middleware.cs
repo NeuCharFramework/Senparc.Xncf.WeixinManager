@@ -93,7 +93,7 @@ namespace Senparc.Xncf.WeixinManager
                           {
                               try
                               {
-                                  using (var middlewareScope = scope.ServiceProvider.CreateScope())
+                                  using (var middlewareScope = services.CreateScope())
                                   {
 
                                       var mpAccountDto = mpAccountDtoFunc(middlewareScope.ServiceProvider);
