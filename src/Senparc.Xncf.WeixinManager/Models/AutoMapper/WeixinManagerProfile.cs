@@ -22,7 +22,7 @@ namespace Senparc.Xncf.WeixinManager.Models.AutoMapper
             //UserTag
             CreateMap<UserTag, UserTag_CreateOrUpdateDto>()
                     .ForSourceMember(z => z.Id, opt => {
-                        opt.Ignore();
+                        //opt.Ignore();
                     });
             CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>()
                     .ForMember(z => z.TagId, opt => opt.MapFrom(src => src.id));
