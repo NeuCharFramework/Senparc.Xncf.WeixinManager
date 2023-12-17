@@ -1,22 +1,19 @@
-﻿using Microsoft.Extensions.Options;
-using Senparc.CO2NET;
+﻿using System;
+using System.IO;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Senparc.CO2NET.Extensions;
-using Senparc.Ncf.Core.Cache;
-using Senparc.Xncf.WeixinManager.WeixinTemplate;
+using Senparc.CO2NET.WebApi;
 using Senparc.Ncf.Log;
-using Senparc.Ncf.Utility;
 using Senparc.Weixin;
 using Senparc.Weixin.Entities;
 using Senparc.Weixin.MP.AdvancedAPIs;
 using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
 using Senparc.Weixin.MP.AdvancedAPIs.TemplateMessage;
 using Senparc.Weixin.MP.Containers;
-using System;
-using System.IO;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Senparc.Xncf.WeixinManager.Cache;
-using Senparc.CO2NET.WebApi;
+using Senparc.Xncf.WeixinManager.WeixinTemplate;
 
 namespace Senparc.Xncf.WeixinManager.Services
 {
