@@ -140,6 +140,10 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="OHS\Local\" />
+	</ItemGroup>
+
 	<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Command="cd E:\Senparc项目\NeuCharFramework\NCF\src\XncfExtensionSample\MyExtensionCode&#xD;&#xA;&#xD;&#xA;dotnet add package $(SolutionName) - - prerelease -s &quot;E:\Senparc项目\NeuCharFramework\NcfPackageSources\src\BuildOutPut&quot;" />
 	</Target>-->

@@ -6,6 +6,8 @@ using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.XncfBase;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
+using Senparc.Xncf.WeixinManager.Domain.Models;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
 using Senparc.Xncf.WeixinManager.Models;
 using System;
 using System.Collections.Generic;

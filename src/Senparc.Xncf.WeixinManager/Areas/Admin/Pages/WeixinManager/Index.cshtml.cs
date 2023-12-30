@@ -10,8 +10,8 @@ using Senparc.Ncf.Service;
 using Senparc.Weixin.Entities;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Weixin.MP.Entities;
-using Senparc.Xncf.WeixinManager.Models;
-using Senparc.Xncf.WeixinManager.Models.VD.Admin;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
+using Senparc.Xncf.WeixinManager.Domain.Models.VD.Admin.WeixinManager;
 
 namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
 {
@@ -33,11 +33,11 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
 
         public List<AccessTokenBag> AccessTokenBags { get; set; }
 
-        private readonly ServiceBase<Models.MpAccount> _mpAccountService;
-        private readonly ServiceBase<Models.WeixinUser> _weixinUserService;
+        private readonly ServiceBase<Domain.Models.DatabaseModel.MpAccount> _mpAccountService;
+        private readonly ServiceBase<Domain.Models.DatabaseModel.WeixinUser> _weixinUserService;
         public IndexModel(Lazy<XncfModuleService> xncfModuleService,
-            ServiceBase<Models.MpAccount> mpAccountService,
-            ServiceBase<Models.WeixinUser> weixinUserService
+            ServiceBase<Domain.Models.DatabaseModel.MpAccount> mpAccountService,
+            ServiceBase<Domain.Models.DatabaseModel.WeixinUser> weixinUserService
             ) : base(xncfModuleService)
         {
             _mpAccountService = mpAccountService;

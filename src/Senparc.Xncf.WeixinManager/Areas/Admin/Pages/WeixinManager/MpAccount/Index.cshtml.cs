@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Service;
 using Senparc.Weixin.MP.Containers;
-using Senparc.Xncf.WeixinManager.Models;
-using Senparc.Xncf.WeixinManager.Models.VD.Admin;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
+using Senparc.Xncf.WeixinManager.Domain.Models.VD.Admin.WeixinManager;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,11 +15,11 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
     {
         public PagedList<MpAccountDto> MpAccountDtos { get; set; }
 
-        private readonly ServiceBase<Models.MpAccount> _mpAccountService;
+        private readonly ServiceBase<Domain.Models.DatabaseModel.MpAccount> _mpAccountService;
         private int pageCount = 20;
 
 
-        public MpAccount_IndexModel(Lazy<XncfModuleService> xncfModuleService, ServiceBase<Models.MpAccount> mpAccountService) : base(xncfModuleService)
+        public MpAccount_IndexModel(Lazy<XncfModuleService> xncfModuleService, ServiceBase<Domain.Models.DatabaseModel.MpAccount> mpAccountService) : base(xncfModuleService)
         {
             _mpAccountService = mpAccountService;
         }

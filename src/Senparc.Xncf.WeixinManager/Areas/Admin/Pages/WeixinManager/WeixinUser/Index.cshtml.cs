@@ -11,8 +11,9 @@ using Senparc.CO2NET.Trace;
 using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Service;
 using Senparc.Ncf.Utility;
-using Senparc.Xncf.WeixinManager.Models;
-using Senparc.Xncf.WeixinManager.Models.VD.Admin;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
+using Senparc.Xncf.WeixinManager.Domain.Models.VD.Admin.WeixinManager;
 
 namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
 {
@@ -21,17 +22,17 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
         public MpAccountDto MpAccountDto { get; set; }
         public PagedList<WeixinUserDto> WeixinUserDtos { get; set; }
 
-        private readonly ServiceBase<Models.MpAccount> _mpAccountService;
-        private readonly ServiceBase<Models.WeixinUser> _weixinUserService;
-        private readonly ServiceBase<Models.UserTag> _userTagService;
+        private readonly ServiceBase<Domain.Models.DatabaseModel.MpAccount> _mpAccountService;
+        private readonly ServiceBase<Domain.Models.DatabaseModel.WeixinUser> _weixinUserService;
+        private readonly ServiceBase<UserTag> _userTagService;
         private readonly IServiceProvider _serviceProvider;
         private int pageCount = 20;
 
         public WeixinUser_IndexModel(
             IServiceProvider serviceProvider,
             Lazy<XncfModuleService> xncfModuleService,
-            ServiceBase<Models.MpAccount> mpAccountService, ServiceBase<Models.WeixinUser> weixinUserService,
-            ServiceBase<Models.UserTag> userTagService
+            ServiceBase<Domain.Models.DatabaseModel.MpAccount> mpAccountService, ServiceBase<Domain.Models.DatabaseModel.WeixinUser> weixinUserService,
+            ServiceBase<UserTag> userTagService
             )
             : base(xncfModuleService)
         {
@@ -83,7 +84,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                 mpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
             }
 
-            var seh = new Ncf.Utility.SenparcExpressionHelper<Models.WeixinUser>();
+            var seh = new Ncf.Utility.SenparcExpressionHelper<Domain.Models.DatabaseModel.WeixinUser>();
             seh.ValueCompare.AndAlso(mpAccountDto != null, z => z.MpAccountId == mpAccountDto.Id);
             var where = seh.BuildWhereExpression();
             var result = await _weixinUserService.GetObjectListAsync(pageIndex, pageSize, where,
@@ -232,8 +233,8 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
             var allUsers = await _weixinUserService.GetFullListAsync(z => z.MpAccountId == mpId,
                                      z => z.Include(p => p.UserTags_WeixinUsers), null);
 
-            ConcurrentBag<Models.WeixinUser> allToSaveWeixinUsers = new ConcurrentBag<Models.WeixinUser>();
-            ConcurrentBag<Models.WeixinUser> newWeixinUsers = new ConcurrentBag<Models.WeixinUser>();
+            ConcurrentBag<Domain.Models.DatabaseModel.WeixinUser> allToSaveWeixinUsers = new ConcurrentBag<Domain.Models.DatabaseModel.WeixinUser>();
+            ConcurrentBag<Domain.Models.DatabaseModel.WeixinUser> newWeixinUsers = new ConcurrentBag<Domain.Models.DatabaseModel.WeixinUser>();
 
             ConcurrentDictionary<int, Task> tasks = new ConcurrentDictionary<int, Task>();
             var maxThreadsCount = 300;//最大拉取线程数
@@ -255,7 +256,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                         {
                             //查看已有项更新，两个数据进行对比
                             var newApiWeixinUserJson = weixinUserDto.ToJson(false, new Newtonsoft.Json.JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
-                            var oldDbWeixinUserDto = _weixinUserService.Mapper.Map<Models.WeixinUser_UpdateFromApiDto>(weixinUser);
+                            var oldDbWeixinUserDto = _weixinUserService.Mapper.Map<WeixinUser_UpdateFromApiDto>(weixinUser);
                             oldDbWeixinUserDto.Tagid_List = weixinUser.UserTags_WeixinUsers.Select(z => z.UserTag.TagId).ToArray();
                             var oldDbWeixinUserJson = oldDbWeixinUserDto.ToJson(false, new Newtonsoft.Json.JsonSerializerSettings() { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
                             if (newApiWeixinUserJson != oldDbWeixinUserJson)
@@ -305,7 +306,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                         }
                         else
                         {
-                            weixinUser = _weixinUserService.Mapper.Map<Models.WeixinUser>(weixinUserDto);//新增
+                            weixinUser = _weixinUserService.Mapper.Map<Domain.Models.DatabaseModel.WeixinUser>(weixinUserDto);//新增
                             weixinUser.UpdateTime();
                             newWeixinUsers.Add(weixinUser);
                             allToSaveWeixinUsers.Add(weixinUser);
