@@ -9,12 +9,17 @@ XNCF 模块：盛派官方发布的微信管理后台
 
 微信 SDK 基于 [Senparc.Weixin SDK](https://github.com/JeffreySu/WeiXinMPSDK) 开发。
 
-公众号 AccessToken（访问令牌）自动管理：
-<img width="1680" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/0f571fb0-637f-4ee3-a0e7-3e920399c833">
+### 模块化安装，零代码、即插即用
+<img width="1382" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/ce9fa3d5-eb32-4cf2-abcf-f25aff1b508d">
 
-零代码管理公众号信息：
+### 零代码多账号管理
+<img width="1672" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/cb896a42-4c0f-485b-ac6e-3932a3944641">
 
-
-零代码实现公众号官方 URL/Token 对接：
+### 码实现公众号官方 URL/Token 对接：
 <img width="750" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/1179281b-df9b-4f7d-8f36-e6c5450898e5">
 
+### 公众号 AccessToken（访问令牌）自动管理：
+<img width="1680" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/0f571fb0-637f-4ee3-a0e7-3e920399c833">
+
+### 只需配置和几行代码即可完美对接 ChatGPT 等 AI 服务：
+<img width="542" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/fc00f7a9-1e84-43bf-9c54-efb8185f980e">
