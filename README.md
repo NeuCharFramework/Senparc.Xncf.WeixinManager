@@ -1,4 +1,4 @@
-# Senparc.Xncf.WeixinManager
+# 微信管理后台：Senparc.Xncf.WeixinManager
 
 [![Build Status](https://mysenparc.visualstudio.com/NCF-and-PackageResources/_apis/build/status/NeuCharFramework.Senparc.Xncf.WeixinManager?branchName=master)](https://mysenparc.visualstudio.com/NCF-and-PackageResources/_build/latest?definitionId=49&branchName=master)
 
