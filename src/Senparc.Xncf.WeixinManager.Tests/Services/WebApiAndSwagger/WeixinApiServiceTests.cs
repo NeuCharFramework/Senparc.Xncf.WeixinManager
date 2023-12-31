@@ -29,12 +29,14 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
             //Init();
             //Console.WriteLine("Finish Init()");
 
-            Init();
+            //Init();
 
             //程序执行会自动触发
             var weixinApis = Senparc.CO2NET.ApiBind.ApiBindInfoCollection.Instance.GetGroupedCollection();
             var webApiEngine = new WebApiEngine(null);
+
             var apiGroup = weixinApis.FirstOrDefault(z => z.Key == NeuChar.PlatformType.WeChat_OfficialAccount.ToString());
+
             if (apiGroup == null)
             {
                 throw new Exception("找不到 Platform");
