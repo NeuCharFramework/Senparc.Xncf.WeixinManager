@@ -37,6 +37,8 @@ namespace Senparc.Xncf.WeixinManager.Tests
             _env = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/>();
             _env.Setup(z => z.ContentRootPath).Returns(() => Path.GetFullPath("..\\..\\..\\"));
 
+            Init();
+
             //SiteConfig.WebRootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
             //ServiceCollection = new ServiceCollection();
             //var result = ServiceCollection.StartEngine(Configuration);
@@ -76,6 +78,7 @@ namespace Senparc.Xncf.WeixinManager.Tests
             serviceCollection.AddMemoryCache();//使用内存缓存
             serviceCollection.AddRouting();
             var builder = serviceCollection.AddRazorPages();
+
             builder.AddNcfAreas(_env.Object);
 
             //自动依赖注入扫描
@@ -99,13 +102,21 @@ namespace Senparc.Xncf.WeixinManager.Tests
             registerService = Senparc.CO2NET.AspNet.RegisterServices.RegisterService.Start(_env.Object, _senparcSetting)
                 .UseSenparcGlobal(autoScanExtensionCacheStrategies);
 
-            IApplicationBuilder app = new ApplicationBuilder(ServiceProvider);
+            var builder = WebApplication.CreateBuilder();
+
+            //var app = builder.Build();// new ApplicationBuilder(ServiceProvider);
+            var app = new ApplicationBuilder(ServiceProvider);
             app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-                endpoints.MapControllers();
-            });
+
+            //app
+            //app.MapRazorPages();
+            //app.MapControllers();
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapRazorPages();
+            //    endpoints.MapControllers();
+            //});
 
             Console.WriteLine("Senparc.Ncf.XncfBase.Register.UseXncfModules");
             //XncfModules（必须）

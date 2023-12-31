@@ -16,9 +16,10 @@ using Senparc.Ncf.XncfBase.Database;
 using Senparc.NeuChar;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
-using Senparc.Xncf.WeixinManager.Models;
-using Senparc.Xncf.WeixinManager.Models.AutoMapper;
-using Senparc.Xncf.WeixinManager.Services;
+using Senparc.Xncf.WeixinManager.Domain.Models;
+using Senparc.Xncf.WeixinManager.Domain.Models.AutoMapper;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
+using Senparc.Xncf.WeixinManager.Domain.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -47,7 +48,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Icon => "fa fa-weixin";
 
 
-        public override string Description => @"NCF 模块：盛派官方发布的微信管理后台
+        public override string Description => @"XNCF 模块：盛派官方发布的微信管理后台
 使用此插件可以在 NCF 中快速集成微信公众号、小程序的部分基础管理功能，欢迎大家一起扩展！
 微信 SDK 基于 Senparc.Weixin SDK 开发。";
 
@@ -96,51 +97,6 @@ namespace Senparc.Xncf.WeixinManager
 
             await base.UninstallAsync(serviceProvider, unsinstallFunc).ConfigureAwait(false);
         }
-
-
-        public override void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration)
-        {
-            //Console.WriteLine("----------");
-            //Console.WriteLine("WeixinManager OnAutoMapMapping");
-            //Console.WriteLine("----------");
-            ////此处会执行IMapper 
-            ////throw new Exception("stop test 3");//测试是否执行
-            //Action<Profile> mapping = profile =>
-            //{
-            //    Console.WriteLine("----------");
-            //    Console.WriteLine("WeixinManager OnAutoMapMapping - Action<Profile> mapping = profile =>");
-            //    Console.WriteLine("----------");
-
-            //    //MpAccount
-            //    profile.CreateMap<MpAccountDto, MpAccount>();
-            //    profile.CreateMap<MpAccount, MpAccountDto>();
-            //    //WeixinUser
-            //    profile.CreateMap<Weixin.MP.AdvancedAPIs.User.UserInfoJson, WeixinUser_UpdateFromApiDto>();
-            //    profile.CreateMap<WeixinUser_UpdateFromApiDto, WeixinUser>();
-            //    profile.CreateMap<WeixinUser, WeixinUser_UpdateFromApiDto>();
-            //    profile.CreateMap<WeixinUserDto, WeixinUser>();
-            //    profile.CreateMap<WeixinUser, WeixinUserDto>();
-            //    //UserTag
-            //    profile.CreateMap<UserTag, UserTag_CreateOrUpdateDto>()
-            //            .ForSourceMember(z => z.Id, opt => { 
-            //                opt.Ignore(); });
-            //    profile.CreateMap<TagJson_Tag, UserTag_CreateOrUpdateDto>()
-            //            .ForMember(z => z.TagId, opt => opt.MapFrom(src => src.id));
-            //    profile.CreateMap<UserTag_CreateOrUpdateDto, UserTag>()
-            //            .ForMember(z => z.Id, opt => {
-            //                opt.Ignore();
-            //        SenparcTrace.SendCustomLog("UserTag_CreateOrUpdateDto -> UserTag", $"opt.Ignore()");
-
-            //            });
-            //    profile.CreateMap<TagJson_Tag, UserTag>();
-            //    //UserTag_WeixinUser
-            //    profile.CreateMap<UserTag_WeixinUserDto, UserTag_WeixinUser>();
-            //    profile.CreateMap<UserTag_WeixinUser, UserTag_WeixinUserDto>();
-            //};
-            //base.AddAutoMapMapping(mapping);
-            //base.OnAutoMapMapping(services, configuration);
-        }
-
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {

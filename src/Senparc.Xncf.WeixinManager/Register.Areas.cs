@@ -1,15 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Senparc.Ncf.Core.Areas;
-using Senparc.Xncf.WeixinManager.Services;
-using Swashbuckle.AspNetCore.Annotations;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Senparc.Xncf.WeixinManager
 {

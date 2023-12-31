@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Senparc.Ncf.Service;
 using Senparc.Weixin.MP.Containers;
-using Senparc.Xncf.WeixinManager.Models;
-using Senparc.Xncf.WeixinManager.Models.VD.Admin;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
+using Senparc.Xncf.WeixinManager.Domain.Models.VD.Admin.WeixinManager;
 using System;
 using System.Threading.Tasks;
 

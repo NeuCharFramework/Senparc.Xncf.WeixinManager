@@ -6,14 +6,15 @@ using Senparc.Weixin.MP.Entities.Request;
 using Senparc.Weixin.MP.MessageContexts;
 using Senparc.Weixin.MP.MessageHandlers;
 using Senparc.Xncf.WeixinManager;
-using Senparc.Xncf.WeixinManager.Models;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
+using Senparc.Xncf.WeixinManager.Tests.MessageHandlers;
 using System;
 using System.IO;
 
 namespace SeSenparc.Xncf.WeixinManager.Tests
 {
     [MpMessageHandler("JeffreyAccount")]
-    public class NcfMesssageHandler : MessageHandler<DefaultMpMessageContext>
+    public class NcfMesssageHandler : MessageHandler<MyMpMessageContext>
     {
         private readonly MpAccountDto _mpAccountDto;
         private readonly ServiceProvider _services;
