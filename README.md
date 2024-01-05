@@ -1,6 +1,6 @@
 # Senparc.Xncf.WeixinManager
 
-[![Build Status](https://mysenparc.visualstudio.com/NCF-and-PackageResources/_apis/build/status/NeuCharFramework.Senparc.Xncf.WeixinManager?branchName=master)](https://mysenparc.visualstudio.com/NCF-and-PackageResources/_build/latest?definitionId=49&branchName=master)
+[![Build Status](https://mysenparc.visualstudio.com/NCF%20and%20Senparc.AI%20Cummunity%20Projects/_apis/build/status%2FNeuCharFramework.Senparc.Xncf.WeixinManager?branchName=master)](https://mysenparc.visualstudio.com/NCF%20and%20Senparc.AI%20Cummunity%20Projects/_build/latest?definitionId=49&branchName=master)
 
 NCF 模块：盛派官方发布的微信管理后台
 
