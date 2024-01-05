@@ -146,6 +146,9 @@
             <el-form-item label="EncodingAESKey" prop="encodingAESKey">
                 <el-input v-model="mpAccountForm.encodingAESKey"></el-input>
             </el-form-item>
+            <el-form-item label="PromptCode" prop="promptRangeCode">
+                <el-input v-model="mpAccountForm.promptRangeCode"></el-input>
+            </el-form-item>
             <el-form-item label="备注" prop="adminRemark">
                 <el-input v-model="mpAccountForm.adminRemark"></el-input>
             </el-form-item>
@@ -188,6 +191,7 @@
                     appSecret: '',
                     token: '',
                     encodingAESKey: '',
+                    promotRangeCode: '',
                     adminRemark: ''
                 },
                 mpAccountRule: {
@@ -209,6 +213,9 @@
                     ],
                     encodingAESKey: [
                         { min: 0, max: 500, message: '长度在 1 至 500 之间', trigger: 'blur' }
+                    ],
+                    promptRangeCode: [
+                        { min: 0, max: 500, message: '长度在 1 至 100 之间', trigger: 'blur' }
                     ],
                     adminRemark: [
                         { min: 0, max: 100, message: '长度在 1 至 100 之间', trigger: 'blur' }
@@ -248,6 +255,7 @@
                         appSecret: '',
                         token: '',
                         encodingAESKey: '',
+                        promotRangeCode: '',
                         adminRemark: ''
                     }
                 },
@@ -264,6 +272,7 @@
                             appSecret: responseData.appSecret,
                             token: responseData.token,
                             encodingAESKey: responseData.encodingAESKey,
+                            promotRangeCode: responseData.promptRangeCode,
                             adminRemark: responseData.adminRemark
                         }
                     });
