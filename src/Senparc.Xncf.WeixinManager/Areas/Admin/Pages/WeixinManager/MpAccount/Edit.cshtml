@@ -52,6 +52,14 @@
                     </div>
 
                     <div class="item form-group">
+                        @Html.LabelFor(z => z.MpAccountDto.PromptRangeCode, new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            @Html.EditorFor(z => z.MpAccountDto.PromptRangeCode, new { htmlAttributes = new { @class = "form-control col-md-7 col-xs-12" } })
+                            @Html.ValidationMessageFor(z => z.MpAccountDto.PromptRangeCode)
+                        </div>
+                    </div>
+
+                    <div class="item form-group">
                         @Html.LabelFor(z => z.MpAccountDto.AdminRemark, "备注", new { @class = "control-label col-md-3 col-sm-3 col-xs-12" })
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             @Html.EditorFor(z => z.MpAccountDto.AdminRemark, new { htmlAttributes = new { @class = "form-control col-md-7 col-xs-12" } })

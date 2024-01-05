@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Senparc.AI.Entities;
 using Senparc.AI.Interfaces;
 using Senparc.AI.Kernel;
 using Senparc.AI.Kernel.Handlers;
-using Senparc.NeuChar.ApiHandlers;
+using Senparc.CO2NET.Extensions;
 using Senparc.Weixin.MP.MessageContexts;
+using Senparc.Xncf.PromptRange.Domain.Services;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
 
 namespace Senparc.Xncf.WeixinManager
@@ -18,20 +18,50 @@ namespace Senparc.Xncf.WeixinManager
     {
         internal static ConcurrentDictionary<string, IWantToRun> IWantoRunDic = new ConcurrentDictionary<string, IWantToRun>();
 
-        internal static IWantToRun GetIWantToRun(IServiceProvider services, MpAccountDto mpAccountDto, PromptConfigParameter promptConfigParameter, string modelName, string openId)
+        /// <summary>
+        /// 构建并获取 IWantToRun 对象
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="mpAccountDto"></param>
+        /// <param name="promptConfigParameter"></param>
+        /// <param name="modelName"></param>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        internal static async Task<IWantToRun> GetIWantToRunAsync(IServiceProvider services, MpAccountDto mpAccountDto, PromptConfigParameter promptConfigParameter, string modelName, string openId)
         {
             if (!IWantoRunDic.ContainsKey(openId))
             {
                 SemanticAiHandler _semanticAiHandler = (SemanticAiHandler)services.GetRequiredService<IAiHandler>();
 
-                //配置和初始化模型
-                var chatConfig = _semanticAiHandler.ChatConfig(promptConfigParameter, userId: openId,
-                                               modelName: modelName /*, modelName: "gpt-4-32k"*/);
+                using (var scope = services.CreateScope())
+                {
+                    var promptItemService = scope.ServiceProvider.GetService<PromptItemService>();
 
-                var iWantToRun = chatConfig.iWantToRun;
+                    string chatPrompt = null;
 
-                //IWantoRunDic.TryAdd(openId, iWantToRun);
-                IWantoRunDic[openId] = iWantToRun;
+                    if (!mpAccountDto.PromptRangeCode.IsNullOrEmpty())
+                    {
+                        var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode);
+
+                        chatPrompt = Senparc.AI.DefaultSetting.DEFAULT_PROMPT_FOR_CHAT;
+                    }
+                    else
+                    {
+                        chatPrompt = Senparc.AI.DefaultSetting.DEFAULT_PROMPT_FOR_CHAT;
+                    }
+
+                    //配置和初始化模型
+                    var chatConfig = _semanticAiHandler.ChatConfig(promptConfigParameter,
+                                                    userId: openId,
+                                                    modelName: modelName,
+                                                    chatPrompt: chatPrompt
+                                                    /*, modelName: "gpt-4-32k"*/);
+
+                    var iWantToRun = chatConfig.iWantToRun;
+
+                    //IWantoRunDic.TryAdd(openId, iWantToRun);
+                    IWantoRunDic[openId] = iWantToRun;
+                }
             }
 
             return IWantoRunDic[openId];

@@ -50,7 +50,7 @@ namespace Senparc.Xncf.WeixinManager
             var modelName = "gpt-35-turbo";//text-davinci-003
 
             //获取 AI 处理器
-            var iWantToRun = WechatAiContext.GetIWantToRun(services, _mpAccountDto, parameter, modelName, requestMessage.FromUserName);
+            var iWantToRun = await WechatAiContext.GetIWantToRunAsync(services, _mpAccountDto, parameter, modelName, requestMessage.FromUserName);
             SemanticAiHandler semanticAiHandler = iWantToRun.SemanticAiHandler;
 
             //发送到 AI 模型，获取结果

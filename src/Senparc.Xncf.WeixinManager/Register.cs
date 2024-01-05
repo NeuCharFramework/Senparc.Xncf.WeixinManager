@@ -16,6 +16,7 @@ using Senparc.Ncf.XncfBase.Database;
 using Senparc.NeuChar;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
+using Senparc.Xncf.PromptRange.Domain.Services;
 using Senparc.Xncf.WeixinManager.Domain.Models.AutoMapper;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
 using Senparc.Xncf.WeixinManager.Domain.Services;
@@ -62,6 +63,7 @@ namespace Senparc.Xncf.WeixinManager
             //});
             services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
             services.AddScoped<MpAccountService>();
+            services.AddScoped<PromptItemService>();
 
             return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }
@@ -96,6 +98,7 @@ namespace Senparc.Xncf.WeixinManager
 
             await base.UninstallAsync(serviceProvider, unsinstallFunc).ConfigureAwait(false);
         }
+
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {
