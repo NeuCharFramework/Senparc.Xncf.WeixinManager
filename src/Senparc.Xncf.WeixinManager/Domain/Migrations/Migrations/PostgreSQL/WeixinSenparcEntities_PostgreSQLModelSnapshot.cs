@@ -2,31 +2,33 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Senparc.Xncf.WeixinManager.Domain.Models.MultipleDatabase;
 
-namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
+#nullable disable
+
+namespace Senparc.Xncf.WeixinManager.Domain.Migrations.Migrations.PostgreSQL
 {
     [DbContext(typeof(WeixinSenparcEntities_PostgreSQL))]
-    [Migration("20211114142616_InitLastVersion")]
-    partial class InitLastVersion
+    partial class WeixinSenparcEntities_PostgreSQLModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.12")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AddTime")
                         .HasColumnType("timestamp without time zone");
@@ -64,6 +66,10 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("PromptRangeCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<string>("Remark")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
@@ -81,15 +87,16 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_MpAccount");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("AdminRemark")
                         .HasMaxLength(300)
@@ -102,7 +109,7 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("MpAccountId")
                         .HasColumnType("integer");
@@ -128,7 +135,7 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_UserTag");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag_WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag_WeixinUser", b =>
                 {
                     b.Property<int>("UserTagId")
                         .HasColumnType("integer");
@@ -137,13 +144,13 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("Flag")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("integer");
@@ -155,15 +162,16 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_UserTag_WeixinUser");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("AdminRemark")
                         .HasMaxLength(300)
@@ -188,7 +196,7 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("MpAccountId")
                         .HasColumnType("integer");
@@ -238,27 +246,27 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_WeixinUser");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", b =>
                 {
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.MpAccount", "MpAccount")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", "MpAccount")
                         .WithMany("UserTags")
                         .HasForeignKey("MpAccountId")
-                        .HasConstraintName("FK__UserTag__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__UserTag__MpAccountId");
 
                     b.Navigation("MpAccount");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag_WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag_WeixinUser", b =>
                 {
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.UserTag", "UserTag")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", "UserTag")
                         .WithMany("UserTags_WeixinUsers")
                         .HasForeignKey("UserTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.WeixinUser", "WeixinUser")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", "WeixinUser")
                         .WithMany("UserTags_WeixinUsers")
                         .HasForeignKey("WeixinUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -269,31 +277,31 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.Navigation("WeixinUser");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", b =>
                 {
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.MpAccount", "MpAccount")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", "MpAccount")
                         .WithMany("WeixinUsers")
                         .HasForeignKey("MpAccountId")
-                        .HasConstraintName("FK__WeixinUser__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__WeixinUser__MpAccountId");
 
                     b.Navigation("MpAccount");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", b =>
                 {
                     b.Navigation("UserTags");
 
                     b.Navigation("WeixinUsers");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", b =>
                 {
                     b.Navigation("UserTags_WeixinUsers");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", b =>
                 {
                     b.Navigation("UserTags_WeixinUsers");
                 });

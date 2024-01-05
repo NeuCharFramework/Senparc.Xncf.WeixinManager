@@ -3,121 +3,123 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Senparc.Xncf.WeixinManager.Domain.Models.MultipleDatabase;
 
-namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
+#nullable disable
+
+namespace Senparc.Xncf.WeixinManager.Domain.Migrations.Migrations.MySql
 {
-    [DbContext(typeof(WeixinSenparcEntities_PostgreSQL))]
-    partial class WeixinSenparcEntities_PostgreSQLModelSnapshot : ModelSnapshot
+    [DbContext(typeof(WeixinSenparcEntities_MySql))]
+    partial class WeixinSenparcEntities_MySqlModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.12")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("AdminRemark")
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("AppId")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("AppSecret")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("EncodingAESKey")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<bool>("Flag")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Logo")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("PromptRangeCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Remark")
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("TenantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("varchar(500)");
 
                     b.HasKey("Id");
 
                     b.ToTable("WeixinManager_MpAccount");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("AdminRemark")
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("Count")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("Flag")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("MpAccountId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Remark")
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("TagId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("TenantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -126,25 +128,25 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_UserTag");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag_WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag_WeixinUser", b =>
                 {
                     b.Property<int>("UserTagId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("WeixinUserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("Flag")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TenantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("UserTagId", "WeixinUserId");
 
@@ -153,81 +155,80 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_UserTag_WeixinUser");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("AddTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("AdminRemark")
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("City")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Country")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("Flag")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Groupid")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("HeadImgUrl")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Language")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("LastUpdateTime")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("MpAccountId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("NickName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("OpenId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Province")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
-                    b.Property<long>("Qr_Scene")
-                        .HasColumnType("bigint");
+                    b.Property<uint>("Qr_Scene")
+                        .HasColumnType("int unsigned");
 
                     b.Property<string>("Qr_Scene_Str")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Remark")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Sex")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Subscribe")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Subscribe_Scene")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("Subscribe_Time")
                         .HasColumnType("bigint");
 
                     b.Property<int>("TenantId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("UnionId")
-                        .HasColumnType("text");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -236,27 +237,27 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.ToTable("WeixinManager_WeixinUser");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", b =>
                 {
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.MpAccount", "MpAccount")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", "MpAccount")
                         .WithMany("UserTags")
                         .HasForeignKey("MpAccountId")
-                        .HasConstraintName("FK__UserTag__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__UserTag__MpAccountId");
 
                     b.Navigation("MpAccount");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag_WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag_WeixinUser", b =>
                 {
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.UserTag", "UserTag")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", "UserTag")
                         .WithMany("UserTags_WeixinUsers")
                         .HasForeignKey("UserTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.WeixinUser", "WeixinUser")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", "WeixinUser")
                         .WithMany("UserTags_WeixinUsers")
                         .HasForeignKey("WeixinUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -267,31 +268,31 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     b.Navigation("WeixinUser");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", b =>
                 {
-                    b.HasOne("Senparc.Xncf.WeixinManager.Models.MpAccount", "MpAccount")
+                    b.HasOne("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", "MpAccount")
                         .WithMany("WeixinUsers")
                         .HasForeignKey("MpAccountId")
-                        .HasConstraintName("FK__WeixinUser__MpAccountId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK__WeixinUser__MpAccountId");
 
                     b.Navigation("MpAccount");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.MpAccount", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.MpAccount", b =>
                 {
                     b.Navigation("UserTags");
 
                     b.Navigation("WeixinUsers");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.UserTag", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.UserTag", b =>
                 {
                     b.Navigation("UserTags_WeixinUsers");
                 });
 
-            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Models.WeixinUser", b =>
+            modelBuilder.Entity("Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.WeixinUser", b =>
                 {
                     b.Navigation("UserTags_WeixinUsers");
                 });

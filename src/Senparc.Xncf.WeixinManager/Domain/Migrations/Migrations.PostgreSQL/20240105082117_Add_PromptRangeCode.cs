@@ -2,10 +2,14 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
+#nullable disable
+
+namespace Senparc.Xncf.WeixinManager.Domain.Migrations.Migrations.PostgreSQL
 {
-    public partial class InitLastVersion : Migration
+    /// <inheritdoc />
+    public partial class Add_PromptRangeCode : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -20,6 +24,7 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     AppSecret = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Token = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     EncodingAESKey = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    PromptRangeCode = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Flag = table.Column<bool>(type: "boolean", nullable: false),
                     AddTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     LastUpdateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -43,8 +48,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     Name = table.Column<string>(type: "text", nullable: false),
                     Count = table.Column<int>(type: "integer", nullable: false),
                     Flag = table.Column<bool>(type: "boolean", nullable: false),
-                    AddTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    LastUpdateTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    AddTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TenantId = table.Column<int>(type: "integer", nullable: false),
                     AdminRemark = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     Remark = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true)
@@ -84,8 +89,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     Qr_Scene = table.Column<long>(type: "bigint", nullable: false),
                     Qr_Scene_Str = table.Column<string>(type: "text", nullable: true),
                     Flag = table.Column<bool>(type: "boolean", nullable: false),
-                    AddTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    LastUpdateTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    AddTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TenantId = table.Column<int>(type: "integer", nullable: false),
                     AdminRemark = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true)
                 },
@@ -107,8 +112,8 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                     UserTagId = table.Column<int>(type: "integer", nullable: false),
                     WeixinUserId = table.Column<int>(type: "integer", nullable: false),
                     Flag = table.Column<bool>(type: "boolean", nullable: false),
-                    AddTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    LastUpdateTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    AddTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastUpdateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TenantId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -144,6 +149,7 @@ namespace Senparc.Xncf.WeixinManager.Migrations.Migrations.PostgreSQL
                 column: "MpAccountId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

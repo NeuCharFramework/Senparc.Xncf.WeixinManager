@@ -10,6 +10,7 @@ using Senparc.AI.Kernel;
 using Senparc.AI.Kernel.Handlers;
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.Weixin.MP.MessageContexts;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
 
 namespace Senparc.Xncf.WeixinManager
 {
@@ -17,7 +18,7 @@ namespace Senparc.Xncf.WeixinManager
     {
         internal static ConcurrentDictionary<string, IWantToRun> IWantoRunDic = new ConcurrentDictionary<string, IWantToRun>();
 
-        internal static IWantToRun GetIWantToRun(IServiceProvider services, PromptConfigParameter promptConfigParameter, string modelName, string openId)
+        internal static IWantToRun GetIWantToRun(IServiceProvider services, MpAccountDto mpAccountDto, PromptConfigParameter promptConfigParameter, string modelName, string openId)
         {
             if (!IWantoRunDic.ContainsKey(openId))
             {
