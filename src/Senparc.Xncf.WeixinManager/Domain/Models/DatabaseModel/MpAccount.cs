@@ -32,6 +32,8 @@ namespace Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel
         public string Token { get; private set; }
         [MaxLength(500)]
         public string EncodingAESKey { get; private set; }
+        [MaxLength(100)]
+        public string PromptRangeCode { get; private set; }
 
         private MpAccount() { }
 
@@ -45,6 +47,7 @@ namespace Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel
             EncodingAESKey = dto.EncodingAESKey;
             AdminRemark = dto.AdminRemark;
             Remark = dto.Remark;
+            PromptRangeCode = dto.PromptRangeCode;
             SetUpdateTime(SystemTime.Now.UtcDateTime);
         }
 

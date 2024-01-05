@@ -3,13 +3,12 @@ using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.XncfBase;
 using Senparc.Ncf.XncfBase.Database;
-using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Senparc.Xncf.WeixinManager.Domain.Models
+namespace Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel
 {
     public class WeixinSenparcEntities : XncfDatabaseDbContext
     {

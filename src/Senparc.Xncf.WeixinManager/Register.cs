@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +16,6 @@ using Senparc.Ncf.XncfBase.Database;
 using Senparc.NeuChar;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
-using Senparc.Xncf.WeixinManager.Domain.Models;
 using Senparc.Xncf.WeixinManager.Domain.Models.AutoMapper;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
 using Senparc.Xncf.WeixinManager.Domain.Services;
@@ -39,7 +38,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.9.0-beta1";
+        public override string Version => "0.10.0-beta1";
 
 
         public override string MenuName => "微信管理";
@@ -249,3 +248,4 @@ namespace Senparc.Xncf.WeixinManager
     //}
 
 }
+

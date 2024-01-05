@@ -4,7 +4,7 @@ using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.Database.MultipleMigrationDbContext;
 using Senparc.Ncf.XncfBase.Database;
-using Senparc.Xncf.WeixinManager.Domain.Models;
+using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
