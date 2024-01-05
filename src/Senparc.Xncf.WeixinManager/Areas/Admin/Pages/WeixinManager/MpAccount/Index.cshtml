@@ -130,7 +130,7 @@
     </div>
     <!--新增 / 编辑 模态框-->
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="40%" :close-on-click-modal="false">
-        <el-form :model="mpAccountForm" :rules="mpAccountRule" ref="ref_mpAccountForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="mpAccountForm" :rules="mpAccountRule" ref="ref_mpAccountForm" label-width="140px" class="demo-ruleForm">
             <el-form-item label="公众号名称" prop="name">
                 <el-input v-model="mpAccountForm.name"></el-input>
             </el-form-item>
@@ -146,7 +146,7 @@
             <el-form-item label="EncodingAESKey" prop="encodingAESKey">
                 <el-input v-model="mpAccountForm.encodingAESKey"></el-input>
             </el-form-item>
-            <el-form-item label="PromptCode" prop="promptRangeCode">
+            <el-form-item label="PromptRangeCode" prop="promptRangeCode">
                 <el-input v-model="mpAccountForm.promptRangeCode"></el-input>
             </el-form-item>
             <el-form-item label="备注" prop="adminRemark">
@@ -191,7 +191,7 @@
                     appSecret: '',
                     token: '',
                     encodingAESKey: '',
-                    promotRangeCode: '',
+                    promptRangeCode: '',
                     adminRemark: ''
                 },
                 mpAccountRule: {
@@ -255,7 +255,7 @@
                         appSecret: '',
                         token: '',
                         encodingAESKey: '',
-                        promotRangeCode: '',
+                        promptRangeCode: '',
                         adminRemark: ''
                     }
                 },
@@ -272,7 +272,7 @@
                             appSecret: responseData.appSecret,
                             token: responseData.token,
                             encodingAESKey: responseData.encodingAESKey,
-                            promotRangeCode: responseData.promptRangeCode,
+                            promptRangeCode: responseData.promptRangeCode,
                             adminRemark: responseData.adminRemark
                         }
                     });
