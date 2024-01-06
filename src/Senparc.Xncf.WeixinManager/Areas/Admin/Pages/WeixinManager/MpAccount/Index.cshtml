@@ -130,7 +130,7 @@
     </div>
     <!--新增 / 编辑 模态框-->
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="40%" :close-on-click-modal="false">
-        <el-form :model="mpAccountForm" :rules="mpAccountRule" ref="ref_mpAccountForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="mpAccountForm" :rules="mpAccountRule" ref="ref_mpAccountForm" label-width="140px" class="demo-ruleForm">
             <el-form-item label="公众号名称" prop="name">
                 <el-input v-model="mpAccountForm.name"></el-input>
             </el-form-item>
@@ -145,6 +145,9 @@
             </el-form-item>
             <el-form-item label="EncodingAESKey" prop="encodingAESKey">
                 <el-input v-model="mpAccountForm.encodingAESKey"></el-input>
+            </el-form-item>
+            <el-form-item label="PromptRangeCode" prop="promptRangeCode">
+                <el-input v-model="mpAccountForm.promptRangeCode"></el-input>
             </el-form-item>
             <el-form-item label="备注" prop="adminRemark">
                 <el-input v-model="mpAccountForm.adminRemark"></el-input>
@@ -188,6 +191,7 @@
                     appSecret: '',
                     token: '',
                     encodingAESKey: '',
+                    promptRangeCode: '',
                     adminRemark: ''
                 },
                 mpAccountRule: {
@@ -209,6 +213,9 @@
                     ],
                     encodingAESKey: [
                         { min: 0, max: 500, message: '长度在 1 至 500 之间', trigger: 'blur' }
+                    ],
+                    promptRangeCode: [
+                        { min: 0, max: 500, message: '长度在 1 至 100 之间', trigger: 'blur' }
                     ],
                     adminRemark: [
                         { min: 0, max: 100, message: '长度在 1 至 100 之间', trigger: 'blur' }
@@ -248,6 +255,7 @@
                         appSecret: '',
                         token: '',
                         encodingAESKey: '',
+                        promptRangeCode: '',
                         adminRemark: ''
                     }
                 },
@@ -264,6 +272,7 @@
                             appSecret: responseData.appSecret,
                             token: responseData.token,
                             encodingAESKey: responseData.encodingAESKey,
+                            promptRangeCode: responseData.promptRangeCode,
                             adminRemark: responseData.adminRemark
                         }
                     });

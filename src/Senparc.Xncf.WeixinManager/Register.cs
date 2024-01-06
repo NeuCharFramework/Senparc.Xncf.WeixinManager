@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
+using Senparc.AI.Kernel;
 using Senparc.CO2NET.RegisterServices;
 using Senparc.CO2NET.Trace;
 using Senparc.Ncf.Core.Enums;
@@ -16,7 +17,7 @@ using Senparc.Ncf.XncfBase.Database;
 using Senparc.NeuChar;
 using Senparc.Weixin.MP.AdvancedAPIs.UserTag;
 using Senparc.Weixin.MP.Containers;
-using Senparc.Xncf.WeixinManager.Domain.Models;
+using Senparc.Xncf.PromptRange.Domain.Services;
 using Senparc.Xncf.WeixinManager.Domain.Models.AutoMapper;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
 using Senparc.Xncf.WeixinManager.Domain.Services;
@@ -39,7 +40,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.9.0-beta1";
+        public override string Version => "0.11.0-beta1";
 
 
         public override string MenuName => "微信管理";
@@ -63,6 +64,8 @@ namespace Senparc.Xncf.WeixinManager
             //});
             services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
             services.AddScoped<MpAccountService>();
+            services.AddScoped<PromptItemService>();
+            services.AddScoped<Senparc.AI.Interfaces.IAiHandler, SemanticAiHandler>();
 
             return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }
@@ -97,6 +100,7 @@ namespace Senparc.Xncf.WeixinManager
 
             await base.UninstallAsync(serviceProvider, unsinstallFunc).ConfigureAwait(false);
         }
+
 
         public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
         {
@@ -249,3 +253,5 @@ namespace Senparc.Xncf.WeixinManager
     //}
 
 }
+
+

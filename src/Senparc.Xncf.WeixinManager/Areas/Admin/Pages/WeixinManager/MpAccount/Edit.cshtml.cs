@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Senparc.CO2NET.Extensions;
 using Senparc.Ncf.Service;
 using Senparc.Weixin.MP.Containers;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
@@ -107,6 +108,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 {
                     return RenderError("公众号信息不存在！");
                 }
+
                 mpAccountDto.AddTime = mpAccount.AddTime;
                 _mpAccountService.Mapper.Map(mpAccountDto, mpAccount);
                 mpAccount.LastUpdateTime = DateTime.Now;

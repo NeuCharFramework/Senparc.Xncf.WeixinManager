@@ -40,3 +40,6 @@
 /src/Senparc.Xncf.WeixinManager.Tests/App_Data/SenparcTraceLog
 *.user
 *.DS_Store
+/src/DevelopmentTools/Senparc.Web.DatabasePlant/App_Data/SenparcTraceLog
+/src/DevelopmentTools/Senparc.Web.DatabasePlant/App_Data/Database/SenparcConfig.Development.config
+/src/DevelopmentTools/Senparc.Web.DatabasePlant/appsettings.Development.json
