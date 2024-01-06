@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
+using Senparc.AI.Kernel;
 using Senparc.CO2NET.RegisterServices;
 using Senparc.CO2NET.Trace;
 using Senparc.Ncf.Core.Enums;
@@ -64,6 +65,7 @@ namespace Senparc.Xncf.WeixinManager
             services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
             services.AddScoped<MpAccountService>();
             services.AddScoped<PromptItemService>();
+            services.AddScoped<Senparc.AI.Interfaces.IAiHandler, SemanticAiHandler>();
 
             return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }

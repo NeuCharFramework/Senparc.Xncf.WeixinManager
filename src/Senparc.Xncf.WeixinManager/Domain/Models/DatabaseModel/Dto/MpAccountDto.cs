@@ -42,7 +42,7 @@ namespace Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto
         [MaxLength(500)]
         public string EncodingAESKey { get; set; }
         [MaxLength(100)]
-        public string PromptRangeCode { get; private set; }
+        public string PromptRangeCode { get; set; }
 
 
         public IList<WeixinUser> WeixinUsers { get; set; }

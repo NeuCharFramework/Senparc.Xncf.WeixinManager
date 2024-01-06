@@ -10,6 +10,7 @@ using Senparc.AI.Kernel.Handlers;
 using Senparc.CO2NET.Extensions;
 using Senparc.Weixin.MP.MessageContexts;
 using Senparc.Xncf.PromptRange.Domain.Services;
+using Senparc.Xncf.PromptRange.Models;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
 
 namespace Senparc.Xncf.WeixinManager
@@ -17,6 +18,18 @@ namespace Senparc.Xncf.WeixinManager
     public class WechatAiContext : DefaultMpMessageContext
     {
         internal static ConcurrentDictionary<string, IWantToRun> IWantoRunDic = new ConcurrentDictionary<string, IWantToRun>();
+
+        /// <summary>
+        /// 获取唯一 Key。
+        /// 使用 PromptRangeCode 参与到 Key 的标记中，可以实现实时 Prompt 的更新
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <param name="mpAccountDto"></param>
+        /// <returns></returns>
+        private static string GetKey(string openId, MpAccountDto mpAccountDto)
+        {
+            return $"{openId}-{mpAccountDto.PromptRangeCode}";
+        }
 
         /// <summary>
         /// 构建并获取 IWantToRun 对象
@@ -29,7 +42,9 @@ namespace Senparc.Xncf.WeixinManager
         /// <returns></returns>
         internal static async Task<IWantToRun> GetIWantToRunAsync(IServiceProvider services, MpAccountDto mpAccountDto, PromptConfigParameter promptConfigParameter, string modelName, string openId)
         {
-            if (!IWantoRunDic.ContainsKey(openId))
+            var key = GetKey(openId, mpAccountDto);
+
+            if (!IWantoRunDic.ContainsKey(key))
             {
                 SemanticAiHandler _semanticAiHandler = (SemanticAiHandler)services.GetRequiredService<IAiHandler>();
 
@@ -38,12 +53,25 @@ namespace Senparc.Xncf.WeixinManager
                     var promptItemService = scope.ServiceProvider.GetService<PromptItemService>();
 
                     string chatPrompt = null;
+                    SenparcAiSetting senparcAiSetting = null;
 
                     if (!mpAccountDto.PromptRangeCode.IsNullOrEmpty())
                     {
-                        var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode);
-
-                        chatPrompt = Senparc.AI.DefaultSetting.DEFAULT_PROMPT_FOR_CHAT;
+                        if (mpAccountDto.PromptRangeCode.Contains("-T") && mpAccountDto.PromptRangeCode.Contains("-A"))
+                        {
+                            //完整版本
+                            var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode);
+                            chatPrompt = promptResult.PromptItem.Content;
+                            senparcAiSetting = promptResult.SenparcAiSetting;
+                        }
+                        else
+                        {
+                            //只有靶场，自动选择最好的版本
+                            var isAverage = mpAccountDto.PromptRangeCode.Contains("Average", StringComparison.OrdinalIgnoreCase);
+                            var promptResult = await promptItemService.GetBestPromptAsync(mpAccountDto.PromptRangeCode, isAverage);
+                            chatPrompt = promptResult.PromptItem.Content;
+                            senparcAiSetting = promptResult.SenparcAiSetting;
+                        }
                     }
                     else
                     {
@@ -54,17 +82,18 @@ namespace Senparc.Xncf.WeixinManager
                     var chatConfig = _semanticAiHandler.ChatConfig(promptConfigParameter,
                                                     userId: openId,
                                                     modelName: modelName,
-                                                    chatPrompt: chatPrompt
+                                                    chatPrompt: chatPrompt,
+                                                     senparcAiSetting: senparcAiSetting
                                                     /*, modelName: "gpt-4-32k"*/);
 
                     var iWantToRun = chatConfig.iWantToRun;
 
                     //IWantoRunDic.TryAdd(openId, iWantToRun);
-                    IWantoRunDic[openId] = iWantToRun;
+                    IWantoRunDic[key] = iWantToRun;
                 }
             }
 
-            return IWantoRunDic[openId];
+            return IWantoRunDic[key];
         }
 
 
