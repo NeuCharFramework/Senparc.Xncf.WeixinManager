@@ -22,19 +22,6 @@ steps:
 #     restoreSolution: '**/Senparc.Xncf.WeixinManager.sln'
 #     feedsToUse: 'select'
 
-
-- task: UseDotNet@2
-  displayName: 'Use .NET SDK 3.1'
-  inputs:
-    version: '3.1.x'
-    packageType: 'sdk'
-
-- task: UseDotNet@2
-  displayName: 'Use .NET SDK 6.0'
-  inputs:
-    version: '6.0.x'
-    packageType: 'sdk'
-
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 8.0'
   inputs:
