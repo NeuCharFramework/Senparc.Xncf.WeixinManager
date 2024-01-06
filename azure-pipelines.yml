@@ -49,3 +49,5 @@ steps:
     #packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'nuget-jeffrey-full-key'
+    continueOnError: true
+    condition: succeededOrFailed()
