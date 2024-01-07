@@ -57,21 +57,12 @@ namespace Senparc.Xncf.WeixinManager
 
                     if (!mpAccountDto.PromptRangeCode.IsNullOrEmpty())
                     {
-                        if (mpAccountDto.PromptRangeCode.Contains("-T") && mpAccountDto.PromptRangeCode.Contains("-A"))
-                        {
-                            //完整版本
-                            var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode);
-                            chatPrompt = promptResult.PromptItem.Content;
-                            senparcAiSetting = promptResult.SenparcAiSetting;
-                        }
-                        else
-                        {
-                            //只有靶场，自动选择最好的版本
-                            var isAverage = mpAccountDto.PromptRangeCode.Contains("Average", StringComparison.OrdinalIgnoreCase);
-                            var promptResult = await promptItemService.GetBestPromptAsync(mpAccountDto.PromptRangeCode, isAverage);
-                            chatPrompt = promptResult.PromptItem.Content;
-                            senparcAiSetting = promptResult.SenparcAiSetting;
-                        }
+                        //只有靶场，自动选择最好的版本
+                        //var isAverage = mpAccountDto.PromptRangeCode.Contains("Average", StringComparison.OrdinalIgnoreCase);
+
+                        var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode, isAvg: true);
+                        chatPrompt = promptResult.PromptItem.Content;
+                        senparcAiSetting = promptResult.SenparcAiSetting;
                     }
                     else
                     {
