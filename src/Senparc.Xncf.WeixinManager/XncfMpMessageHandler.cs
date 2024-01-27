@@ -46,6 +46,8 @@ namespace Senparc.Xncf.WeixinManager
                 TopP = 0.5
             };
 
+            //TODO：判断是否为“文生图”的请求
+
             //定义 AI 模型
             var modelName = "gpt-35-turbo";//text-davinci-003
 

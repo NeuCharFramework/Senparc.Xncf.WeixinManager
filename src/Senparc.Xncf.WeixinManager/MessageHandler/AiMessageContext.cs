@@ -61,8 +61,8 @@ namespace Senparc.Xncf.WeixinManager
                         //var isAverage = mpAccountDto.PromptRangeCode.Contains("Average", StringComparison.OrdinalIgnoreCase);
 
                         var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode, isAvg: true);
-                        chatPrompt = promptResult.PromptItem.Content;
-                        senparcAiSetting = promptResult.SenparcAiSetting;
+                        chatPrompt = promptResult.PromptItem.Content;// Prompt
+                        senparcAiSetting = promptResult.SenparcAiSetting;// AI 模型参数
                     }
                     else
                     {
