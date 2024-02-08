@@ -11,6 +11,7 @@ using Senparc.CO2NET.Extensions;
 using Senparc.Weixin.MP.MessageContexts;
 using Senparc.Xncf.PromptRange.Domain.Services;
 using Senparc.Xncf.PromptRange.Models;
+using Senparc.Xncf.PromptRange.Models.DatabaseModel.Dto;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel.Dto;
 
 namespace Senparc.Xncf.WeixinManager
@@ -40,7 +41,7 @@ namespace Senparc.Xncf.WeixinManager
         /// <param name="modelName"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        internal static async Task<IWantToRun> GetIWantToRunAsync(IServiceProvider services, MpAccountDto mpAccountDto, PromptConfigParameter promptConfigParameter, string modelName, string openId)
+        public static async Task<IWantToRun> GetIWantToRunAsync(IServiceProvider services, MpAccountDto mpAccountDto, string openId)
         {
             var key = GetKey(openId, mpAccountDto);
 
@@ -52,8 +53,9 @@ namespace Senparc.Xncf.WeixinManager
                 {
                     var promptItemService = scope.ServiceProvider.GetService<PromptItemService>();
 
-                    string chatPrompt = null;
+                    string promptTemplate = null;
                     SenparcAiSetting senparcAiSetting = null;
+                    PromptConfigParameter promptConfigParameter = null;
 
                     if (!mpAccountDto.PromptRangeCode.IsNullOrEmpty())
                     {
@@ -61,21 +63,31 @@ namespace Senparc.Xncf.WeixinManager
                         //var isAverage = mpAccountDto.PromptRangeCode.Contains("Average", StringComparison.OrdinalIgnoreCase);
 
                         var promptResult = await promptItemService.GetWithVersionAsync(mpAccountDto.PromptRangeCode, isAvg: true);
-                        chatPrompt = promptResult.PromptItem.Content;// Prompt
+                        promptTemplate = promptResult.PromptItem.Content;// Prompt
+
                         senparcAiSetting = promptResult.SenparcAiSetting;// AI 模型参数
+                        await Console.Out.WriteLineAsync(senparcAiSetting.ToJson(true));
+                        var promptResultDto = promptItemService.Mapper.Map<PromptItemDto>(promptResult.PromptItem);
+                        promptConfigParameter = promptItemService.GetPromptConfigParameterFromAiSetting(promptResultDto);
                     }
                     else
                     {
-                        chatPrompt = Senparc.AI.DefaultSetting.DEFAULT_PROMPT_FOR_CHAT;
+                        promptTemplate = Senparc.AI.DefaultSetting.GetPromptForChat(Senparc.AI.DefaultSetting.DEFAULT_SYSTEM_MESSAGE);
+                        promptConfigParameter = new PromptConfigParameter()
+                        {
+                            MaxTokens = 2000,
+                            Temperature = 0.7,
+                            TopP = 0.5
+                        };
                     }
 
                     //配置和初始化模型
                     var chatConfig = _semanticAiHandler.ChatConfig(promptConfigParameter,
-                                                    userId: openId,
-                                                    modelName: modelName,
-                                                    chatPrompt: chatPrompt,
+                                                     userId: openId,
+                                                     maxHistoryStore: 20,
+                                                     promptTemplate: promptTemplate,
                                                      senparcAiSetting: senparcAiSetting
-                                                    /*, modelName: "gpt-4-32k"*/);
+                                                                                                          /*, modelName: "gpt-4-32k"*/);
 
                     var iWantToRun = chatConfig.iWantToRun;
 
