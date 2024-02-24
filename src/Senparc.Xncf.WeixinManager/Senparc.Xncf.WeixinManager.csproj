@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<!--<RazorLangVersion>3.0</RazorLangVersion>-->
-		<Version>0.15.0.1-beta1</Version>
+		<Version>0.15.2-beta1</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -98,9 +98,9 @@
 		<PackageReference Include="Senparc.Weixin.TenPay" Version="1.13.1" />
 		<PackageReference Include="Senparc.Weixin.Work" Version="3.18.2" />
 		<PackageReference Include="Senparc.Weixin.WxOpen" Version="3.17.6" />
-		<PackageReference Include="Senparc.Xncf.AIKernel" Version="0.3.6.1-beta2" />
+		<PackageReference Include="Senparc.Xncf.AIKernel" Version="0.3.6.6-beta2" />
 		<PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.17.4-beta1" />
-		<PackageReference Include="Senparc.Xncf.PromptRange" Version="0.4.16.1-preview1" />
+		<PackageReference Include="Senparc.Xncf.PromptRange" Version="0.4.16.5-preview1" />
 
 		<!-- 为解决 VS 2019 v16.8 的一个bug，需要添加下方引用 -->
 		<!--<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="3.1.10" />-->

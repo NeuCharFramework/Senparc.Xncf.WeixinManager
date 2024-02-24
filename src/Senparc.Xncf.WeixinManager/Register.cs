@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
+using Senparc.AI.Interfaces;
 using Senparc.AI.Kernel;
 using Senparc.CO2NET.RegisterServices;
 using Senparc.CO2NET.Trace;
@@ -31,6 +32,8 @@ using System.Threading.Tasks;
 
 namespace Senparc.Xncf.WeixinManager
 {
+    [XncfRegister]
+    [XncfOrder(5880)]
     public partial class Register : XncfRegisterBase, IXncfRegister //注册 XNCF 基础模块接口（必须）
     {
         #region IXncfRegister 接口
@@ -62,10 +65,11 @@ namespace Senparc.Xncf.WeixinManager
             //{
             //    //根据条件生成不同的PostModel
             //});
+            services.AddScoped<IAiHandler, SemanticAiHandler>();
+            services.AddScoped<ISenparcAiSetting, SenparcAiSetting>();
             services.AddAutoMapper(z => z.AddProfile<WeixinManagerProfile>());
             services.AddScoped<MpAccountService>();
             services.AddScoped<PromptItemService>();
-            services.AddScoped<Senparc.AI.Interfaces.IAiHandler, SemanticAiHandler>();
 
             return base.AddXncfModule(services, configuration, env);//如果重写此方法，必须调用基类方法
         }
