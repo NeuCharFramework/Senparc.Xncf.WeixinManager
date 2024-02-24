@@ -22,11 +22,11 @@ steps:
 #     restoreSolution: '**/Senparc.Xncf.WeixinManager.sln'
 #     feedsToUse: 'select'
 
-- task: UseDotNet@2
-  displayName: 'Use .NET SDK 8'
-  inputs:
-    version: '8.0.x'
-    packageType: 'sdk'
+# - task: UseDotNet@2
+#   displayName: 'Use .NET SDK 8'
+#   inputs:
+#     version: '8.0.x'
+#     packageType: 'sdk'
     
 - task: DotNetCoreCLI@2
   displayName: Build
