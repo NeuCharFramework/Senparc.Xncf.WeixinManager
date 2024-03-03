@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<!--<RazorLangVersion>3.0</RazorLangVersion>-->
-		<Version>0.15.2.1-beta1</Version>
+		<Version>0.15.2.2-beta1</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -87,10 +87,10 @@
 		<PackageReference Include="Senparc.CO2NET.WebApi" Version="1.5.2.1" />
 		<!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.1" />-->
 
-		<PackageReference Include="Senparc.Ncf.AreaBase" Version="0.13.3-beta1" />
-		<PackageReference Include="Senparc.Ncf.Core" Version="0.14.4.1-beta1" />
-		<PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.13.3-beta1" />
-		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.15.3-beta1" />
+		<PackageReference Include="Senparc.Ncf.AreaBase" Version="0.13.3.1-beta1" />
+		<PackageReference Include="Senparc.Ncf.Core" Version="0.14.4.12-beta1" />
+		<PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.13.3.1-beta1" />
+		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.15.3.1-beta1" />
 		<PackageReference Include="Senparc.Weixin.AspNet" Version="1.1.1" />
 		<PackageReference Include="Senparc.Weixin.MP" Version="16.20.5" />
 		<PackageReference Include="Senparc.Weixin.MP.Middleware" Version="1.1.1" />
@@ -98,9 +98,9 @@
 		<PackageReference Include="Senparc.Weixin.TenPay" Version="1.13.1" />
 		<PackageReference Include="Senparc.Weixin.Work" Version="3.18.2" />
 		<PackageReference Include="Senparc.Weixin.WxOpen" Version="3.17.6" />
-		<PackageReference Include="Senparc.Xncf.AIKernel" Version="0.3.6.6-beta2" />
-		<PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.17.4-beta1" />
-		<PackageReference Include="Senparc.Xncf.PromptRange" Version="0.4.16.6-preview1" />
+		<PackageReference Include="Senparc.Xncf.AIKernel" Version="0.3.6.10-beta2" />
+		<PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.17.4.1-beta1" />
+		<PackageReference Include="Senparc.Xncf.PromptRange" Version="0.4.16.10-preview1" />
 
 		<!-- 为解决 VS 2019 v16.8 的一个bug，需要添加下方引用 -->
 		<!--<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="3.1.10" />-->
@@ -111,8 +111,8 @@
 
 		<!-- 由于 Npgsql 生成代码有依赖，因此此处暂时引用 -->
 		<!--<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />-->
-		<PackageReference Include="Senparc.Ncf.Database.PostgreSQL" Version="0.6.4-beta1" />
-		<PackageReference Include="Senparc.Ncf.Database.Sqlite" Version="0.13.3.2-beta1" />
+		<PackageReference Include="Senparc.Ncf.Database.PostgreSQL" Version="0.6.4.1-beta1" />
+		<PackageReference Include="Senparc.Ncf.Database.Sqlite" Version="0.13.3.3-beta1" />
 
 	</ItemGroup>
 
