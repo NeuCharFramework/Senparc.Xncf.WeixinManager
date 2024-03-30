@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.Database.MultipleMigrationDbContext;
 using Senparc.Ncf.XncfBase.Database;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Senparc.Xncf.WeixinManager.Domain.Models.MultipleDatabase
 {
@@ -30,10 +28,10 @@ namespace Senparc.Xncf.WeixinManager.Domain.Models.MultipleDatabase
     /// </summary>
     public class SenparcDbContextFactory_SqlServer : SenparcDesignTimeDbContextFactoryBase<WeixinSenparcEntities_SqlServer, Register>
     {
-        protected override Action<IServiceCollection> ServicesAction => services =>
+        protected override Action<IApplicationBuilder> AppAction => app =>
         {
             //指定其他数据库
-            services.AddDatabase("Senparc.Ncf.Database.SqlServer", "Senparc.Ncf.Database.SqlServer", "SQLServerDatabaseConfiguration");
+            app.UseNcfDatabase("Senparc.Ncf.Database.SqlServer", "Senparc.Ncf.Database.SqlServer", "SQLServerDatabaseConfiguration");
         };
 
         public SenparcDbContextFactory_SqlServer()

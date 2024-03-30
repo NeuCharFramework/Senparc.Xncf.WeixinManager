@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Senparc.Ncf.Core.Models;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.Database.MultipleMigrationDbContext;
 using Senparc.Ncf.XncfBase.Database;
 using Senparc.Xncf.WeixinManager.Domain.Models.DatabaseModel;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Senparc.Xncf.WeixinManager.Domain.Models.MultipleDatabase
 {
@@ -30,10 +28,10 @@ namespace Senparc.Xncf.WeixinManager.Domain.Models.MultipleDatabase
     /// </summary>
     public class SenparcDbContextFactory_MySql : SenparcDesignTimeDbContextFactoryBase<WeixinSenparcEntities_MySql, Register>
     {
-        protected override Action<IServiceCollection> ServicesAction => services =>
+        protected override Action<IApplicationBuilder> AppAction => app =>
         {
             //指定其他数据库
-            services.AddDatabase("Senparc.Ncf.Database.MySql", "Senparc.Ncf.Database.MySql", "MySqlDatabaseConfiguration");
+            app.UseNcfDatabase("Senparc.Ncf.Database.MySql", "Senparc.Ncf.Database.MySql", "MySqlDatabaseConfiguration");
         };
 
         public SenparcDbContextFactory_MySql()
