@@ -49,7 +49,7 @@ namespace Senparc.Xncf.WeixinManager
 
             //发送到 AI 模型，获取结果
             var result = await semanticAiHandler.ChatAsync(iWantToRun, requestMessage.Content);
-            await Console.Out.WriteLineAsync("AI result.Output:" + result.Output);
+            await Console.Out.WriteLineAsync("AI result.Output:" + result.OutputString);
             if (result == null)
             {
                 await Console.Out.WriteLineAsync("result is null");
@@ -72,7 +72,7 @@ namespace Senparc.Xncf.WeixinManager
             //异步发送 AI 结果到用户
 
             Console.WriteLine("MpAccountDTO：" + mpAccountDto.ToJson(true));
-            var resultMsg = $"{senparcAiResult.Output}\r\n -- AI 计算耗时：{SystemTime.DiffTotalMS(startTime)}毫秒";
+            var resultMsg = $"{senparcAiResult.OutputString}\r\n -- AI 计算耗时：{SystemTime.DiffTotalMS(startTime)}毫秒";
             Console.WriteLine("公众号客服消息2：" + resultMsg);
 
             var result = await Senparc.Weixin.MP.AdvancedAPIs.CustomApi.SendTextAsync(mpAccountDto.AppId, requestMessage.FromUserName, resultMsg);
