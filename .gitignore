@@ -43,3 +43,4 @@
 /src/DevelopmentTools/Senparc.Web.DatabasePlant/App_Data/SenparcTraceLog
 /src/DevelopmentTools/Senparc.Web.DatabasePlant/App_Data/Database/SenparcConfig.Development.config
 /src/DevelopmentTools/Senparc.Web.DatabasePlant/appsettings.Development.json
+*.Development.config
