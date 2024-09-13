@@ -35,6 +35,8 @@ namespace Senparc.Xncf.WeixinManager.Services.Tests
             var weixinApis = Senparc.CO2NET.ApiBind.ApiBindInfoCollection.Instance.GetGroupedCollection();
             var webApiEngine = new WebApiEngine(null);
 
+            Console.WriteLine( $"weixinApis item count: {weixinApis.Count()}");
+
             var apiGroup = weixinApis.FirstOrDefault(z => z.Key == NeuChar.PlatformType.WeChat_OfficialAccount.ToString());
 
             if (apiGroup == null)
