@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +14,7 @@ using Senparc.Ncf.Core.Config;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.Database.Sqlite;
 using Senparc.Ncf.XncfBase;
+using Senparc.Xncf.AreasBase;
 using System;
 using System.IO;
 using System.Linq;
@@ -30,11 +32,11 @@ namespace Senparc.Xncf.WeixinManager.Tests
         protected IRegisterService registerService;
         protected SenparcSetting _senparcSetting;
 
-        protected Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/> _env;
+        protected Mock<IWebHostEnvironment/*IHostingEnvironment*/> _env;
 
         public BaseTest()
         {
-            _env = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/>();
+            _env = new Mock<IWebHostEnvironment/*IHostingEnvironment*/>();
             _env.Setup(z => z.ContentRootPath).Returns(() => Path.GetFullPath("..\\..\\..\\"));
 
             Init();
@@ -67,8 +69,6 @@ namespace Senparc.Xncf.WeixinManager.Tests
             _senparcSetting = new SenparcSetting() { IsDebug = true };
             config.GetSection("SenparcSetting").Bind(_senparcSetting);
 
-            serviceCollection.AddDatabase<SqliteMemoryDatabaseConfiguration>();//使用 SQLServer数据库
-
 
             SiteConfig.WebRootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
 
@@ -77,17 +77,20 @@ namespace Senparc.Xncf.WeixinManager.Tests
 
             serviceCollection.AddMemoryCache();//使用内存缓存
             serviceCollection.AddRouting();
+
+            serviceCollection.StartWebEngine(config, _env.Object, null);
+
             var builder = serviceCollection.AddRazorPages();
 
-            builder.AddNcfAreas(_env.Object);
+            //builder.AddNcfAreas(_env.Object);
 
             //自动依赖注入扫描
             serviceCollection.ScanAssamblesForAutoDI();
             //已经添加完所有程序集自动扫描的委托，立即执行扫描（必须）
-            AssembleScanHelper.RunScan();
+            AssembleScanHelper.RunScan(null);
 
 
-            var result = serviceCollection.StartEngine(Configuration, _env.Object);
+            //var result = serviceCollection.StartNcfEngine(Configuration, _env.Object, null);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
@@ -106,6 +109,11 @@ namespace Senparc.Xncf.WeixinManager.Tests
 
             //var app = builder.Build();// new ApplicationBuilder(ServiceProvider);
             var app = new ApplicationBuilder(ServiceProvider);
+
+
+            app.UseNcfDatabase<SqliteMemoryDatabaseConfiguration>();//使用 SQLServer数据库
+
+
             app.UseRouting();
 
             //app
