@@ -35,17 +35,17 @@ steps:
     projects: '**/Senparc.Xncf.WeixinManager.sln'
     arguments: '--configuration Release'
 
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet 5.2.0'
-  inputs:
-    versionSpec: 5.2.0
-    checkLatest: true
+# - task: NuGetToolInstaller@1
+#   displayName: 'Use NuGet 5.2.0'
+#   inputs:
+#     versionSpec: 5.2.0
+#     checkLatest: true
     
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-#    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    packagesToPush: '**/*.nupkg;**/*.symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'nuget-jeffrey-full-key'
+# - task: NuGetCommand@2
+#   inputs:
+#     command: 'push'
+# #    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+#     packagesToPush: '**/*.nupkg;**/*.symbols.nupkg'
+#     nuGetFeedType: 'external'
+#     publishFeedCredentials: 'nuget-jeffrey-full-key'
