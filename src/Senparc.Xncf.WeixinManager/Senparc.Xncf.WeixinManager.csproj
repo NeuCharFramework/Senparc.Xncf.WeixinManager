@@ -1,10 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 	<!--<Project Sdk="Microsoft.NET.Sdk.Razor">-->
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<!--<RazorLangVersion>3.0</RazorLangVersion>-->
-		<Version>0.16.5-preview1</Version>
+		<Version>0.16.6-preview1</Version>
 		<!--<GenerateProgramFile>false</GenerateProgramFile>-->
 		<!--https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1511#issuecomment-696682962-->
 		<OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
@@ -52,6 +51,7 @@
 			v0.16.2 更新基础库
 			[2024-09-13] v0.16.4-preview1 升级基础库
 			[2024-10-09] v0.16.5-preview1 升级基础库
+			[2024-12-07] v0.16.6-preview1 更新基础库
 		</PackageReleaseNotes>
 		<RepositoryUrl> https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
 		<Configurations>Debug;Release;Test;LocalRelease</Configurations>
@@ -73,7 +73,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="wwwroot\**\*" />
 		<EmbeddedResource Include="App_Data\ApiDocXml\*" />
-		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.10" />
 	</ItemGroup>
 	<ItemGroup>
 		<!--<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />-->
@@ -84,31 +84,26 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Senparc.CO2NET.WebApi" Version="1.7.0" />
+		<PackageReference Include="Senparc.CO2NET.WebApi" Version="2.1.0-beta3" />
 		<!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.1" />-->
-		<PackageReference Include="Senparc.Ncf.AreaBase" Version="0.18.5-preview1" />
-		<PackageReference Include="Senparc.Ncf.Core" Version="0.20.5-preview1" />
-		<PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.18.5-preview1" />
-		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.21.10-preview1" />
-		<PackageReference Include="Senparc.Weixin.AspNet" Version="1.3.4" />
-		<PackageReference Include="Senparc.Weixin.MP" Version="16.22.3" />
-		<PackageReference Include="Senparc.Weixin.MP.Middleware" Version="1.3.4" />
-		<PackageReference Include="Senparc.Weixin.Open" Version="4.20.4" />
-		<PackageReference Include="Senparc.Weixin.TenPay" Version="1.16.3" />
-		<PackageReference Include="Senparc.Weixin.Work" Version="3.23.2" />
-		<PackageReference Include="Senparc.Weixin.WxOpen" Version="3.21.0" />
-		<PackageReference Include="Senparc.Xncf.AIKernel" Version="0.9.4-preview1" />
-		<PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.23.8-preview1" />
-		<PackageReference Include="Senparc.Xncf.PromptRange" Version="0.10.6-preview1" />
-		<!-- 为解决 VS 2019 v16.8 的一个bug，需要添加下方引用 -->
-		<!--<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="3.1.10" />-->
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+		<PackageReference Include="Senparc.Ncf.AreaBase" Version="0.20.3.1-preview1" />
+		<PackageReference Include="Senparc.Ncf.Core" Version="0.23.5.1-preview1" />
+		<PackageReference Include="Senparc.Ncf.Mvc.UI" Version="0.20.3.1-preview1" />
+		<PackageReference Include="Senparc.Ncf.XncfBase" Version="0.22.1.1-preview1" />
+		<PackageReference Include="Senparc.Weixin.AspNet" Version="1.4.7" />
+		<PackageReference Include="Senparc.Weixin.MP" Version="16.23.6" />
+		<PackageReference Include="Senparc.Weixin.MP.Middleware" Version="1.4.7" />
+		<PackageReference Include="Senparc.Weixin.Open" Version="4.21.9" />
+		<PackageReference Include="Senparc.Weixin.TenPay" Version="1.17.6" />
+		<PackageReference Include="Senparc.Weixin.Work" Version="3.25.2" />
+		<PackageReference Include="Senparc.Weixin.WxOpen" Version="3.23.2" />
+		<PackageReference Include="Senparc.Xncf.AIKernel" Version="0.12.3-preview1" />
+		<PackageReference Include="Senparc.Xncf.DatabaseToolkit" Version="0.24.1-preview1" />
+		<PackageReference Include="Senparc.Xncf.PromptRange" Version="0.13.3.1-preview1" />
 		<!-- 由于 Npgsql 生成代码有依赖，因此此处暂时引用 -->
 		<!--<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />-->
-		<PackageReference Include="Senparc.Ncf.Database.PostgreSQL" Version="0.11.5-preview1" />
-		<PackageReference Include="Senparc.Ncf.Database.Sqlite" Version="0.18.5-preview1" />
+		<PackageReference Include="Senparc.Ncf.Database.PostgreSQL" Version="0.12.1.1-preview1" />
+		<PackageReference Include="Senparc.Ncf.Database.Sqlite" Version="0.19.1.5-preview1" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="App_Data\ApiDocXml\Senparc.WebSocket.xml">
