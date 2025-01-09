@@ -7,11 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Senparc.Ncf.DatabasePlant" Version="0.20.1.1-preview1" />
+		<PackageReference Include="Senparc.Ncf.DatabasePlant" Version="0.20.3-preview1" />
 	</ItemGroup>
 
 	<ItemGroup>
