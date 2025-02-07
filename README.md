@@ -23,3 +23,4 @@ XNCF 模块：盛派官方发布的微信管理后台
 
 ### 只需配置和几行代码即可完美对接 ChatGPT 等 AI 服务：
 <img width="542" alt="image" src="https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager/assets/2281927/fc00f7a9-1e84-43bf-9c54-efb8185f980e">
+
