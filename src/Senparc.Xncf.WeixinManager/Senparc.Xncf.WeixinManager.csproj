@@ -53,7 +53,7 @@
 			[2024-10-09] v0.16.5-preview1 升级基础库
 			[2024-12-07] v0.16.6-preview1 更新基础库
 			[2025-01-10] v0.17.0-preview1 添加达梦（DM）和 Oracle 数据库支持
-			[2025-05-29] v0.18.0-preview.1 添加达梦（DM）和 Oracle 数据库支持
+			[2025-05-29] v0.18.0-preview.1 升级基础库
 		</PackageReleaseNotes>
 		<RepositoryUrl> https://github.com/NeuCharFramework/Senparc.Xncf.WeixinManager</RepositoryUrl>
 		<Configurations>Debug;Release;Test;LocalRelease</Configurations>
