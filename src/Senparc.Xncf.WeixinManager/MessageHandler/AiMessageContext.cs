@@ -82,14 +82,14 @@ namespace Senparc.Xncf.WeixinManager
                     }
 
                     //配置和初始化模型
-                    var chatConfig = _semanticAiHandler.ChatConfig(promptConfigParameter,
+                    var iWantToRun = _semanticAiHandler.ChatConfig(promptConfigParameter,
                                                      userId: openId,
                                                      maxHistoryStore: 20,
                                                      promptTemplate: promptTemplate,
                                                      senparcAiSetting: senparcAiSetting
                                                                                                           /*, modelName: "gpt-4-32k"*/);
 
-                    var iWantToRun = chatConfig.iWantToRun;
+                    //var iWantToRun = chatConfig.iWantToRun;
 
                     //IWantoRunDic.TryAdd(openId, iWantToRun);
                     IWantoRunDic[key] = iWantToRun;
