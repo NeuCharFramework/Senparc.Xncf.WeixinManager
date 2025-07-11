@@ -43,7 +43,7 @@ namespace Senparc.Xncf.WeixinManager
         public override string Uid => "EB84CB21-AC22-406E-0001-000000000001";
 
 
-        public override string Version => "0.21.10-beta1";
+        public override string Version => "0.22.0";
 
 
         public override string MenuName => "微信管理";
