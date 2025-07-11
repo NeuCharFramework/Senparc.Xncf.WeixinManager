@@ -73,59 +73,68 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
         /// <returns></returns>
         public async Task<IActionResult> OnGetAjaxAsync(int mpId = 0, int pageIndex = 1, int pageSize = 10)
         {
-            MpAccountDto mpAccountDto = null;// new MpAccountDto();
-            if (mpId > 0)
+            try
             {
-                var mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == mpId);
-                if (mpAccount == null)
+                MpAccountDto mpAccountDto = null;// new MpAccountDto();
+                if (mpId > 0)
                 {
-                    return RenderError("公众号配置不存在：" + mpId);
+                    var mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == mpId);
+                    if (mpAccount == null)
+                    {
+                        return RenderError("公众号配置不存在：" + mpId);
+                    }
+                    mpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
                 }
-                mpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
+
+                var seh = new Ncf.Utility.SenparcExpressionHelper<Domain.Models.DatabaseModel.WeixinUser>();
+                seh.ValueCompare.AndAlso(mpAccountDto != null, z => z.MpAccountId == mpAccountDto.Id);
+                var where = seh.BuildWhereExpression();
+                var result = await _weixinUserService.GetObjectListAsync(pageIndex, pageSize, where,
+                    z => z.Id, Ncf.Core.Enums.OrderingType.Descending, z => z.Include(p => p.UserTags_WeixinUsers).ThenInclude(p => p.UserTag));
+
+                //ViewData["Test"] = result.FirstOrDefault();
+                var weixinUserDtos = new PagedList<WeixinUserDto>(result.Select(z => _weixinUserService.Mapper.Map<WeixinUserDto>(z)).ToList(), result.PageIndex, result.PageCount, result.TotalCount);
+                return Ok(new
+                {
+                    mpAccountDto,
+                    weixinUserDtos = new
+                    {
+                        weixinUserDtos.TotalCount,
+                        list = weixinUserDtos.Select(z => new
+                        {
+                            z.AddTime,
+                            z.Remark,
+                            z.AdminRemark,
+                            z.City,
+                            z.Country,
+                            z.Groupid,
+                            z.HeadImgUrl,
+                            z.Id,
+                            z.Language,
+                            z.LastUpdateTime,
+                            z.MpAccountId,
+                            z.NickName,
+                            z.OpenId,
+                            z.Province,
+                            z.Qr_Scene,
+                            z.Qr_Scene_Str,
+                            z.Sex,
+                            z.Subscribe,
+                            z.Subscribe_Scene,
+                            Subscribe_Time = new DateTime(1970, 1, 1).AddSeconds(z.Subscribe_Time).ToString(),
+                            //_.Tagid_List,
+                            z.UnionId,
+                            UserTags_WeixinUsers = z.UserTags_WeixinUsers.Select(u => new { u.UserTag, u.UserTagId, u.WeixinUserId }),
+                        }).AsEnumerable()
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                SenparcTrace.BaseExceptionLog(ex);
+                return Ok(false, ex.Message);
             }
 
-            var seh = new Ncf.Utility.SenparcExpressionHelper<Domain.Models.DatabaseModel.WeixinUser>();
-            seh.ValueCompare.AndAlso(mpAccountDto != null, z => z.MpAccountId == mpAccountDto.Id);
-            var where = seh.BuildWhereExpression();
-            var result = await _weixinUserService.GetObjectListAsync(pageIndex, pageSize, where,
-                z => z.Id, Ncf.Core.Enums.OrderingType.Descending, z => z.Include(p => p.UserTags_WeixinUsers).ThenInclude(p => p.UserTag));
-
-            //ViewData["Test"] = result.FirstOrDefault();
-            var weixinUserDtos = new PagedList<WeixinUserDto>(result.Select(z => _weixinUserService.Mapper.Map<WeixinUserDto>(z)).ToList(), result.PageIndex, result.PageCount, result.TotalCount);
-            return Ok(new
-            {
-                mpAccountDto,
-                weixinUserDtos = new
-                {
-                    weixinUserDtos.TotalCount,
-                    list = weixinUserDtos.Select(z => new
-                    {
-                        z.AddTime,
-                        z.Remark,
-                        z.AdminRemark,
-                        z.City,
-                        z.Country,
-                        z.Groupid,
-                        z.HeadImgUrl,
-                        z.Id,
-                        z.Language,
-                        z.LastUpdateTime,
-                        z.MpAccountId,
-                        z.NickName,
-                        z.OpenId,
-                        z.Province,
-                        z.Qr_Scene,
-                        z.Qr_Scene_Str,
-                        z.Sex,
-                        z.Subscribe,
-                        z.Subscribe_Scene,
-                        Subscribe_Time = new DateTime(1970, 1, 1).AddSeconds(z.Subscribe_Time).ToString(),
-                        //_.Tagid_List,
-                        z.UnionId,
-                        UserTags_WeixinUsers = z.UserTags_WeixinUsers.Select(u => new { u.UserTag, u.UserTagId, u.WeixinUserId }),
-                    }).AsEnumerable()
-                }
-            });
         }
 
         public enum SyncType
@@ -189,12 +198,12 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.WeixinManager
                 tagDto = dbUserTag == null
                 //? _userTagService.Mapper.Map<UserTag_CreateOrUpdateDto>(tag)//创建新tag
                 ? new UserTag_CreateOrUpdateDto()
-                    {
-                        Count = tag.count,
-                        TagId = tag.id,
-                        Name = tag.name,
-                        MpAccountId = mpId
-                    }
+                {
+                    Count = tag.count,
+                    TagId = tag.id,
+                    Name = tag.name,
+                    MpAccountId = mpId
+                }
                 : _userTagService.Mapper.Map<UserTag_CreateOrUpdateDto>(dbUserTag)//从数据库获取
                     ;
 
