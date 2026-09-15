@@ -33,7 +33,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 var mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == id);
                 if (mpAccount == null)
                 {
-                    return RenderError("���ں���Ϣ�����ڣ�");
+                    return RenderError("公众号信息不存在！");
                 }
 
                 MpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
@@ -53,7 +53,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 var mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == id);
                 if (mpAccount == null)
                 {
-                    return RenderError("���ں���Ϣ�����ڣ�");
+                    return RenderError("公众号信息不存在！");
                 }
 
                 mpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
@@ -70,7 +70,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == id);
                 if (mpAccount == null)
                 {
-                    return RenderError("���ں���Ϣ�����ڣ�");
+                    return RenderError("公众号信息不存在！");
                 }
                 _mpAccountService.Mapper.Map(MpAccountDto, mpAccount);
             }
@@ -80,12 +80,12 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
             }
             await _mpAccountService.SaveObjectAsync(mpAccount);
 
-            //���½��й��ں�ע��
+            //注册公众号信息
             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
 
             try
             {
-                //������ȡ AccessToken
+                //尝试获取 AccessToken
                 await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
             }
             catch (Exception ex)
@@ -106,7 +106,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == mpAccountDto.Id);
                 if (mpAccount == null)
                 {
-                    return RenderError("���ں���Ϣ�����ڣ�");
+                    return RenderError("公众号信息不存在！");
                 }
 
                 mpAccountDto.AddTime = mpAccount.AddTime;
@@ -119,12 +119,12 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
             }
             await _mpAccountService.SaveObjectAsync(mpAccount);
 
-            //���½��й��ں�ע��
+            //注册公众号信息
             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
 
             try
             {
-                //������ȡ AccessToken
+                //尝试获取 AccessToken
                 await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
             }
             catch (Exception ex)
