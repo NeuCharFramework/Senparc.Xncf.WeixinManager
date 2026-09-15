@@ -16,6 +16,7 @@ namespace Senparc.Xncf.WeixinManager.Tests.Areas.Admin.Pages.WeixinManager
 
             StringAssert.Contains(result, "IP 白名单");
             StringAssert.Contains(result, "127.0.0.1");
+            StringAssert.Contains(result, "::1");
         }
 
         [TestMethod]
