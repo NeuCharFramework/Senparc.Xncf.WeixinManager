@@ -33,7 +33,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 var mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == id);
                 if (mpAccount == null)
                 {
-                    return RenderError("¹«ÖÚºÅĞÅÏ¢²»´æÔÚ£¡");
+                    return RenderError("å…¬ä¼—å·ä¿¡æ¯ä¸å­˜åœ¨ï¼");
                 }
 
                 MpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
@@ -53,7 +53,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 var mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == id);
                 if (mpAccount == null)
                 {
-                    return RenderError("¹«ÖÚºÅĞÅÏ¢²»´æÔÚ£¡");
+                    return RenderError("å…¬ä¼—å·ä¿¡æ¯ä¸å­˜åœ¨ï¼");
                 }
 
                 mpAccountDto = _mpAccountService.Mapper.Map<MpAccountDto>(mpAccount);
@@ -70,7 +70,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == id);
                 if (mpAccount == null)
                 {
-                    return RenderError("¹«ÖÚºÅĞÅÏ¢²»´æÔÚ£¡");
+                    return RenderError("å…¬ä¼—å·ä¿¡æ¯ä¸å­˜åœ¨ï¼");
                 }
                 _mpAccountService.Mapper.Map(MpAccountDto, mpAccount);
             }
@@ -80,17 +80,17 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
             }
             await _mpAccountService.SaveObjectAsync(mpAccount);
 
-            //ÖØĞÂ½øĞĞ¹«ÖÚºÅ×¢²á
+            //æ³¨å†Œå…¬ä¼—å·ä¿¡æ¯
             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
 
             try
             {
-                //Á¢¼´»ñÈ¡ AccessToken
+                //å°è¯•è·å– AccessToken
                 await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
             }
             catch (Exception ex)
             {
-                return Ok(new { id = mpAccount.Id, uid = Uid, msg = "ÕËºÅÒÑ¾­Ìí¼Ó£¬µ« AppId »ò Secret ÓĞÎó£¬ÎŞ·¨Õı³£¹¤×÷£¬Çë¼ì²é£¡" });
+                return Ok(new { id = mpAccount.Id, uid = Uid, msg = MpAccountSaveMessageHelper.BuildAccessTokenErrorMessage(ex) });
             }
 
 
@@ -106,7 +106,7 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
                 mpAccount = await _mpAccountService.GetObjectAsync(z => z.Id == mpAccountDto.Id);
                 if (mpAccount == null)
                 {
-                    return RenderError("¹«ÖÚºÅĞÅÏ¢²»´æÔÚ£¡");
+                    return RenderError("å…¬ä¼—å·ä¿¡æ¯ä¸å­˜åœ¨ï¼");
                 }
 
                 mpAccountDto.AddTime = mpAccount.AddTime;
@@ -119,17 +119,17 @@ namespace Senparc.Xncf.WeixinManager.Areas.Admin.Pages.WeixinManager
             }
             await _mpAccountService.SaveObjectAsync(mpAccount);
 
-            //ÖØĞÂ½øĞĞ¹«ÖÚºÅ×¢²á
+            //æ³¨å†Œå…¬ä¼—å·ä¿¡æ¯
             await AccessTokenContainer.RegisterAsync(mpAccount.AppId, mpAccount.AppSecret, $"{mpAccount.Name}-{mpAccount.Id}");
 
             try
             {
-                //Á¢¼´»ñÈ¡ AccessToken
+                //å°è¯•è·å– AccessToken
                 await AccessTokenContainer.GetAccessTokenAsync(mpAccount.AppId, true);
             }
             catch (Exception ex)
             {
-                return Ok(new { id = mpAccount.Id, uid = Uid, msg = "ÕËºÅÒÑ¾­Ìí¼Ó£¬µ« AppId »ò Secret ÓĞÎó£¬ÎŞ·¨Õı³£¹¤×÷£¬Çë¼ì²é£¡" });
+                return Ok(new { id = mpAccount.Id, uid = Uid, msg = MpAccountSaveMessageHelper.BuildAccessTokenErrorMessage(ex) });
             }
 
 
